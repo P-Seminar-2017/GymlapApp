@@ -3,10 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/GymlapApp.iml" filepath="$PROJECT_DIR$/GymlapApp.iml" />
-      <module fileurl="file://E:\Android_Projects\Atlas\ProjectFolders\GymlapApp\GymlapApp.iml" filepath="E:\Android_Projects\Atlas\ProjectFolders\GymlapApp\GymlapApp.iml" />
-      <module fileurl="file://C:\Users\Schalk\AndroidStudioProjects\GymlapApp\.idea\GymlapApp.iml" filepath="C:\Users\Schalk\AndroidStudioProjects\GymlapApp\.idea\GymlapApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://E:\Android_Projects\Atlas\ProjectFolders\GymlapApp\app\app.iml" filepath="E:\Android_Projects\Atlas\ProjectFolders\GymlapApp\app\app.iml" />
     </modules>
   </component>
 </project>
