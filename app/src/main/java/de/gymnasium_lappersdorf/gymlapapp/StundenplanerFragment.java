@@ -72,12 +72,22 @@ public class StundenplanerFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         tb = ((Activity)context).findViewById(R.id.toolbar_main);
-        tb.setElevation(0);
+        try {
+            tb.setElevation(0);
+        }catch (NullPointerException e){
+            e.printStackTrace();
+        }
+
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        tb.setElevation(4);
+        try {
+            tb.setElevation(4);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+
     }
 }
