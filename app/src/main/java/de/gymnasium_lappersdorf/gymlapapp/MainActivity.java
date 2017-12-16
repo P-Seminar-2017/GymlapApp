@@ -1,6 +1,5 @@
 package de.gymnasium_lappersdorf.gymlapapp;
 
-import android.app.FragmentManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -12,6 +11,7 @@ public class MainActivity extends AppCompatActivity {
 
     DrawerLayout drl;
     Toolbar tb;
+    NavDrawerOnclickHandler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,16 +34,12 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         toggle.syncState();
         NavigationView nv =findViewById(R.id.navigation);
-        nv.setNavigationItemSelectedListener(new NavDrawerOnclickHandler(MainActivity.this));
+
+        handler = new NavDrawerOnclickHandler(MainActivity.this);
+        nv.setNavigationItemSelectedListener(handler);
         //setting HomeFragment as default fragment when launching Activity
-        setHomeFragment();
+        handler.setHomeFragment();
     }
 
-    private void setHomeFragment(){
-        android.app.Fragment h = new HomeFragment();
-        FragmentManager fm = getFragmentManager();
-        fm.beginTransaction()
-                .replace(R.id.content_frame_main, h)
-                .commit();
-    }
+
 }

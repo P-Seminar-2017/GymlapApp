@@ -2,4 +2,16 @@
     <string name="app_name">GymlapApp</string>
     <string name="drawer_open">Öffnen</string>
     <string name="drawer_close">Schließen</string>
+    <string-array name="stundenauswahl">
+        <item>Einzelstunde</item>
+        <item>Doppelstunde</item>
+        <item>Pause</item>
+    </string-array>
+    <string-array name="tage">
+        <item>Montag</item>
+        <item>Dienstag</item>
+        <item>Mittwoch</item>
+        <item>Donnerstag</item>
+        <item>Freitag</item>
+    </string-array>
 </resources>
