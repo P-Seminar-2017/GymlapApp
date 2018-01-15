@@ -14,15 +14,15 @@
             android:theme="@style/AppTheme">
         <activity android:name=".MainActivity"
             android:theme="@style/AppTheme.noActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
         </activity>
         <activity android:name=".AddHourActivity" android:parentActivityName=".MainActivity"></activity>
 
+        <activity android:name=".homeworkList.HomeworkListActivity"> <intent-filter>
+            <action android:name="android.intent.action.MAIN"/>
 
+            <category android:name="android.intent.category.LAUNCHER"/>
+        </intent-filter></activity>
         <!--region services-->
 
         <service android:name=".JobService"

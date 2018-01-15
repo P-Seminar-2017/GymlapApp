@@ -1,6 +1,7 @@
 package de.gymnasium_lappersdorf.gymlapapp;
 
 import android.os.Parcel;
+import android.os.Parcelable;
 
 /**
  * Created by Leon on 02.12.2017.
@@ -11,6 +12,38 @@ public class Einzelstunde extends Stunde {
     String hour, start, end, lesson, course, teacher, room;
     int id;
     final static int TYPE = 0;
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(hour);
+        dest.writeString(start);
+        dest.writeString(end);
+        dest.writeString(lesson);
+        dest.writeString(course);
+        dest.writeString(teacher);
+        dest.writeString(room);
+        dest.writeInt(id);
+    }
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+        public Einzelstunde createFromParcel(Parcel in) {
+            return new Einzelstunde(in);
+        }
+
+        public Einzelstunde[] newArray(int size) {
+            return new Einzelstunde[size];
+        }
+    };
+
+    public Einzelstunde(Parcel in){
+        hour = in.readString();
+        start = in.readString();
+        end =in.readString();
+        lesson = in.readString();
+        course = in.readString();
+        teacher = in.readString();
+        room = in.readString();
+        id = in.readInt();
+    }
 
     public Einzelstunde(String hour, String start, String end, String lesson, String course, String teacher, String room) {
         this.hour = hour;
@@ -93,6 +126,12 @@ public class Einzelstunde extends Stunde {
     //returns type of Hour: 0=single-hour, 1=double-hour, 2=break
     public int getType() {
         return TYPE;
+    }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
 

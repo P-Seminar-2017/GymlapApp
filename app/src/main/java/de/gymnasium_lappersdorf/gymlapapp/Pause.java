@@ -1,6 +1,7 @@
 package de.gymnasium_lappersdorf.gymlapapp;
 
 import android.os.Parcel;
+import android.os.Parcelable;
 
 /**
  * Created by Leon on 02.12.2017.
@@ -18,6 +19,32 @@ public class Pause extends Stunde {
         this.title = title;
     }
 
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(start);
+        parcel.writeString(end);
+        parcel.writeString(title);
+        parcel.writeInt(id);
+    }
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+        public Pause createFromParcel(Parcel in) {
+            return new Pause(in);
+        }
+
+        public Pause[] newArray(int size) {
+            return new Pause[size];
+        }
+    };
+
+    public Pause(Parcel in){
+        start = in.readString();
+        end =in.readString();
+        title = in.readString();
+        id = in.readInt();
+    }
+    
+    
+    
     //setters
 
     public void setId(int id){
@@ -60,4 +87,10 @@ public class Pause extends Stunde {
     }
 
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+  
 }
