@@ -1,4 +1,4 @@
-package de.roze.myapplication;
+package de.gymnasium_lappersdorf.gymlapapp;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -26,12 +26,14 @@ public class Hausaufgabe {
         this.stufe = stufe;
         this.kurs = kurs;
         done = false;
-        this.types =types;
+        this.types = types;
 
     }
+
     public enum Types {
-       DATE, NEXT, NEXT2
+        DATE, NEXT, NEXT2
     }
+
     public String getDateFormatted() {
         Calendar c = Calendar.getInstance();
         c.setTime(new Date(date));
@@ -96,6 +98,10 @@ public class Hausaufgabe {
 
     public int getStufe() {
         return stufe;
+    }
+
+    public Types getTypes() {
+        return types;
     }
 }
 

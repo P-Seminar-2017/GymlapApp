@@ -1,4 +1,4 @@
-package de.roze.myapplication;
+package de.gymnasium_lappersdorf.gymlapapp;
 
 import android.content.ContentValues;
 import android.content.Context;

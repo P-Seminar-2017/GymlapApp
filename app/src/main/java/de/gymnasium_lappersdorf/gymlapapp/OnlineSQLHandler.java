@@ -13,7 +13,7 @@ import java.net.URL;
  */
 
 
-public class OnlineSQLHandler extends AsyncTask<Homework, String, String> {
+public class OnlineSQLHandler extends AsyncTask<Hausaufgabe, String, String> {
     private String key;
     private String apiDomain;
     private SQLCallback sqlCallback;
@@ -36,7 +36,7 @@ public class OnlineSQLHandler extends AsyncTask<Homework, String, String> {
     }
 
     @Override
-    protected String doInBackground(Homework... data) {
+    protected String doInBackground(Hausaufgabe... data) {
         URL url;
         HttpURLConnection httpConn;
         BufferedReader rd;
@@ -50,20 +50,20 @@ public class OnlineSQLHandler extends AsyncTask<Homework, String, String> {
                     break;
                 case GET:
                     sb.append("&fach=").append(data[0].getFach());
-                    sb.append("&klasse=").append(data[0].getKlasse());
+                    sb.append("&klasse=").append(data[0].getStufe());
                     sb.append("&stufe=").append(data[0].getStufe());
                     break;
                 case EDIT:
                     sb.append("&id=").append(data[0].getId());
-                    sb.append("&text=").append(data[0].getText());
+                    sb.append("&text=").append(data[0].getQuest());
                     break;
                 case SAVE:
                     sb.append("&fach=").append(data[0].getFach());
-                    sb.append("&klasse=").append(data[0].getKlasse());
-                    sb.append("&stufe=").append(data[0].getStufe());
-                    sb.append("&type=").append(data[0].getType());
-                    sb.append("&date=").append(data[0].getDate());
-                    sb.append("&text=").append(data[0].getText());
+                    sb.append("&klasse=").append(data[0].getStufe());
+                    sb.append("&stufe=").append(data[0].getKurs());
+                    sb.append("&type=").append(data[0].getTypes());
+                    sb.append("&date=").append(data[0].getTimestamp());
+                    sb.append("&text=").append(data[0].getQuest());
                     break;
                 case DELETE:
                     sb.append("&id=").append(data[0].getId());
