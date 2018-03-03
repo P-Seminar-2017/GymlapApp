@@ -5,8 +5,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * 07.01.2018 | created by Lukas S
+ * 20.01.2018
+ * Created by Lukas S
  */
+
 
 public class JsonHandler {
     private boolean success;
@@ -32,7 +34,7 @@ public class JsonHandler {
                 dataArray = null;
             }
 
-        } catch (JSONException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             success = false;
         }
@@ -65,7 +67,7 @@ public class JsonHandler {
     }
 
     public String getType(int position) {
-        return getString(position, "position");
+        return getString(position, "type");
     }
 
     public long getDate(int position) {
