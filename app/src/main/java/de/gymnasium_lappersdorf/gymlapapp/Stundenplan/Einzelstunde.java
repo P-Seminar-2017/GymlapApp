@@ -1,6 +1,4 @@
-package de.gymnasium_lappersdorf.gymlapapp;
-
-import android.os.Parcel;
+package de.gymnasium_lappersdorf.gymlapapp.Stundenplan;
 
 /**
  * Created by Leon on 02.12.2017.

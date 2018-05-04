@@ -1,4 +1,4 @@
-package de.gymnasium_lappersdorf.gymlapapp;
+package de.gymnasium_lappersdorf.gymlapapp.HausaufgabenPlaner;
 
 import org.json.JSONArray;
 import org.json.JSONException;

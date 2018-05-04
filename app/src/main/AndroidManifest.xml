@@ -22,14 +22,14 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".AddHourActivity"
+            android:name=".Stundenplan.AddHourActivity"
             android:parentActivityName=".MainActivity"></activity>
 
 
         <!--region services-->
 
         <service
-            android:name=".JobService"
+            android:name=".HausaufgabenPlaner.JobService"
             android:permission="android.permission.BIND_JOB_SERVICE">
 
         </service>

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="de.gymnasium_lappersdorf.gymlapapp.AddHourActivity">
+    tools:context="de.gymnasium_lappersdorf.gymlapapp.Stundenplan.AddHourActivity">
 
     <LinearLayout
         android:layout_width="match_parent"

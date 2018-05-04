@@ -10,6 +10,9 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
+import de.gymnasium_lappersdorf.gymlapapp.Home.HomeFragment;
+import de.gymnasium_lappersdorf.gymlapapp.Stundenplan.StundenplanerFragment;
+
 /**
  * Created by leon on 08.12.17.
  */

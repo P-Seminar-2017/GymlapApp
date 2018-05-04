@@ -1,4 +1,4 @@
-package de.gymnasium_lappersdorf.gymlapapp;
+package de.gymnasium_lappersdorf.gymlapapp.Stundenplan;
 
 import android.app.TimePickerDialog;
 import android.content.Intent;
@@ -14,6 +14,8 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
+
+import de.gymnasium_lappersdorf.gymlapapp.R;
 
 public class AddHourActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 

@@ -1,4 +1,4 @@
-package de.gymnasium_lappersdorf.gymlapapp;
+package de.gymnasium_lappersdorf.gymlapapp.Stundenplan;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;

@@ -1,4 +1,4 @@
-package de.gymnasium_lappersdorf.gymlapapp;
+package de.gymnasium_lappersdorf.gymlapapp.Stundenplan;
 
 import android.app.Activity;
 import android.content.Context;
@@ -12,6 +12,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import de.gymnasium_lappersdorf.gymlapapp.R;
 
 public class StundenplanerFragment extends Fragment {
 

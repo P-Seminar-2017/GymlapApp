@@ -1,4 +1,4 @@
-package de.gymnasium_lappersdorf.gymlapapp;
+package de.gymnasium_lappersdorf.gymlapapp.Home;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -17,6 +17,8 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import de.gymnasium_lappersdorf.gymlapapp.R;
 
 /**
  * Created by leon on 08.12.17.

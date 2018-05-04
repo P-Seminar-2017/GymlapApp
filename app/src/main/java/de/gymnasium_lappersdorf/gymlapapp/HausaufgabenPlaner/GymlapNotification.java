@@ -1,4 +1,4 @@
-package de.gymnasium_lappersdorf.gymlapapp;
+package de.gymnasium_lappersdorf.gymlapapp.HausaufgabenPlaner;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+
+import de.gymnasium_lappersdorf.gymlapapp.R;
 
 /**
  * Created by Lukas S | 03.12.2017

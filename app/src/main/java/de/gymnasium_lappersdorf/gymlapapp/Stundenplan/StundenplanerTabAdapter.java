@@ -1,4 +1,4 @@
-package de.gymnasium_lappersdorf.gymlapapp;
+package de.gymnasium_lappersdorf.gymlapapp.Stundenplan;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;

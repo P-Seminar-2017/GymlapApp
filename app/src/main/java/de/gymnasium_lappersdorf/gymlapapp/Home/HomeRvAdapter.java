@@ -1,4 +1,4 @@
-package de.gymnasium_lappersdorf.gymlapapp;
+package de.gymnasium_lappersdorf.gymlapapp.Home;
 
 import android.content.Context;
 import android.graphics.BitmapFactory;
@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+
+import de.gymnasium_lappersdorf.gymlapapp.R;
 
 /**
  * Created by Leon on 03.01.2018.
