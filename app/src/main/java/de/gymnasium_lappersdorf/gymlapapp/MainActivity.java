@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 
+import de.gymnasium_lappersdorf.gymlapapp.Navigation.NavDrawerOnclickHandler;
+
 public class MainActivity extends AppCompatActivity {
 
     DrawerLayout drl;

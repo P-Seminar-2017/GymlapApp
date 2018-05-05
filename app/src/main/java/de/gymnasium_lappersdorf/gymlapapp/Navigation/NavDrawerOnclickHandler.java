@@ -1,4 +1,4 @@
-package de.gymnasium_lappersdorf.gymlapapp;
+package de.gymnasium_lappersdorf.gymlapapp.Navigation;
 
 import android.app.Activity;
 import android.content.Context;
@@ -11,6 +11,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 import de.gymnasium_lappersdorf.gymlapapp.Home.HomeFragment;
+import de.gymnasium_lappersdorf.gymlapapp.Maps.MapFragment;
+import de.gymnasium_lappersdorf.gymlapapp.R;
 import de.gymnasium_lappersdorf.gymlapapp.Stundenplan.StundenplanerFragment;
 
 /**
@@ -21,7 +23,7 @@ public class NavDrawerOnclickHandler implements NavigationView.OnNavigationItemS
 
     Context c;
     DrawerLayout dl;
-    Fragment h, s;
+    Fragment h, s, m;
     FragmentManager fm;
 
     public NavDrawerOnclickHandler(Context c) {
@@ -43,6 +45,11 @@ public class NavDrawerOnclickHandler implements NavigationView.OnNavigationItemS
                 setSPFragment();
                 item.setChecked(false);
                 return true;
+            case R.id.indoormap:
+                item.setChecked(true);
+                setMapFragment();
+                item.setChecked(false);
+                return true;
         }
         return false;
     }
@@ -59,6 +66,14 @@ public class NavDrawerOnclickHandler implements NavigationView.OnNavigationItemS
         if (s==null) s = new StundenplanerFragment();
         fm.beginTransaction()
                 .replace(R.id.content_frame_main, s)
+                .commit();
+        dl.closeDrawers();
+    }
+
+    public void setMapFragment(){
+        if (m==null) m = new MapFragment();
+        fm.beginTransaction()
+                .replace(R.id.content_frame_main, m)
                 .commit();
         dl.closeDrawers();
     }
