@@ -3,6 +3,7 @@
 
     <item android:title="Home" android:icon="@drawable/home" android:id="@+id/_home"/>
     <item android:title="Stundenplaner" android:icon="@drawable/schedule" android:id="@+id/stundenplaner"/>
-    <item android:title="Map" android:icon="@drawable/ic_map" android:id="@+id/indoormap"/>
+    <item android:title="Indoormap GMaps" android:icon="@drawable/ic_map" android:id="@+id/indoormap"/>
+    <item android:title="Indoormap Mapwize" android:icon="@drawable/ic_map" android:id="@+id/indoormap_mapwize"/>
 
 </menu>
