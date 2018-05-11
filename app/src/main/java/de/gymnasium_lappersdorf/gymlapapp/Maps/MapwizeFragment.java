@@ -1,8 +1,12 @@
 package de.gymnasium_lappersdorf.gymlapapp.Maps;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,6 +41,7 @@ public class MapwizeFragment extends Fragment {
     private MapboxMap map;
 
     private Place start, target;
+    private Snackbar snackbar;
 
     @Nullable
     @Override
@@ -49,9 +54,15 @@ public class MapwizeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        snackbar = Snackbar.make(v, "Lade Karte...", Snackbar.LENGTH_INDEFINITE);
+        mapView = v.findViewById(R.id.mapview);
+
         Mapbox.getInstance(v.getContext(), getResources().getString(R.string.mapbox_access_token));
 
-        mapView = v.findViewById(R.id.mapview);
+        //Laden
+        snackbar.show();
+        mapView.setVisibility(View.INVISIBLE);
+
         mapView.onCreate(savedInstanceState);
         MapOptions options = new MapOptions.Builder()
                 .language("de")
@@ -59,14 +70,6 @@ public class MapwizeFragment extends Fragment {
 
         mapwizePlugin = new MapwizePlugin(mapView, options);
 
-        mapwizePlugin.setOnDidLoadListener(new MapwizePlugin.OnDidLoadListener() {
-            @Override
-            public void didLoad(MapwizePlugin mapwizePlugin) {
-                // Mapwize is ready to use
-                MapwizeFragment.this.mapwizePlugin = mapwizePlugin;
-                initApi();
-            }
-        });
 
         mapView.getMapAsync(new OnMapReadyCallback() {
             @Override
@@ -75,51 +78,25 @@ public class MapwizeFragment extends Fragment {
                 map = mapboxMap;
             }
         });
+
+        mapwizePlugin.setOnDidLoadListener(new MapwizePlugin.OnDidLoadListener() {
+            @Override
+            public void didLoad(MapwizePlugin mapwizePlugin) {
+                // Mapwize is ready to use
+                MapwizeFragment.this.mapwizePlugin = mapwizePlugin;
+
+                initPluginListeners();
+            }
+        });
     }
 
-    //get access to api
-    private void initApi() {
+    private void initPluginListeners() {
 
         mapwizePlugin.grantAccess(getResources().getString(R.string.mapwize_gymlap_access_key), new ApiCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean aBoolean) {
-                //Load venue
-                Api.getVenue(getResources().getString(R.string.mapwize_venue_gymlap_id), new ApiCallback<Venue>() {
-                    @Override
-                    public void onSuccess(Venue venue) {
-                        venue_gymlap = venue;
-                        CameraPosition position = new CameraPosition.Builder()
-                                .target(venue_gymlap.getMarker())
-                                .zoom(18)
-                                .tilt(0)
-                                .build();
-                        map.setCameraPosition(position);
-
-                        buildInterface();
-                    }
-
-                    @Override
-                    public void onFailure(Throwable throwable) {
-                        //TODO
-                    }
-                });
-            }
-
-            @Override
-            public void onFailure(Throwable throwable) {
-                //TODO
-            }
-        });
-
-    }
-
-    //show building and implement listeners
-    private void buildInterface() {
-
-        Api.getPlace(getResources().getString(R.string.mapwize_gymlap_entrance_id), new ApiCallback<Place>() {
-            @Override
-            public void onSuccess(Place place) {
-                start = place;
+                //Api is ready
+                initApiCalls();
             }
 
             @Override
@@ -151,6 +128,53 @@ public class MapwizeFragment extends Fragment {
 
     }
 
+    private void initApiCalls() {
+
+        //Gymlap venue
+        Api.getVenue(getResources().getString(R.string.mapwize_venue_gymlap_id), new ApiCallback<Venue>() {
+            @Override
+            public void onSuccess(Venue venue) {
+                venue_gymlap = venue;
+                CameraPosition position = new CameraPosition.Builder()
+                        .target(venue_gymlap.getMarker())
+                        .zoom(18)
+                        .tilt(0)
+                        .build();
+                map.setCameraPosition(position);
+
+                getActivity().runOnUiThread(new Runnable() {
+
+                    @Override
+                    public void run() {
+
+                        mapView.setVisibility(View.VISIBLE);
+                        snackbar.dismiss();
+
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                //TODO
+            }
+        });
+
+        //Eingang
+        Api.getPlace(getResources().getString(R.string.mapwize_gymlap_entrance_id), new ApiCallback<Place>() {
+            @Override
+            public void onSuccess(Place place) {
+                start = place;
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                //TODO
+            }
+        });
+
+    }
+
     //displays route between start and target
     private void displayRoute() {
         Api.getDirection(start, target, true, new ApiCallback<Direction>() {
@@ -165,6 +189,13 @@ public class MapwizeFragment extends Fragment {
                 //TODO
             }
         });
+    }
+
+    //checks for internet connection
+    public static boolean isNetworkConnected(Context context) {
+        ConnectivityManager con = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = con.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
     }
 
     @Override
