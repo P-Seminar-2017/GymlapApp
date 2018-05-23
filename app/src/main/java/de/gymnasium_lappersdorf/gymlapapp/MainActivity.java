@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 
 import de.gymnasium_lappersdorf.gymlapapp.Navigation.NavDrawerOnclickHandler;
-import io.mapwize.mapwizeformapbox.AccountManager;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -42,9 +41,6 @@ public class MainActivity extends AppCompatActivity {
         nv.setNavigationItemSelectedListener(handler);
         //setting HomeFragment as default fragment when launching Activity
         handler.setHomeFragment();
-
-        //Mapwize
-        AccountManager.start(this.getApplication(), getResources().getString(R.string.mapwize_access_token));
     }
 
 

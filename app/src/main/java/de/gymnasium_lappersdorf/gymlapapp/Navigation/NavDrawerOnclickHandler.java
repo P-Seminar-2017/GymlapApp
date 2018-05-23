@@ -12,7 +12,6 @@ import android.view.MenuItem;
 
 import de.gymnasium_lappersdorf.gymlapapp.Home.HomeFragment;
 import de.gymnasium_lappersdorf.gymlapapp.Maps.MapFragment;
-import de.gymnasium_lappersdorf.gymlapapp.Maps.MapwizeFragment;
 import de.gymnasium_lappersdorf.gymlapapp.R;
 import de.gymnasium_lappersdorf.gymlapapp.Stundenplan.StundenplanerFragment;
 
@@ -51,11 +50,6 @@ public class NavDrawerOnclickHandler implements NavigationView.OnNavigationItemS
                 setMapFragment();
                 item.setChecked(false);
                 return true;
-            case R.id.indoormap_mapwize:
-                item.setChecked(true);
-                setMapwizeFragment();
-                item.setChecked(false);
-                return true;
         }
         return false;
     }
@@ -80,14 +74,6 @@ public class NavDrawerOnclickHandler implements NavigationView.OnNavigationItemS
         if (m==null) m = new MapFragment();
         fm.beginTransaction()
                 .replace(R.id.content_frame_main, m)
-                .commit();
-        dl.closeDrawers();
-    }
-
-    public void setMapwizeFragment(){
-        if (mw==null) mw = new MapwizeFragment();
-        fm.beginTransaction()
-                .replace(R.id.content_frame_main, mw)
                 .commit();
         dl.closeDrawers();
     }
