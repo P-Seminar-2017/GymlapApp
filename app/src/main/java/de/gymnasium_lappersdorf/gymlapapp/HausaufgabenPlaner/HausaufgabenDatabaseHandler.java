@@ -57,9 +57,9 @@ public class HausaufgabenDatabaseHandler extends SQLiteOpenHelper {
 
         values.put(KEY_ID, h.getId());
         values.put(KEY_FACH, h.getFach());
-        values.put(KEY_QUEST, h.getQuest());
+        values.put(KEY_QUEST, h.getText());
         values.put(KEY_TIMETOBEDONE, h.getTimestamp());
-        values.put(KEY_DONE, h.getDOne());
+        values.put(KEY_DONE, h.isDone());
         values.put(KEY_STUFE, h.getStufe());
         values.put(KEY_KURS, h.getKurs());
 
@@ -68,7 +68,7 @@ public class HausaufgabenDatabaseHandler extends SQLiteOpenHelper {
         db.close();
     }
 
-    //read Homework form Database
+    //read Homework from Database
     public Hausaufgabe getHomework(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(DATABASE_NAME, new String[]{KEY_ID, KEY_FACH, KEY_QUEST, KEY_TIMETOBEDONE,
@@ -77,6 +77,8 @@ public class HausaufgabenDatabaseHandler extends SQLiteOpenHelper {
         if (cursor != null) {
             cursor.moveToFirst();
         }
+
+        //TODO Create new Homework object and return it
 
         return null;
     }
@@ -115,9 +117,9 @@ public class HausaufgabenDatabaseHandler extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(KEY_ID, h.getId());
         values.put(KEY_FACH, h.getFach());
-        values.put(KEY_QUEST, h.getQuest());
+        values.put(KEY_QUEST, h.getText());
         values.put(KEY_TIMETOBEDONE, h.getTimestamp());
-        values.put(KEY_DONE, h.getDOne());
+        values.put(KEY_DONE, h.isDone());
         values.put(KEY_STUFE, h.getStufe());
         values.put(KEY_KURS, h.getKurs());
 

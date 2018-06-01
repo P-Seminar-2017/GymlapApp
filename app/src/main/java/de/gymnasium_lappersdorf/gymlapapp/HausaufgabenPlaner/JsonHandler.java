@@ -58,10 +58,12 @@ public class JsonHandler {
         return getString(position, "fach");
     }
 
+    //Klasse entspricht z.B. 9 oder 10
     public String getKlasse(int position) {
         return getString(position, "klasse");
     }
 
+    //Stufe entspricht z.B. a oder 1m3
     public String getStufe(int position) {
         return getString(position, "stufe");
     }

@@ -7,29 +7,28 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.os.PersistableBundle;
 
+import de.gymnasium_lappersdorf.gymlapapp.MainActivity;
+
 /**
  * Created by jonas on 12/3/2017.
  */
 
 public class JobService extends android.app.job.JobService {
-
+    private static int id = 0;
 
     //region constants
-
     private static final String EXTRA_TEXT = "extra_text";
     //endregion
 
 
     @Override
     public boolean onStartJob(JobParameters params) {
+        id++;
 
         String message = params.getExtras().getString(EXTRA_TEXT);
-        //todo create Notification
 
-
+        new GymlapNotification(getBaseContext(), message, MainActivity.class, id).show();
         return false;
-
-        
     }
 
     @Override
@@ -40,7 +39,7 @@ public class JobService extends android.app.job.JobService {
     //region helper methods
 
     //creates a new job that will execute at the given timestamp(in milli seconds) and show the given notification
-    public static void createScedule(Context context, long timestamp, String notification){
+    public static void createSchedule(Context context, long timestamp, String notification){
         ComponentName componentName = new ComponentName(context, JobService.class);
         JobInfo.Builder builder = new JobInfo.Builder(0, componentName);
         builder.setMinimumLatency(timestamp-System.currentTimeMillis());
@@ -52,8 +51,6 @@ public class JobService extends android.app.job.JobService {
             jobScheduler.schedule(builder.build());
         }
     }
-
-
 
     //endregion
 }

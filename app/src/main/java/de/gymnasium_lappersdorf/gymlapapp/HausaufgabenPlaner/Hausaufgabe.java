@@ -10,24 +10,25 @@ import java.util.Date;
 public class Hausaufgabe {
     private int mid;
     private String fach;
-    private String quest;
+    private String text;
     private long date;
     private boolean done;
     private int stufe;
     private String kurs;
-    private Types types;
+    private Types type;
+    private boolean fromInternet;
 
 
-    public Hausaufgabe(int id, String fach, String quest, long date, int stufe, String kurs, Types types) {
+    public Hausaufgabe(int id, String fach, String text, long date, int stufe, String kurs, Types type, boolean fromInternet) {
         this.mid = id;
         this.fach = fach;
-        this.quest = quest;
+        this.text = text;
         this.date = date;
         this.stufe = stufe;
         this.kurs = kurs;
-        done = false;
-        this.types = types;
-
+        this.done = false;
+        this.type = type;
+        this.fromInternet = fromInternet;
     }
 
     public enum Types {
@@ -60,8 +61,8 @@ public class Hausaufgabe {
         this.fach = fach;
     }
 
-    public void setQuest(String quest) {
-        this.quest = quest;
+    public void setText(String text) {
+        this.text = text;
     }
 
     public void setTimestamp(long date) {
@@ -84,11 +85,11 @@ public class Hausaufgabe {
         return fach;
     }
 
-    public String getQuest() {
-        return quest;
+    public String getText() {
+        return text;
     }
 
-    public boolean getDOne() {
+    public boolean isDone() {
         return done;
     }
 
@@ -100,8 +101,17 @@ public class Hausaufgabe {
         return stufe;
     }
 
-    public Types getTypes() {
-        return types;
+    public Types getType() {
+        return type;
+    }
+
+    public boolean isFromInternet() {
+        return fromInternet;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return this.getClass() == obj.getClass() && this.mid == ((Hausaufgabe) obj).mid;
     }
 }
 

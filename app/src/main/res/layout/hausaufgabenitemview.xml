@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/homework_view_wrapper"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/homework_card_view"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_gravity="center"
+        android:layout_margin="4dp"
+        card_view:cardCornerRadius="2dp"
+        card_view:cardElevation="2dp"
+        tools:style="@style/CardView">
+
+        <RelativeLayout
+            android:id="@+id/inner_wrapper"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="4dp">
+
+            <TextView
+                android:id="@+id/text_type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="TYPE_OF_CARD"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/text_fach"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/text_type"
+                android:text="FACH"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/text_klasse_stufe"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/text_type"
+                android:text="KLASSE_STUFE"
+                android:textAlignment="viewEnd"
+                android:textSize="12sp" />
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/text_fach"
+                android:scrollbarAlwaysDrawHorizontalTrack="true"
+                android:scrollbarAlwaysDrawVerticalTrack="true">
+
+                <TextView
+                    android:id="@+id/text_homework"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="HAUSAUFGABE_NOTIZEN" />
+
+            </ScrollView>
+
+            <Button
+                android:id="@+id/reminder_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:background="?android:attr/selectableItemBackground"
+                android:textAllCaps="false"
+                android:text="Erinnerung setzen"
+                android:textColor="#00bcd4" />
+
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>
