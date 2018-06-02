@@ -15,6 +15,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -62,6 +63,9 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
     private Hausaufgabe lastItem = null;
     private int lastItemPosition = -1;
 
+    //Database
+    private HausaufgabenDatabaseHandler dbh;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -80,6 +84,9 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        dbh = new HausaufgabenDatabaseHandler(v.getContext());
+
         snackbarConn = Snackbar.make(v, "Keine Verbindung", Snackbar.LENGTH_INDEFINITE);
         snackbarRevert = Snackbar.make(v, "Hausaufgabe erledigt", Snackbar.LENGTH_LONG);
         snackbarRevert.setAction("Rückgängig", new View.OnClickListener() {
@@ -92,6 +99,7 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
                     updateLabel();
                     recyclerView.smoothScrollToPosition(lastItemPosition);
                     lastItem = null;
+                    //saveToDatabase();
                 }
             }
         });
@@ -141,6 +149,7 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
                 homeworkRvAdapter.removeItem(viewHolder.getAdapterPosition());
                 updateLabel();
                 snackbarRevert.show();
+                //saveToDatabase();
             }
         };
 
@@ -150,6 +159,7 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
         stufe = 5;
         klasse = getResources().getStringArray(R.array.klassen)[0];
 
+        //loadFromDatabase();
         initDownload();
     }
 
@@ -315,7 +325,7 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
 
                 //Gab es das item schon? -> "done" übernehmen
                 for (Hausaufgabe aTemp : temp) {
-                    if (aTemp.isFromInternet() && aTemp.getId() == jsonHandler.getID(i)) {
+                    if (aTemp.isFromInternet() && aTemp.getInternetId() == jsonHandler.getID(i)) {
                         neu.setDone(aTemp.isDone()); //"done" übernehmen
                     }
                 }
@@ -323,6 +333,7 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
                 homeworks.add(neu);
             }
 
+            //saveToDatabase();
             filter(stufe, klasse);
         } else {
             //TODO No success
@@ -376,6 +387,28 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
         homeworkRvAdapter.setDataset(temp_new_items.toArray(new Hausaufgabe[temp_new_items.size()]));
         homeworkRvAdapter.notifyDataSetChanged();
         updateLabel();
+    }
+
+    //TODO not working
+    private void saveToDatabase() {
+        if (dbh == null) return;
+
+        for (int i = 0; i < homeworks.size(); i++) {
+            dbh.addHomework(homeworks.get(i));
+        }
+    }
+
+    //TODO not working
+    private void loadFromDatabase() {
+        if (dbh == null) return;
+
+        Hausaufgabe[] hausis = dbh.getAllHomeworks();
+
+        homeworks.clear();
+
+        homeworks.addAll(Arrays.asList(hausis));
+
+        filter(stufe, klasse);
     }
 
 }

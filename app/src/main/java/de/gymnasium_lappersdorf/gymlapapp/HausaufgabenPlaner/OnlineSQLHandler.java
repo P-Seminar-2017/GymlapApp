@@ -54,7 +54,7 @@ public class OnlineSQLHandler extends AsyncTask<Hausaufgabe, String, String> {
                     sb.append("&stufe=").append(data[0].getStufe());
                     break;
                 case EDIT:
-                    sb.append("&id=").append(data[0].getId());
+                    sb.append("&id=").append(data[0].getInternetId());
                     sb.append("&text=").append(data[0].getText());
                     break;
                 case SAVE:
@@ -66,7 +66,7 @@ public class OnlineSQLHandler extends AsyncTask<Hausaufgabe, String, String> {
                     sb.append("&text=").append(data[0].getText());
                     break;
                 case DELETE:
-                    sb.append("&id=").append(data[0].getId());
+                    sb.append("&id=").append(data[0].getInternetId());
                     break;
             }
 

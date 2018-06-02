@@ -8,7 +8,8 @@ import java.util.Date;
  */
 
 public class Hausaufgabe {
-    private int mid;
+    private int databaseId;
+    private int internetId;
     private String fach;
     private String text;
     private long date;
@@ -19,8 +20,8 @@ public class Hausaufgabe {
     private boolean fromInternet;
 
 
-    public Hausaufgabe(int id, String fach, String text, long date, int stufe, String kurs, Types type, boolean fromInternet) {
-        this.mid = id;
+    public Hausaufgabe(int internetId, String fach, String text, long date, int stufe, String kurs, Types type, boolean fromInternet) {
+        this.internetId = internetId;
         this.fach = fach;
         this.text = text;
         this.date = date;
@@ -45,16 +46,24 @@ public class Hausaufgabe {
     }
 
 
-    public int getId() {
-        return mid;
+    public int getInternetId() {
+        return internetId;
+    }
+
+    public void setInternetId(int internetId) {
+        this.internetId = internetId;
+    }
+
+    public int getDatabaseId() {
+        return databaseId;
+    }
+
+    public void setDatabaseId(int databaseId) {
+        this.databaseId = databaseId;
     }
 
     public void setDone(boolean done) {
         this.done = done;
-    }
-
-    public void setMid(int mid) {
-        this.mid = mid;
     }
 
     public void setFach(String fach) {
@@ -107,11 +116,6 @@ public class Hausaufgabe {
 
     public boolean isFromInternet() {
         return fromInternet;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return this.getClass() == obj.getClass() && this.mid == ((Hausaufgabe) obj).mid;
     }
 }
 
