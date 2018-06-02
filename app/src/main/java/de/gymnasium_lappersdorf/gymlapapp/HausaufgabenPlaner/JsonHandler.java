@@ -50,8 +50,8 @@ public class JsonHandler {
     }
 
 
-    public int getID(int position) {
-        return getInt(position, "id");
+    public long getID(int position) {
+        return getLong(position, "id");
     }
 
     public String getFach(int position) {

@@ -15,7 +15,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -30,6 +29,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 import de.gymnasium_lappersdorf.gymlapapp.R;
 
@@ -51,13 +51,15 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
     private JsonHandler jsonHandler;
     private OnlineSQLHandler onlineSQLHandler;
 
-    private ArrayList<Hausaufgabe> homeworks; //aus dem inet
+    private ArrayList<Hausaufgabe> homeworks; //enthält zurzeit alle hausaufgaben, auch aus der database und abgeschlossene //TODO abgeschlossene hausaufgaben löschen
     private ArrayList<Hausaufgabe> homeworksLocal; //vom user erstellt //TODO extra filter oder tab für vom user erstellte hausis
 
     //Dialog
+    private AlertDialog filterDialog;
+    private NumberPicker stufenPicker;
     private int stufe;
     private String klasse;
-    private Spinner klasse_spinner;
+    private Spinner klasseSpinner;
 
     //Recycler swipe removing
     private Hausaufgabe lastItem = null;
@@ -78,14 +80,13 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.clear();
         inflater.inflate(R.menu.homework_menu, menu);
+        createFilterDialog();
         super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        dbh = new HausaufgabenDatabaseHandler(v.getContext());
 
         snackbarConn = Snackbar.make(v, "Keine Verbindung", Snackbar.LENGTH_INDEFINITE);
         snackbarRevert = Snackbar.make(v, "Hausaufgabe erledigt", Snackbar.LENGTH_LONG);
@@ -99,7 +100,8 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
                     updateLabel();
                     recyclerView.smoothScrollToPosition(lastItemPosition);
                     lastItem = null;
-                    //saveToDatabase();
+                    //Updating database
+                    dbh.updateHomework(homeworks.get(pos));
                 }
             }
         });
@@ -134,6 +136,7 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
             }
         });
 
+        //Swipe card to remove
         ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
@@ -149,7 +152,8 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
                 homeworkRvAdapter.removeItem(viewHolder.getAdapterPosition());
                 updateLabel();
                 snackbarRevert.show();
-                //saveToDatabase();
+                //Updating database
+                dbh.updateHomework(homeworks.get(pos));
             }
         };
 
@@ -159,8 +163,19 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
         stufe = 5;
         klasse = getResources().getStringArray(R.array.klassen)[0];
 
-        //loadFromDatabase();
-        initDownload();
+        //Database
+        dbh = new HausaufgabenDatabaseHandler(v.getContext());
+
+        if (dbh.getHomeworkCount() > 0) {
+            //load content of db
+            Hausaufgabe[] hw_db = dbh.getAllHomeworks();
+
+            Collections.addAll(homeworks, hw_db);
+
+            filter(stufe, klasse);
+        } else {
+            initDownload();
+        }
     }
 
     @Override
@@ -183,10 +198,10 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
 
         if (oldVal != newVal) {
             if (newVal > 10) {
-                klasse_spinner.setSelection(0);
-                klasse_spinner.setEnabled(false);
+                klasseSpinner.setSelection(0);
+                klasseSpinner.setEnabled(false);
             } else {
-                klasse_spinner.setEnabled(true);
+                klasseSpinner.setEnabled(true);
             }
 
             stufe = newVal;
@@ -204,32 +219,32 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
     public void onNothingSelected(AdapterView<?> adapterView) {
     }
 
-    private void showFilterDialog() {
-        final AlertDialog.Builder d = new AlertDialog.Builder(v.getContext());
+    //creating dialog once for better performance
+    private void createFilterDialog() {
+
+        AlertDialog.Builder d = new AlertDialog.Builder(v.getContext());
         LayoutInflater inflater = this.getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.homework_filter_dialog, null);
         d.setTitle("Deine Klasse");
         d.setView(dialogView);
 
-        final NumberPicker numberPicker = dialogView.findViewById(R.id.filter_numberpicker);
-        numberPicker.setMaxValue(12);
-        numberPicker.setMinValue(5);
-        numberPicker.setWrapSelectorWheel(false);
-        numberPicker.setOnValueChangedListener(this);
-        numberPicker.setValue(stufe);
+        stufenPicker = dialogView.findViewById(R.id.filter_numberpicker);
+        stufenPicker.setMaxValue(12);
+        stufenPicker.setMinValue(5);
+        stufenPicker.setWrapSelectorWheel(false);
+        stufenPicker.setOnValueChangedListener(this);
 
-        klasse_spinner = dialogView.findViewById(R.id.filter_spinner);
+        klasseSpinner = dialogView.findViewById(R.id.filter_spinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(v.getContext(), R.array.klassen, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        klasse_spinner.setAdapter(adapter);
-        klasse_spinner.setOnItemSelectedListener(this);
-        klasse_spinner.setSelection(Arrays.asList(getResources().getStringArray(R.array.klassen)).indexOf(klasse));
+        klasseSpinner.setAdapter(adapter);
+        klasseSpinner.setOnItemSelectedListener(this);
 
         d.setPositiveButton("Fertig", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                stufe = numberPicker.getValue();
-                klasse = getResources().getStringArray(R.array.klassen)[klasse_spinner.getSelectedItemPosition()];
+                stufe = stufenPicker.getValue();
+                klasse = getResources().getStringArray(R.array.klassen)[klasseSpinner.getSelectedItemPosition()];
                 filter(stufe, klasse);
             }
         });
@@ -244,12 +259,26 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
         //TODO Remove in release
         d.setNeutralButton("Dev", new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
+            public void onClick(DialogInterface dialogInterface, int id) {
+                for (int i = 0; i < homeworks.size(); i++) {
+                    if (homeworks.get(i).isDone()) {
+                        homeworks.get(i).setDone(false);
+                        dbh.updateHomework(homeworks.get(i));
+                    }
+                }
                 resetFilter();
             }
         });
 
-        d.create().show();
+        filterDialog = d.create();
+    }
+
+    private void showFilterDialog() {
+        //Default values
+        stufenPicker.setValue(stufe);
+        klasseSpinner.setSelection(Arrays.asList(getResources().getStringArray(R.array.klassen)).indexOf(klasse));
+
+        filterDialog.show();
     }
 
     //checks for internet connection
@@ -289,10 +318,6 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
     private void processData() {
 
         if (jsonHandler.getSuccess()) {
-            Hausaufgabe[] temp = homeworks.toArray(new Hausaufgabe[homeworks.size()]);
-
-            //Alle items aus dem inet zuerst enfernen
-            homeworks.clear();
 
             for (int i = 0; i < jsonHandler.getLength(); i++) {
                 Hausaufgabe.Types hw_type;
@@ -313,27 +338,38 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
                         break;
                 }
 
+                //TODO if "next" or "next2" -> calculate time with values from stundenplan
+
                 neu = new Hausaufgabe(
-                        jsonHandler.getID(i),
                         jsonHandler.getFach(i),
                         jsonHandler.getText(i),
                         jsonHandler.getDate(i),
                         Integer.parseInt(jsonHandler.getKlasse(i)),
                         jsonHandler.getStufe(i),
-                        hw_type,
-                        true);
+                        Hausaufgabe.Types.DATE);
 
-                //Gab es das item schon? -> "done" übernehmen
-                for (Hausaufgabe aTemp : temp) {
-                    if (aTemp.isFromInternet() && aTemp.getInternetId() == jsonHandler.getID(i)) {
-                        neu.setDone(aTemp.isDone()); //"done" übernehmen
-                    }
+                neu.setInternetId(jsonHandler.getID(i));
+
+                if (homeworks.indexOf(neu) != -1) {
+                    //Homework alredy exists -> update it
+                    int index = homeworks.indexOf(neu);
+                    neu.setDatabaseId(homeworks.get(index).getDatabaseId());
+                    neu.setInternetId(homeworks.get(index).getInternetId());
+                    neu.setDone(homeworks.get(index).isDone());
+
+                    homeworks.set(index, neu);
+                    //Updating database
+                    dbh.updateHomework(homeworks.get(index));
+                } else {
+                    homeworks.add(neu);
+
+                    //Add new homework to database
+                    long id = dbh.addHomework(homeworks.get(i));
+                    homeworks.get(i).setDatabaseId(id);
                 }
 
-                homeworks.add(neu);
             }
 
-            //saveToDatabase();
             filter(stufe, klasse);
         } else {
             //TODO No success
@@ -387,28 +423,6 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
         homeworkRvAdapter.setDataset(temp_new_items.toArray(new Hausaufgabe[temp_new_items.size()]));
         homeworkRvAdapter.notifyDataSetChanged();
         updateLabel();
-    }
-
-    //TODO not working
-    private void saveToDatabase() {
-        if (dbh == null) return;
-
-        for (int i = 0; i < homeworks.size(); i++) {
-            dbh.addHomework(homeworks.get(i));
-        }
-    }
-
-    //TODO not working
-    private void loadFromDatabase() {
-        if (dbh == null) return;
-
-        Hausaufgabe[] hausis = dbh.getAllHomeworks();
-
-        homeworks.clear();
-
-        homeworks.addAll(Arrays.asList(hausis));
-
-        filter(stufe, klasse);
     }
 
 }

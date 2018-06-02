@@ -8,8 +8,8 @@ import java.util.Date;
  */
 
 public class Hausaufgabe {
-    private int databaseId;
-    private int internetId;
+    private long databaseId; //-1 if not in database already
+    private long internetId; //-1 if not from internet
     private String fach;
     private String text;
     private long date;
@@ -17,11 +17,11 @@ public class Hausaufgabe {
     private int stufe;
     private String kurs;
     private Types type;
-    private boolean fromInternet;
 
 
-    public Hausaufgabe(int internetId, String fach, String text, long date, int stufe, String kurs, Types type, boolean fromInternet) {
-        this.internetId = internetId;
+    public Hausaufgabe(String fach, String text, long date, int stufe, String kurs, Types type) {
+        this.internetId = -1;
+        this.databaseId = -1;
         this.fach = fach;
         this.text = text;
         this.date = date;
@@ -29,7 +29,6 @@ public class Hausaufgabe {
         this.kurs = kurs;
         this.done = false;
         this.type = type;
-        this.fromInternet = fromInternet;
     }
 
     public enum Types {
@@ -46,19 +45,19 @@ public class Hausaufgabe {
     }
 
 
-    public int getInternetId() {
+    public long getInternetId() {
         return internetId;
     }
 
-    public void setInternetId(int internetId) {
+    public void setInternetId(long internetId) {
         this.internetId = internetId;
     }
 
-    public int getDatabaseId() {
+    public long getDatabaseId() {
         return databaseId;
     }
 
-    public void setDatabaseId(int databaseId) {
+    public void setDatabaseId(long databaseId) {
         this.databaseId = databaseId;
     }
 
@@ -115,7 +114,20 @@ public class Hausaufgabe {
     }
 
     public boolean isFromInternet() {
-        return fromInternet;
+        return internetId == -1;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+
+        if (this.getClass() == obj.getClass()) {
+            Hausaufgabe other = (Hausaufgabe) obj;
+            if (this.databaseId == other.getDatabaseId() || this.internetId == other.getInternetId()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
 

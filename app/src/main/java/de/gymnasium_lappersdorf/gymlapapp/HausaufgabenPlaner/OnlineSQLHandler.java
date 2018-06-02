@@ -73,6 +73,10 @@ public class OnlineSQLHandler extends AsyncTask<Hausaufgabe, String, String> {
             url = new URL(String.format(apiDomain + "?key=%s%s", key, sb.toString()));
             httpConn = (HttpURLConnection) url.openConnection();
 
+            //TODO Timeout value
+            //httpConn.setConnectTimeout(15000);
+            //httpConn.setReadTimeout(15000);
+
             if (httpConn.getResponseCode() == 200) {
                 rd = new BufferedReader(new InputStreamReader(httpConn.getInputStream()));
                 sb = new StringBuilder();

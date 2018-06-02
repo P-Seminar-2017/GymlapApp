@@ -11,7 +11,7 @@ import java.util.List;
 
 
 public class HausaufgabenDatabaseHandler extends SQLiteOpenHelper {
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     private static final String DATABASE_NAME = "hausaufgabenliste";
     private static final String DATABASE_TABLE = "hausaufgabentable";
 
@@ -25,7 +25,6 @@ public class HausaufgabenDatabaseHandler extends SQLiteOpenHelper {
     private static final String KEY_DONE = "done";
     private static final String KEY_STUFE = "stufe";
     private static final String KEY_KURS = "kurs";
-    private static final String KEY_FROMINTERNET = "frominternet";
 
     public HausaufgabenDatabaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -35,66 +34,64 @@ public class HausaufgabenDatabaseHandler extends SQLiteOpenHelper {
     //Creates new Database
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        String CREATE_CONTACTS_TABLE1 = "CREATE TABLE " + DATABASE_TABLE + "("
-                + KEY_ID + " INTEGER PRIMARY KEY," + KEY_INTERNET_ID + " INT," + KEY_FACH + " TEXT," + KEY_TEXT
-                + " TEXT," + KEY_TIMETOBEDONE + " TEXT," + KEY_DONE + " INT," + KEY_KURS
-                + " TEXT," + KEY_STUFE + " INT," + KEY_FROMINTERNET + " INT" + ")";
+        String CREATE_TABLE = "CREATE TABLE " + DATABASE_TABLE + "(" +
+                KEY_ID + " INTEGER PRIMARY KEY," +
+                KEY_INTERNET_ID + " INT," +
+                KEY_FACH + " TEXT," +
+                KEY_TEXT + " TEXT," +
+                KEY_TIMETOBEDONE + " TEXT," +
+                KEY_DONE + " INT," +
+                KEY_KURS + " TEXT," +
+                KEY_STUFE + " INT" +
+                ")";
 
 
-        sqLiteDatabase.execSQL(CREATE_CONTACTS_TABLE1);
-
+        sqLiteDatabase.execSQL(CREATE_TABLE);
     }
 
     //Overrides old Database with new Database
     @Override
-    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
+    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE);
         onCreate(sqLiteDatabase);
     }
 
     //insert homework into database
-    public void addHomework(Hausaufgabe h) {
-        Hausaufgabe[] hausis = getAllHomeworks();
-
-        //Only insert if not existing already
-        for (Hausaufgabe hausi : hausis) {
-            if (h.getDatabaseId() == hausi.getDatabaseId()) {
-                updateHomework(h);
-            } else {
-                SQLiteDatabase db = this.getWritableDatabase();
-                ContentValues values = new ContentValues();
+    public long addHomework(Hausaufgabe h) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
 
 
-                values.put(KEY_INTERNET_ID, h.getInternetId());
-                values.put(KEY_FACH, h.getFach());
-                values.put(KEY_TEXT, h.getText());
-                values.put(KEY_TIMETOBEDONE, h.getTimestamp());
-                values.put(KEY_DONE, h.isDone() ? 1 : 0);
-                values.put(KEY_STUFE, h.getStufe());
-                values.put(KEY_KURS, h.getKurs());
-                values.put(KEY_FROMINTERNET, h.isFromInternet() ? 1 : 0);
+        values.put(KEY_INTERNET_ID, h.getInternetId());
+        values.put(KEY_FACH, h.getFach());
+        values.put(KEY_TEXT, h.getText());
+        values.put(KEY_TIMETOBEDONE, h.getTimestamp());
+        values.put(KEY_DONE, h.isDone() ? 1 : 0);
+        values.put(KEY_STUFE, h.getStufe());
+        values.put(KEY_KURS, h.getKurs());
 
 
-                db.insert(DATABASE_TABLE, null, values);
-                db.close();
-            }
-        }
+        long id = db.insert(DATABASE_TABLE, null, values);
+        db.close();
+        return id;
     }
 
     //read Homework from Database
-    public Hausaufgabe getHomework(int id) {
+    public Hausaufgabe getHomework(long id) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(DATABASE_TABLE, new String[]{KEY_ID, KEY_INTERNET_ID, KEY_FACH, KEY_TEXT, KEY_TIMETOBEDONE,
-                KEY_DONE, KEY_KURS, KEY_STUFE, KEY_FROMINTERNET}, KEY_ID +
-                "=?", new String[]{String.valueOf(id)}, null, null, null, null);
+        Cursor cursor = db.query(DATABASE_TABLE, new String[]{KEY_ID, KEY_INTERNET_ID, KEY_FACH, KEY_TEXT, KEY_TIMETOBEDONE, KEY_DONE, KEY_KURS, KEY_STUFE},
+                KEY_ID + "=?",
+                new String[]{String.valueOf(id)}, null, null, null, null);
         if (cursor != null) {
             cursor.moveToFirst();
         }
 
-        Hausaufgabe h = new Hausaufgabe(cursor.getInt(1), cursor.getString(2), cursor.getString(3), Long.parseLong(cursor.getString(4)),
-                cursor.getInt(7), cursor.getString(6), Hausaufgabe.Types.DATE, cursor.getInt(8) == 1);
+        Hausaufgabe h = new Hausaufgabe(cursor.getString(2), cursor.getString(3), Long.parseLong(cursor.getString(4)),
+                cursor.getInt(7), cursor.getString(6), Hausaufgabe.Types.DATE);
+
         h.setDone(cursor.getInt(5) == 1);
-        h.setDatabaseId(cursor.getInt(0));
+        h.setDatabaseId(cursor.getLong(0));
+        h.setInternetId(cursor.getLong(1));
 
         cursor.close();
         return h;
@@ -103,20 +100,23 @@ public class HausaufgabenDatabaseHandler extends SQLiteOpenHelper {
 
     //returns all homeworks in an array
     public Hausaufgabe[] getAllHomeworks() {
-        List<Hausaufgabe> homeworklist = new ArrayList<Hausaufgabe>();
+        List<Hausaufgabe> homeworklist = new ArrayList<>();
         String query = "SELECT * FROM " + DATABASE_TABLE;
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(query, null);
 
         if (cursor.moveToFirst()) {
             do {
-                int id = Integer.parseInt(cursor.getString(0));
+                int id = cursor.getInt(0);
                 homeworklist.add(getHomework(id));
             } while (cursor.moveToNext());
         }
+
         cursor.close();
+
         Hausaufgabe[] s = new Hausaufgabe[homeworklist.size()];
         s = homeworklist.toArray(s);
+
         return s;
     }
 
@@ -125,8 +125,9 @@ public class HausaufgabenDatabaseHandler extends SQLiteOpenHelper {
         String query = "SELECT  * FROM " + DATABASE_TABLE;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(query, null);
+        int count = cursor.getCount();
         cursor.close();
-        return cursor.getCount();
+        return count;
     }
 
     //updates a homework in the database with a new one
@@ -140,7 +141,6 @@ public class HausaufgabenDatabaseHandler extends SQLiteOpenHelper {
         values.put(KEY_DONE, h.isDone());
         values.put(KEY_STUFE, h.getStufe());
         values.put(KEY_KURS, h.getKurs());
-        values.put(KEY_FROMINTERNET, h.isFromInternet());
 
 
         // updating row
