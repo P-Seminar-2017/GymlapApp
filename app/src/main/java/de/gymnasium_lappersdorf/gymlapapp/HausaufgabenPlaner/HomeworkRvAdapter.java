@@ -3,6 +3,7 @@ package de.gymnasium_lappersdorf.gymlapapp.HausaufgabenPlaner;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,8 +42,9 @@ public class HomeworkRvAdapter extends RecyclerView.Adapter<HomeworkRvAdapter.Vi
         holder.hv.setRemindButtonCallback(new HausaufgabenItemView.Callback() {
             @Override
             public void onClick() {
-                //Testing
+                //Testing TODO: time
                 JobService.createSchedule(c, System.currentTimeMillis() + 2000, dataset.get(holder.getAdapterPosition()).getText());
+                Toast.makeText(c, "Erinnerung gesetzt", Toast.LENGTH_SHORT).show();
             }
         });
     }

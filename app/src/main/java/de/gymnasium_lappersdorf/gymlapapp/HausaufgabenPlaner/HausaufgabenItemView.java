@@ -4,7 +4,7 @@ import android.content.Context;
 import android.support.v7.widget.CardView;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -17,7 +17,7 @@ import de.gymnasium_lappersdorf.gymlapapp.R;
 public class HausaufgabenItemView extends LinearLayout {
     private CardView cardView;
     private TextView viewType, viewFach, viewKlasseStufe, viewHausaufgaben;
-    private Button btnReminder;
+    private ImageButton btnReminder;
 
     private Hausaufgabe hw;
 
