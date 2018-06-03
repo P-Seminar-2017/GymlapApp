@@ -151,7 +151,7 @@ public class HausaufgabenDatabaseHandler extends SQLiteOpenHelper {
     //removes an homework from the database
     public void deleteHomework(Hausaufgabe h) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(DATABASE_TABLE, KEY_ID + "= ?", new String[]{String.valueOf(h.getDatabaseId())});
+        db.delete(DATABASE_TABLE, KEY_ID + " = ?", new String[]{String.valueOf(h.getDatabaseId())});
         db.close();
     }
 

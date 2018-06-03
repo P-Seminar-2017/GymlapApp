@@ -25,6 +25,9 @@
         <activity
             android:name=".Stundenplan.AddHourActivity"
             android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".HausaufgabenPlaner.AddHomeworkActivity"
+            android:parentActivityName=".MainActivity" />
 
         <!-- google maps (KEY ONLY FOR TESTING) TODO: Add secure api key for release -->
 

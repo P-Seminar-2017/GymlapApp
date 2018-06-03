@@ -65,7 +65,7 @@ public class HausaufgabenItemView extends LinearLayout {
         }
 
         viewFach.setText(hw.getFach());
-        viewKlasseStufe.setText(hw.getStufe() + " | " + hw.getKurs());
+        viewKlasseStufe.setText(hw.getStufe() + " | " + hw.getKurs() + " | " + (hw.isFromInternet() ? "Internet" : "Lokal"));
         viewHausaufgaben.setText(hw.getText());
     }
 

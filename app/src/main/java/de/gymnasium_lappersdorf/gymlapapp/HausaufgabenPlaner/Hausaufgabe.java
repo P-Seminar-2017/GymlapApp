@@ -114,7 +114,7 @@ public class Hausaufgabe {
     }
 
     public boolean isFromInternet() {
-        return internetId == -1;
+        return internetId != -1;
     }
 
     @Override

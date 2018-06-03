@@ -2,6 +2,7 @@ package de.gymnasium_lappersdorf.gymlapapp.HausaufgabenPlaner;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -33,11 +34,16 @@ import java.util.Collections;
 
 import de.gymnasium_lappersdorf.gymlapapp.R;
 
+import static android.app.Activity.RESULT_OK;
+
 /**
  * 01.06.2018 | created by Lukas S
  */
 
 public class HausaufgabenFragment extends Fragment implements NumberPicker.OnValueChangeListener, Spinner.OnItemSelectedListener {
+    private static final int REQUEST_ID = 1;
+    private static final String[] KLASSEN_ARRAY = new String[]{"Alle", "a", "b", "c", "d"};
+
     private View v;
     private RecyclerView recyclerView;
     private HomeworkRvAdapter homeworkRvAdapter;
@@ -52,7 +58,6 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
     private OnlineSQLHandler onlineSQLHandler;
 
     private ArrayList<Hausaufgabe> homeworks; //enthält zurzeit alle hausaufgaben, auch aus der database und abgeschlossene //TODO abgeschlossene hausaufgaben löschen
-    private ArrayList<Hausaufgabe> homeworksLocal; //vom user erstellt //TODO extra filter oder tab für vom user erstellte hausis
 
     //Dialog
     private AlertDialog filterDialog;
@@ -73,6 +78,7 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.fragment_homework, container, false);
         setHasOptionsMenu(true);
+        createFilterDialog();
         return v;
     }
 
@@ -80,7 +86,6 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.clear();
         inflater.inflate(R.menu.homework_menu, menu);
-        createFilterDialog();
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -110,12 +115,12 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO
+                Intent i = new Intent(getActivity(), AddHomeworkActivity.class);
+                startActivityForResult(i, REQUEST_ID);
             }
         });
 
         homeworks = new ArrayList<>();
-        homeworksLocal = new ArrayList<>();
 
         refreshLayout = v.findViewById(R.id.swiperefresh_homework);
         recyclerView = v.findViewById(R.id.homework_rv);
@@ -161,13 +166,13 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
         itemTouchHelper.attachToRecyclerView(recyclerView);
 
         stufe = 5;
-        klasse = getResources().getStringArray(R.array.klassen)[0];
+        klasse = KLASSEN_ARRAY[0];
 
         //Database
         dbh = new HausaufgabenDatabaseHandler(v.getContext());
 
         if (dbh.getHomeworkCount() > 0) {
-            //load content of db
+            //load content of db //TODO async
             Hausaufgabe[] hw_db = dbh.getAllHomeworks();
 
             Collections.addAll(homeworks, hw_db);
@@ -205,18 +210,42 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
             }
 
             stufe = newVal;
+            filter(stufe, klasse);
         }
     }
 
     //Spinner
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long id) {
-        klasse = getResources().getStringArray(R.array.klassen)[pos];
+        klasse = KLASSEN_ARRAY[pos];
+        filter(stufe, klasse);
     }
 
     //Spinner
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
+    }
+
+    //Adding new homework to "homeworks"
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == REQUEST_ID) {
+
+            if (resultCode == RESULT_OK) {
+                long id = data.getExtras().getLong("HW_ID");
+
+                Hausaufgabe temp = dbh.getHomework(id);
+
+                homeworks.add(temp);
+
+                stufe = temp.getStufe();
+                klasse = temp.getKurs();
+
+                filter(stufe, klasse);
+            }
+
+        }
     }
 
     //creating dialog once for better performance
@@ -235,7 +264,7 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
         stufenPicker.setOnValueChangedListener(this);
 
         klasseSpinner = dialogView.findViewById(R.id.filter_spinner);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(v.getContext(), R.array.klassen, android.R.layout.simple_spinner_item);
+        ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(v.getContext(), android.R.layout.simple_spinner_item, KLASSEN_ARRAY);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         klasseSpinner.setAdapter(adapter);
         klasseSpinner.setOnItemSelectedListener(this);
@@ -244,7 +273,7 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 stufe = stufenPicker.getValue();
-                klasse = getResources().getStringArray(R.array.klassen)[klasseSpinner.getSelectedItemPosition()];
+                klasse = KLASSEN_ARRAY[klasseSpinner.getSelectedItemPosition()];
                 filter(stufe, klasse);
             }
         });
@@ -276,7 +305,7 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
     private void showFilterDialog() {
         //Default values
         stufenPicker.setValue(stufe);
-        klasseSpinner.setSelection(Arrays.asList(getResources().getStringArray(R.array.klassen)).indexOf(klasse));
+        klasseSpinner.setSelection(Arrays.asList(KLASSEN_ARRAY).indexOf(klasse));
 
         filterDialog.show();
     }
@@ -384,7 +413,7 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
 
         for (int i = 0; i < homeworks.size(); i++) {
 
-            if (klasse.equals(getResources().getStringArray(R.array.klassen)[0])) {
+            if (klasse.equals(KLASSEN_ARRAY[0])) {
                 //Alle sind ausgewählt
 
                 if (stufe == homeworks.get(i).getStufe() && !homeworks.get(i).isDone()) {
@@ -410,8 +439,9 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
         ArrayList<Hausaufgabe> temp_new_items = new ArrayList<>();
 
         stufe = 5;
-        klasse = getResources().getStringArray(R.array.klassen)[0];
+        klasse = KLASSEN_ARRAY[0];
 
+        //TODO currently displays all homeworks -> used for "dev" dialog -> on release change to filter(..., ...);
         for (int i = 0; i < homeworks.size(); i++) {
 
             if (!homeworks.get(i).isDone()) {

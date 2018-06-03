@@ -14,11 +14,4 @@
         <item>Donnerstag</item>
         <item>Freitag</item>
     </string-array>
-    <string-array name="klassen">
-        <item>Alle</item>
-        <item>a</item>
-        <item>b</item>
-        <item>c</item>
-        <item>d</item>
-    </string-array>
 </resources>
