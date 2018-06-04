@@ -12,6 +12,7 @@ import android.view.MenuItem;
 
 import de.gymnasium_lappersdorf.gymlapapp.HausaufgabenPlaner.HausaufgabenFragment;
 import de.gymnasium_lappersdorf.gymlapapp.Home.HomeFragment;
+import de.gymnasium_lappersdorf.gymlapapp.Info.InfoFragment;
 import de.gymnasium_lappersdorf.gymlapapp.Maps.MapFragment;
 import de.gymnasium_lappersdorf.gymlapapp.R;
 import de.gymnasium_lappersdorf.gymlapapp.Stundenplan.StundenplanerFragment;
@@ -24,7 +25,7 @@ public class NavDrawerOnclickHandler implements NavigationView.OnNavigationItemS
 
     Context c;
     DrawerLayout dl;
-    Fragment h, s, m, hw;
+    Fragment h, s, m, hw, inf;
     FragmentManager fm;
 
     public NavDrawerOnclickHandler(Context c) {
@@ -54,6 +55,11 @@ public class NavDrawerOnclickHandler implements NavigationView.OnNavigationItemS
             case R.id.hausaufgaben:
                 item.setChecked(true);
                 setHWFragment();
+                item.setChecked(false);
+                return true;
+            case R.id.information:
+                item.setChecked(true);
+                setInfoFragment();
                 item.setChecked(false);
                 return true;
         }
@@ -88,6 +94,14 @@ public class NavDrawerOnclickHandler implements NavigationView.OnNavigationItemS
         if (hw==null) hw = new HausaufgabenFragment();
         fm.beginTransaction()
                 .replace(R.id.content_frame_main, hw)
+                .commit();
+        dl.closeDrawers();
+    }
+
+    public void setInfoFragment(){
+        if (inf==null) inf = new InfoFragment();
+        fm.beginTransaction()
+                .replace(R.id.content_frame_main, inf)
                 .commit();
         dl.closeDrawers();
     }
