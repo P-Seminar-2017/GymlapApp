@@ -114,6 +114,19 @@ public class JsonHandler {
         }
     }
 
+    public boolean contains(Hausaufgabe h) {
+        boolean contains = false;
+
+        for (int i = 0; i < getLength(); i++) {
+            if (h.getInternetId() == getID(i)) {
+                contains = true;
+                break;
+            }
+        }
+
+        return contains;
+    }
+
     @Override
     public String toString() {
         return jsonString;

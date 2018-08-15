@@ -31,6 +31,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 
 import de.gymnasium_lappersdorf.gymlapapp.R;
 
@@ -42,7 +43,7 @@ import static android.app.Activity.RESULT_OK;
 
 public class HausaufgabenFragment extends Fragment implements NumberPicker.OnValueChangeListener, Spinner.OnItemSelectedListener {
     private static final int REQUEST_ID = 1;
-    private static final String[] KLASSEN_ARRAY = new String[]{"Alle", "a", "b", "c", "d"};
+    private static final String[] KLASSEN_ARRAY = new String[]{"Alle", "a", "b", "c", "d", "e"};
 
     private View v;
     private RecyclerView recyclerView;
@@ -177,6 +178,17 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
 
             Collections.addAll(homeworks, hw_db);
 
+            //Removing all local homeworks that are marked as done
+            Iterator it = homeworks.iterator();
+            Hausaufgabe temp;
+            while (it.hasNext()) {
+                temp = (Hausaufgabe) it.next();
+                if (temp.isDone() && !temp.isFromInternet()) {
+                    it.remove();
+                    dbh.deleteHomework(temp);
+                }
+            }
+
             filter(stufe, klasse);
         } else {
             initDownload();
@@ -258,7 +270,7 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
         d.setView(dialogView);
 
         stufenPicker = dialogView.findViewById(R.id.filter_numberpicker);
-        stufenPicker.setMaxValue(12);
+        stufenPicker.setMaxValue(13);
         stufenPicker.setMinValue(5);
         stufenPicker.setWrapSelectorWheel(false);
         stufenPicker.setOnValueChangedListener(this);
@@ -397,6 +409,17 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
                     homeworks.get(i).setDatabaseId(id);
                 }
 
+            }
+
+            //Removing all internet homeworks that aren't mentioned in the new data
+            Iterator it = homeworks.iterator();
+            Hausaufgabe temp;
+            while (it.hasNext()) {
+                temp = (Hausaufgabe) it.next();
+                if (!jsonHandler.contains(temp) && temp.isFromInternet()) {
+                    it.remove();
+                    dbh.deleteHomework(temp);
+                }
             }
 
             filter(stufe, klasse);
