@@ -28,6 +28,8 @@ import android.widget.NumberPicker;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -381,9 +383,17 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
 
                 //TODO if "next" or "next2" -> calculate time with values from stundenplan
 
+                //Text from database is URI encoded
+                String text = jsonHandler.getText(i);
+                try {
+                    text = URLDecoder.decode(text.replace("+", "%2B"), "UTF-8").replace("%2B", "+");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+
                 neu = new Hausaufgabe(
                         jsonHandler.getFach(i),
-                        jsonHandler.getText(i),
+                        text,
                         jsonHandler.getDate(i),
                         Integer.parseInt(jsonHandler.getKlasse(i)),
                         jsonHandler.getStufe(i),
