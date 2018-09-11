@@ -60,7 +60,7 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
     private JsonHandler jsonHandler;
     private OnlineSQLHandler onlineSQLHandler;
 
-    private ArrayList<Hausaufgabe> homeworks; //enthält zurzeit alle hausaufgaben, auch aus der database und abgeschlossene //TODO abgeschlossene hausaufgaben löschen
+    private ArrayList<Hausaufgabe> homeworks;
 
     //Dialog
     private AlertDialog filterDialog;
@@ -175,7 +175,7 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
         dbh = new HausaufgabenDatabaseHandler(v.getContext());
 
         if (dbh.getHomeworkCount() > 0) {
-            //load content of db //TODO async
+            //load content of db
             Hausaufgabe[] hw_db = dbh.getAllHomeworks();
 
             Collections.addAll(homeworks, hw_db);
