@@ -14,6 +14,7 @@
         <item>Donnerstag</item>
         <item>Freitag</item>
     </string-array>
+    <string name="shared_pref_api">SHARED_API_KEY</string>
 
     <string name="copyrightglide">Copyright 2014 Google, Inc. All rights reserved.
 

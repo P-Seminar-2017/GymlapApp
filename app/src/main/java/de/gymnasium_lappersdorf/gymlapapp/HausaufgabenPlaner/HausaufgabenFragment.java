@@ -3,13 +3,16 @@ package de.gymnasium_lappersdorf.gymlapapp.HausaufgabenPlaner;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
@@ -53,7 +56,8 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
     private LinearLayoutManager linearLayoutManager;
     private SwipeRefreshLayout refreshLayout;
     private TextView countLabel;
-    private Snackbar snackbarConn, snackbarRevert;
+    private Snackbar snackbarConn, snackbarRevert, snackBarAPIKey;
+    private CoordinatorLayout fabContainer;
     private FloatingActionButton fab;
     private ItemTouchHelper itemTouchHelper;
 
@@ -69,6 +73,10 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
     private String klasse;
     private Spinner klasseSpinner;
 
+    //Dialog API Key
+    private AlertDialog apikeyDialog;
+    private TextInputEditText keyInput;
+
     //Recycler swipe removing
     private Hausaufgabe lastItem = null;
     private int lastItemPosition = -1;
@@ -82,6 +90,7 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
         v = inflater.inflate(R.layout.fragment_homework, container, false);
         setHasOptionsMenu(true);
         createFilterDialog();
+        createAPIKeyDialog();
         return v;
     }
 
@@ -96,8 +105,10 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        snackbarConn = Snackbar.make(v, "Keine Verbindung", Snackbar.LENGTH_INDEFINITE);
-        snackbarRevert = Snackbar.make(v, "Hausaufgabe erledigt", Snackbar.LENGTH_LONG);
+        fabContainer = v.findViewById(R.id.fab_container);
+
+        snackbarConn = Snackbar.make(fabContainer, "Keine Verbindung", Snackbar.LENGTH_INDEFINITE);
+        snackbarRevert = Snackbar.make(fabContainer, "Hausaufgabe erledigt", Snackbar.LENGTH_LONG);
         snackbarRevert.setAction("Rückgängig", new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -113,8 +124,15 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
                 }
             }
         });
+        snackBarAPIKey = Snackbar.make(fabContainer, "Offline Modus", Snackbar.LENGTH_INDEFINITE);
+        snackBarAPIKey.setAction("Online", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showAPIKeyDialog();
+            }
+        });
 
-        fab = v.findViewById(R.id.add_homework_fab);
+        fab = fabContainer.findViewById(R.id.add_homework_fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -265,11 +283,11 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
     //creating dialog once for better performance
     private void createFilterDialog() {
 
-        AlertDialog.Builder d = new AlertDialog.Builder(v.getContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
         LayoutInflater inflater = this.getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.homework_filter_dialog, null);
-        d.setTitle("Deine Klasse");
-        d.setView(dialogView);
+        builder.setTitle("Deine Klasse");
+        builder.setView(dialogView);
 
         stufenPicker = dialogView.findViewById(R.id.filter_numberpicker);
         stufenPicker.setMaxValue(13);
@@ -283,7 +301,7 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
         klasseSpinner.setAdapter(adapter);
         klasseSpinner.setOnItemSelectedListener(this);
 
-        d.setPositiveButton("Fertig", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton("Fertig", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 stufe = stufenPicker.getValue();
@@ -291,7 +309,7 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
                 filter(stufe, klasse);
             }
         });
-        d.setNegativeButton("Reset", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton("Reset", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 resetFilter();
@@ -300,7 +318,7 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
         });
 
         //TODO Remove in release
-        d.setNeutralButton("Dev", new DialogInterface.OnClickListener() {
+        builder.setNeutralButton("Dev", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int id) {
                 for (int i = 0; i < homeworks.size(); i++) {
@@ -313,7 +331,7 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
             }
         });
 
-        filterDialog = d.create();
+        filterDialog = builder.create();
     }
 
     private void showFilterDialog() {
@@ -322,6 +340,51 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
         klasseSpinner.setSelection(Arrays.asList(KLASSEN_ARRAY).indexOf(klasse));
 
         filterDialog.show();
+    }
+
+    //creating dialog once for better performance
+    private void createAPIKeyDialog() {
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.homework_api_key_dialog, null);
+
+        keyInput = dialogView.findViewById(R.id.homework_input_api_key);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
+        builder.setTitle("API Schlüssel eintragen");
+
+        builder.setView(dialogView);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                saveAPIKey(keyInput.getText().toString());
+                initDownload();
+            }
+        });
+        builder.setNegativeButton("Zurück", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+                initDownload();
+            }
+        });
+
+        builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialogInterface) {
+                initDownload();
+            }
+        });
+
+        apikeyDialog = builder.create();
+    }
+
+    private void showAPIKeyDialog() {
+        //Default value
+        String defKey = loadAPIKey();
+        if (defKey != null) keyInput.setText(defKey);
+
+        apikeyDialog.show();
     }
 
     //checks for internet connection
@@ -342,8 +405,7 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
     private void initDownload() {
         if (isNetworkConnected(getActivity())) {
             refreshLayout.setRefreshing(true);
-
-            onlineSQLHandler = new OnlineSQLHandler("917342346673", "http://api.lakinator.bplaced.net/request.php", OnlineSQLHandler.RequestTypes.ALL, new OnlineSQLHandler.SQLCallback() {
+            onlineSQLHandler = new OnlineSQLHandler(loadAPIKey(), "http://api.lakinator.bplaced.net/request.php", OnlineSQLHandler.RequestTypes.ALL, new OnlineSQLHandler.SQLCallback() {
                 @Override
                 public void onDataReceived(JsonHandler jsonHandler) {
                     HausaufgabenFragment.this.jsonHandler = jsonHandler;
@@ -385,14 +447,16 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
 
                 //Text from database is URI encoded
                 String text = jsonHandler.getText(i);
+                String fach = jsonHandler.getFach(i);
                 try {
                     text = URLDecoder.decode(text.replace("+", "%2B"), "UTF-8").replace("%2B", "+");
+                    fach = URLDecoder.decode(fach.replace("+", "%2B"), "UTF-8").replace("%2B", "+");
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
 
                 neu = new Hausaufgabe(
-                        jsonHandler.getFach(i),
+                        fach,
                         text,
                         jsonHandler.getDate(i),
                         Integer.parseInt(jsonHandler.getKlasse(i)),
@@ -432,13 +496,15 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
                 }
             }
 
+            snackBarAPIKey.dismiss();
             filter(stufe, klasse);
         } else {
-            //TODO No success
+            //No success
+            snackBarAPIKey.show();
         }
 
-        refreshLayout.setRefreshing(false);
         snackbarConn.dismiss();
+        refreshLayout.setRefreshing(false);
     }
 
     private void filter(int stufe, String klasse) {
@@ -486,6 +552,19 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
         homeworkRvAdapter.setDataset(temp_new_items.toArray(new Hausaufgabe[temp_new_items.size()]));
         homeworkRvAdapter.notifyDataSetChanged();
         updateLabel();
+    }
+
+    private void saveAPIKey(String key) {
+        SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(getString(R.string.shared_pref_api), key);
+        editor.apply();
+    }
+
+    private String loadAPIKey() {
+        SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+        //default value is null !!
+        return sharedPref.getString(getString(R.string.shared_pref_api), null);
     }
 
 }
