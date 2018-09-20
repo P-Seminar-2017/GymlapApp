@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 
 import de.gymnasium_lappersdorf.gymlapapp.Navigation.NavDrawerOnclickHandler;
+import de.gymnasium_lappersdorf.gymlapapp.Stundenplan.DatabaseHandler;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -20,6 +21,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //initializing Stundenplan-DB at app start
+        DatabaseHandler.INSTANCE.initialize(this);
+
         //setting Toolbar instead of Actionbar
         tb = findViewById(R.id.toolbar_main);
         setSupportActionBar(tb);
@@ -28,14 +32,14 @@ public class MainActivity extends AppCompatActivity {
         drl = findViewById(R.id.drawer_layout_main);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(MainActivity.this, drl, tb, R.string.drawer_close, R.string.drawer_open);
         drl.addDrawerListener(toggle);
-        try{
+        try {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }catch (NullPointerException e){
+        } catch (NullPointerException e) {
             e.printStackTrace();
         }
         getSupportActionBar().setHomeButtonEnabled(true);
         toggle.syncState();
-        NavigationView nv =findViewById(R.id.navigation);
+        NavigationView nv = findViewById(R.id.navigation);
 
         handler = new NavDrawerOnclickHandler(MainActivity.this);
         nv.setNavigationItemSelectedListener(handler);

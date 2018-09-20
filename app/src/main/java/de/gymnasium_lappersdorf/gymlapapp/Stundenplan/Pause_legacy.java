@@ -4,13 +4,13 @@ package de.gymnasium_lappersdorf.gymlapapp.Stundenplan;
  * Created by Leon on 02.12.2017.
  */
 
-public class Pause extends Stunde {
+public class Pause_legacy extends Stunde_legacy {
 
     String start, end, title;
     int id;
     final static int TYPE = 2;
 
-    public Pause(String start, String end, String title) {
+    public Pause_legacy(String start, String end, String title) {
         this.start = start;
         this.end = end;
         this.title = title;

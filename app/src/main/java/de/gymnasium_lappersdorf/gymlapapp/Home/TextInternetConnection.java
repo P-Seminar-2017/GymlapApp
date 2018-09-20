@@ -13,7 +13,7 @@ import java.net.URL;
  * Created by Leon on 16.12.2017.
  */
 
-public class TextInternetConnection extends AsyncTask<String, Object, String>{
+public class TextInternetConnection extends AsyncTask<String, Object, String> {
 
     public interface AsyncResponse {
         void processFinish(String output);
@@ -21,7 +21,7 @@ public class TextInternetConnection extends AsyncTask<String, Object, String>{
 
     public AsyncResponse response = null;
 
-    public TextInternetConnection(AsyncResponse response){
+    public TextInternetConnection(AsyncResponse response) {
         this.response = response;
     }
 
@@ -56,7 +56,7 @@ public class TextInternetConnection extends AsyncTask<String, Object, String>{
         HttpURLConnection con = getConnection(url);
         if (con == null) return null;
         StringBuffer sb = new StringBuffer();
-        try{
+        try {
             String tmp = "";
             BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream()));
             while ((tmp = br.readLine()) != null)

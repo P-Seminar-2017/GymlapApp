@@ -10,30 +10,28 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import de.gymnasium_lappersdorf.gymlapapp.R;
+import io.objectbox.BoxStore;
 
 public class StundenplanerDayFragment extends Fragment {
 
     RecyclerView rv;
-    int day;
-    StundenplanDatabaseHandler dbh;
+    long day;
     StundenplanRvAdapter rvAdapter;
 
-    public void setDay(int d){
+    public void setDay(int d) {
         day = d;
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        dbh = new StundenplanDatabaseHandler(getActivity(), "day"+day);
-        View v = inflater.inflate(R.layout.fragment_stundenplaner_day, container, false);
-        rv = v.findViewById(R.id.stundenplaner_rv);
 
+
+        View v = inflater.inflate(R.layout.fragment_stundenplaner_day, container, false);
         rv = v.findViewById(R.id.stundenplaner_rv);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         rv.setLayoutManager(layoutManager);
-
-        rvAdapter = new StundenplanRvAdapter(dbh.getAllHours());
+        rvAdapter = new StundenplanRvAdapter(DatabaseHandler.INSTANCE.getDay(this.day).lessons, this.day, getActivity());
         rv.setAdapter(rvAdapter);
         return v;
     }
@@ -49,8 +47,8 @@ public class StundenplanerDayFragment extends Fragment {
         refreshRV();
     }
 
-    public void refreshRV(){
-        rvAdapter.setDataset(dbh.getAllHours());
+    public void refreshRV() {
+        rvAdapter.setDataset(DatabaseHandler.INSTANCE.getDay(this.day).lessons);
         rvAdapter.notifyDataSetChanged();
     }
 }
