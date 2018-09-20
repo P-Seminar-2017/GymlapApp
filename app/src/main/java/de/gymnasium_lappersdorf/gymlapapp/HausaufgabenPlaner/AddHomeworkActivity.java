@@ -30,7 +30,7 @@ import de.gymnasium_lappersdorf.gymlapapp.R;
  */
 
 public class AddHomeworkActivity extends AppCompatActivity implements NumberPicker.OnValueChangeListener {
-    private static final String[] KLASSEN_ARRAY = new String[]{"a", "b", "c", "d"};
+    private static final String[] KLASSEN_ARRAY = new String[]{"a", "b", "c", "d", "e"};
 
     private TextView textViewDate, textViewKlasse;
     private TextInputEditText textInputFach, textInputText;

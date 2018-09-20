@@ -122,7 +122,10 @@ public class Hausaufgabe {
 
         if (this.getClass() == obj.getClass()) {
             Hausaufgabe other = (Hausaufgabe) obj;
-            if (this.databaseId == other.getDatabaseId() || this.internetId == other.getInternetId()) {
+
+            if (this.databaseId == other.getDatabaseId() && !isFromInternet()) {
+                return true;
+            } else if (this.internetId == other.getInternetId() && isFromInternet()) {
                 return true;
             }
         }

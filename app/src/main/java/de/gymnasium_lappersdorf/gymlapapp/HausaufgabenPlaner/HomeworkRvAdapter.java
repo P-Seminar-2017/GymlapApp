@@ -42,8 +42,7 @@ public class HomeworkRvAdapter extends RecyclerView.Adapter<HomeworkRvAdapter.Vi
         holder.hv.setRemindButtonCallback(new HausaufgabenItemView.Callback() {
             @Override
             public void onClick() {
-                //Testing TODO: time
-                JobService.createSchedule(c, System.currentTimeMillis() + 2000, dataset.get(holder.getAdapterPosition()).getText());
+                JobService.createSchedule(c, dataset.get(holder.getAdapterPosition()).getTimestamp(), dataset.get(holder.getAdapterPosition()).getText());
                 Toast.makeText(c, "Erinnerung gesetzt", Toast.LENGTH_SHORT).show();
             }
         });

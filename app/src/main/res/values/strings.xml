@@ -6,6 +6,8 @@
         <item>Doppelstunde</item>
         <item>Einzelstunde</item>
     </string-array>
+    <string name="shared_pref_api">SHARED_API_KEY</string>
+
     <string name="copyrightglide">Copyright 2014 Google, Inc. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are
