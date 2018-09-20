@@ -86,40 +86,40 @@ public class StundenplanDatabaseHandler extends SQLiteOpenHelper {
     }
 
     //insert hour into database
-    public void addHour(Stunde s){
+    public void addHour(Stunde_legacy s){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         switch (s.getType()){
             case 0:
                 //single-hour
-                values.put(KEY_HOUR1, ((Einzelstunde) s).getHour());
-                values.put(KEY_HOUR1Start, ((Einzelstunde) s).getStart());
-                values.put(KEY_HOUR1STOP, ((Einzelstunde) s).getEnd());
-                values.put(KEY_TITLE, ((Einzelstunde) s).getLesson());
-                values.put(KEY_COURSE, ((Einzelstunde) s).getCourse());
-                values.put(KEY_TEACHER, ((Einzelstunde) s).getTeacher());
-                values.put(KEY_ROOM, ((Einzelstunde) s).getRoom());
+                values.put(KEY_HOUR1, ((Einzelstunde_legacy) s).getHour());
+                values.put(KEY_HOUR1Start, ((Einzelstunde_legacy) s).getStart());
+                values.put(KEY_HOUR1STOP, ((Einzelstunde_legacy) s).getEnd());
+                values.put(KEY_TITLE, ((Einzelstunde_legacy) s).getLesson());
+                values.put(KEY_COURSE, ((Einzelstunde_legacy) s).getCourse());
+                values.put(KEY_TEACHER, ((Einzelstunde_legacy) s).getTeacher());
+                values.put(KEY_ROOM, ((Einzelstunde_legacy) s).getRoom());
                 values.put(KEY_TYPE, s.getType());
                 break;
             case 1:
-                values.put(KEY_HOUR1, ((Doppelstunde) s).getHour1());
-                values.put(KEY_HOUR2, ((Doppelstunde) s).getHour2());
-                values.put(KEY_HOUR1Start, ((Doppelstunde) s).getHour1start());
-                values.put(KEY_HOUR1STOP, ((Doppelstunde) s).getHour1end());
-                values.put(KEY_HOUR2START, ((Doppelstunde) s).getHour2start());
-                values.put(KEY_HOUR2STOP, ((Doppelstunde) s).getHour2end());
-                values.put(KEY_TITLE, ((Doppelstunde) s).getLesson());
-                values.put(KEY_COURSE, ((Doppelstunde) s).getCourse());
-                values.put(KEY_TEACHER, ((Doppelstunde) s).getTeacher());
-                values.put(KEY_ROOM, ((Doppelstunde) s).getRoom());
+                values.put(KEY_HOUR1, ((Doppelstunde_legacy) s).getHour1());
+                values.put(KEY_HOUR2, ((Doppelstunde_legacy) s).getHour2());
+                values.put(KEY_HOUR1Start, ((Doppelstunde_legacy) s).getHour1start());
+                values.put(KEY_HOUR1STOP, ((Doppelstunde_legacy) s).getHour1end());
+                values.put(KEY_HOUR2START, ((Doppelstunde_legacy) s).getHour2start());
+                values.put(KEY_HOUR2STOP, ((Doppelstunde_legacy) s).getHour2end());
+                values.put(KEY_TITLE, ((Doppelstunde_legacy) s).getLesson());
+                values.put(KEY_COURSE, ((Doppelstunde_legacy) s).getCourse());
+                values.put(KEY_TEACHER, ((Doppelstunde_legacy) s).getTeacher());
+                values.put(KEY_ROOM, ((Doppelstunde_legacy) s).getRoom());
                 values.put(KEY_TYPE, s.getType());
                 //double-hour
                 break;
             case 2:
                 //break
-                values.put(KEY_HOUR1Start, ((Pause) s).getStart());
-                values.put(KEY_HOUR1STOP, ((Pause) s).getEnd());
-                values.put(KEY_TITLE, ((Pause) s).getTitle());
+                values.put(KEY_HOUR1Start, ((Pause_legacy) s).getStart());
+                values.put(KEY_HOUR1STOP, ((Pause_legacy) s).getEnd());
+                values.put(KEY_TITLE, ((Pause_legacy) s).getTitle());
                 values.put(KEY_TYPE, s.getType());
                 break;
         }
@@ -128,7 +128,7 @@ public class StundenplanDatabaseHandler extends SQLiteOpenHelper {
     }
 
     //read hour form Database
-    public Stunde getHour(int id){
+    public Stunde_legacy getHour(int id){
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(TABLE_HOURS, new String[]{KEY_ID, KEY_HOUR1, KEY_HOUR2, KEY_HOUR1Start,
         KEY_HOUR2START, KEY_HOUR1STOP, KEY_HOUR2STOP, KEY_TITLE, KEY_COURSE, KEY_TEACHER, KEY_ROOM, KEY_TYPE}, KEY_ID +
@@ -140,18 +140,18 @@ public class StundenplanDatabaseHandler extends SQLiteOpenHelper {
         //and returns the object
         switch (Integer.parseInt(cursor.getString(11))){
             case 0:
-                 Einzelstunde s = new Einzelstunde(cursor.getString(1),  cursor.getString(3), cursor.getString(5), cursor.getString(7)
+                 Einzelstunde_legacy s = new Einzelstunde_legacy(cursor.getString(1),  cursor.getString(3), cursor.getString(5), cursor.getString(7)
                 , cursor.getString(8), cursor.getString(9), cursor.getString(10));
                  s.setId(id);
                  return s;
             case 1:
-                Doppelstunde d = new Doppelstunde(cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(5)
+                Doppelstunde_legacy d = new Doppelstunde_legacy(cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(5)
                 , cursor.getString(4), cursor.getString(6), cursor.getString(7), cursor.getString(8), cursor.getString(9)
                 , cursor.getString(10));
                 d.setId(id);
                 return d;
             case 2:
-                Pause p = new Pause(cursor.getString(3), cursor.getString(5), cursor.getString(7));
+                Pause_legacy p = new Pause_legacy(cursor.getString(3), cursor.getString(5), cursor.getString(7));
                 p.setId(id);
                 return p;
         }
@@ -159,8 +159,8 @@ public class StundenplanDatabaseHandler extends SQLiteOpenHelper {
     }
 
     //returns all hours in an array
-    public Stunde[] getAllHours(){
-        List<Stunde> hourlist = new ArrayList<Stunde>();
+    public Stunde_legacy[] getAllHours(){
+        List<Stunde_legacy> hourlist = new ArrayList<Stunde_legacy>();
         String query = "SELECT * FROM " + TABLE_HOURS;
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(query, null);
@@ -171,7 +171,7 @@ public class StundenplanDatabaseHandler extends SQLiteOpenHelper {
                 hourlist.add(getHour(id));
             }while (cursor.moveToNext());
         }
-        Stunde [] s = new Stunde[hourlist.size()];
+        Stunde_legacy[] s = new Stunde_legacy[hourlist.size()];
         s = hourlist.toArray(s);
         return s;
     }
@@ -186,41 +186,41 @@ public class StundenplanDatabaseHandler extends SQLiteOpenHelper {
     }
 
     //updates an hour in the database with a new one
-    public int updateHour(Stunde s){
+    public int updateHour(Stunde_legacy s){
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         switch (s.getType()){
             case 0:
                 //single-hour
-                values.put(KEY_HOUR1, ((Einzelstunde) s).getHour());
-                values.put(KEY_HOUR1Start, ((Einzelstunde) s).getStart());
-                values.put(KEY_HOUR1STOP, ((Einzelstunde) s).getEnd());
-                values.put(KEY_TITLE, ((Einzelstunde) s).getLesson());
-                values.put(KEY_COURSE, ((Einzelstunde) s).getCourse());
-                values.put(KEY_TEACHER, ((Einzelstunde) s).getTeacher());
-                values.put(KEY_ROOM, ((Einzelstunde) s).getRoom());
+                values.put(KEY_HOUR1, ((Einzelstunde_legacy) s).getHour());
+                values.put(KEY_HOUR1Start, ((Einzelstunde_legacy) s).getStart());
+                values.put(KEY_HOUR1STOP, ((Einzelstunde_legacy) s).getEnd());
+                values.put(KEY_TITLE, ((Einzelstunde_legacy) s).getLesson());
+                values.put(KEY_COURSE, ((Einzelstunde_legacy) s).getCourse());
+                values.put(KEY_TEACHER, ((Einzelstunde_legacy) s).getTeacher());
+                values.put(KEY_ROOM, ((Einzelstunde_legacy) s).getRoom());
                 values.put(KEY_TYPE, s.getType());
                 break;
             case 1:
-                values.put(KEY_HOUR1, ((Doppelstunde) s).getHour1());
-                values.put(KEY_HOUR2, ((Doppelstunde) s).getHour2());
-                values.put(KEY_HOUR1Start, ((Doppelstunde) s).getHour1start());
-                values.put(KEY_HOUR1STOP, ((Doppelstunde) s).getHour1end());
-                values.put(KEY_HOUR2START, ((Doppelstunde) s).getHour2start());
-                values.put(KEY_HOUR2STOP, ((Doppelstunde) s).getHour2end());
-                values.put(KEY_TITLE, ((Doppelstunde) s).getLesson());
-                values.put(KEY_COURSE, ((Doppelstunde) s).getCourse());
-                values.put(KEY_TEACHER, ((Doppelstunde) s).getTeacher());
-                values.put(KEY_ROOM, ((Doppelstunde) s).getRoom());
+                values.put(KEY_HOUR1, ((Doppelstunde_legacy) s).getHour1());
+                values.put(KEY_HOUR2, ((Doppelstunde_legacy) s).getHour2());
+                values.put(KEY_HOUR1Start, ((Doppelstunde_legacy) s).getHour1start());
+                values.put(KEY_HOUR1STOP, ((Doppelstunde_legacy) s).getHour1end());
+                values.put(KEY_HOUR2START, ((Doppelstunde_legacy) s).getHour2start());
+                values.put(KEY_HOUR2STOP, ((Doppelstunde_legacy) s).getHour2end());
+                values.put(KEY_TITLE, ((Doppelstunde_legacy) s).getLesson());
+                values.put(KEY_COURSE, ((Doppelstunde_legacy) s).getCourse());
+                values.put(KEY_TEACHER, ((Doppelstunde_legacy) s).getTeacher());
+                values.put(KEY_ROOM, ((Doppelstunde_legacy) s).getRoom());
                 values.put(KEY_TYPE, s.getType());
                 //double-hour
                 break;
             case 2:
                 //break
-                values.put(KEY_HOUR1Start, ((Pause) s).getStart());
-                values.put(KEY_HOUR1STOP, ((Pause) s).getEnd());
-                values.put(KEY_TITLE, ((Pause) s).getTitle());
+                values.put(KEY_HOUR1Start, ((Pause_legacy) s).getStart());
+                values.put(KEY_HOUR1STOP, ((Pause_legacy) s).getEnd());
+                values.put(KEY_TITLE, ((Pause_legacy) s).getTitle());
                 values.put(KEY_TYPE, s.getType());
                 break;
         }
@@ -232,7 +232,7 @@ public class StundenplanDatabaseHandler extends SQLiteOpenHelper {
     }
 
     //removes an hour from the database
-    public void deleteHour(Stunde s){
+    public void deleteHour(Stunde_legacy s){
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_HOURS, KEY_ID + "= ?", new String[]{String.valueOf(s.getID())});
         db.close();

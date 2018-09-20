@@ -57,10 +57,10 @@ public class HausaufgabenItemView extends LinearLayout {
                 viewType.setText("Hausaufgabe/Notiz für " + hw.getDateFormatted());
                 break;
             case NEXT:
-                viewType.setText("Hausaufgabe aufgegeben am " + hw.getDateFormatted() + ", Abgabe: Nächste Stunde");
+                viewType.setText("Hausaufgabe aufgegeben am " + hw.getDateFormatted() + ", Abgabe: Nächste Lesson");
                 break;
             case NEXT2:
-                viewType.setText("Hausaufgabe aufgegeben am " + hw.getDateFormatted() + ", Abgabe: Übernächste Stunde");
+                viewType.setText("Hausaufgabe aufgegeben am " + hw.getDateFormatted() + ", Abgabe: Übernächste Lesson");
                 break;
         }
 

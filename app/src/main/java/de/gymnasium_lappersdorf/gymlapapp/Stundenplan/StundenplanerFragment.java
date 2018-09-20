@@ -14,13 +14,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import de.gymnasium_lappersdorf.gymlapapp.R;
+import io.objectbox.BoxStore;
 
 public class StundenplanerFragment extends Fragment {
 
     ViewPager vp;
     TabLayout tl;
     FloatingActionButton fab;
-    int day;
+    long day;
     StundenplanerTabAdapter adapter;
     Toolbar tb;
 
@@ -34,7 +35,7 @@ public class StundenplanerFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 //start Activity to add new hour
-                Intent i = new Intent(getActivity(), AddHourActivity.class);
+                Intent i = new Intent(getActivity(), AddLessonActivity.class);
                 i.putExtra("day", day);
                 startActivityForResult(i, 1);
             }

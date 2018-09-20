@@ -4,13 +4,13 @@ package de.gymnasium_lappersdorf.gymlapapp.Stundenplan;
  * Created by Leon on 02.12.2017.
  */
 
-public class Einzelstunde extends Stunde {
+public class Einzelstunde_legacy extends Stunde_legacy {
 
     String hour, start, end, lesson, course, teacher, room;
     int id;
     final static int TYPE = 0;
 
-    public Einzelstunde(String hour, String start, String end, String lesson, String course, String teacher, String room) {
+    public Einzelstunde_legacy(String hour, String start, String end, String lesson, String course, String teacher, String room) {
         this.hour = hour;
         this.start = start;
         this.end = end;
