@@ -26,7 +26,8 @@ object DatabaseHandler {
 
     /*
     * initializes the BoxStore for this Handler with a [context]
-    * !should only be called once on app start, before accessing getInstance!
+    * !should only be called once on app start,
+    * before accessing getInstance, e.g in the launcher Activity!
     * */
     fun initialize(context: Context) {
         store = MyObjectBox.builder().androidContext(context).build()
@@ -75,10 +76,18 @@ object DatabaseHandler {
         return query.find()
     }
 
+
+    /*
+    * add one [subject] object to the database
+    * */
     fun setSubject(subject: Subject) {
         subBox.put(subject)
     }
 
+
+    /*
+    * @returns just one subject based on a [name] String
+    * */
     fun getSubject(name: String): Subject? {
         val query = subBox.query().equal(Subject_.name, name).build()
         try {
@@ -89,6 +98,9 @@ object DatabaseHandler {
         return null
     }
 
+    /*
+    * @return all the Subject objects in the database
+    * */
     fun getSubjects(): List<Subject> {
         val query = subBox.query().build()
         return query.find()
