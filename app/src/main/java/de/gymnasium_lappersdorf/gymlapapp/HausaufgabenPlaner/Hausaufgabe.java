@@ -1,7 +1,11 @@
 package de.gymnasium_lappersdorf.gymlapapp.HausaufgabenPlaner;
 
+import android.content.Context;
+
 import java.util.Calendar;
 import java.util.Date;
+
+import de.gymnasium_lappersdorf.gymlapapp.R;
 
 /**
  * Created by lmatn on 01.03.2018.
@@ -44,6 +48,11 @@ public class Hausaufgabe {
                 c.get(Calendar.YEAR));
     }
 
+    public String getDayOfWeek(Context ctx) {
+        Calendar c = Calendar.getInstance();
+        c.setTime(new Date(date));
+        return ctx.getResources().getStringArray(R.array.tage)[c.get(Calendar.DAY_OF_WEEK)-2];
+    }
 
     public long getInternetId() {
         return internetId;
