@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import de.gymnasium_lappersdorf.gymlapapp.R;
-import io.objectbox.BoxStore;
 
 public class StundenplanerDayFragment extends Fragment {
 

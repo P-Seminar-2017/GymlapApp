@@ -7,22 +7,16 @@ import io.objectbox.exception.NonUniqueResultException
 import io.objectbox.kotlin.boxFor
 
 /*
-* class that handles all CRUD operations
+* object that handles all CRUD operations
 * for Day and Subject in the objectbox DB
-*
 * only one instance of BoxStore should exist at runtime,
-* so make sure to only use one instance of it at a time!
+* so make sure to call initialize before first use!
 * */
 object DatabaseHandler {
 
     private lateinit var store: BoxStore
     private lateinit var dayBox: Box<Day>
     private lateinit var subBox: Box<Subject>
-
-    /*
-    * @return the single instance Handler
-    * */
-    fun getInstance(): DatabaseHandler = this
 
     /*
     * initializes the BoxStore for this Handler with a [context]
