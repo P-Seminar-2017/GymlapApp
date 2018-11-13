@@ -43,7 +43,7 @@ public class HomeworkRvAdapter extends RecyclerView.Adapter<HomeworkRvAdapter.Vi
             @Override
             public void onClick() {
                 JobService.createSchedule(c, dataset.get(holder.getAdapterPosition()).getTimestamp(), dataset.get(holder.getAdapterPosition()).getText());
-                Toast.makeText(c, "Erinnerung gesetzt", Toast.LENGTH_SHORT).show();
+                Toast.makeText(c, "Erinnerung gesetzt (" + ((dataset.get(holder.getAdapterPosition()).getTimestamp()-System.currentTimeMillis()) / 3600000) + " Stunden verbleibend)", Toast.LENGTH_SHORT).show();
             }
         });
     }
