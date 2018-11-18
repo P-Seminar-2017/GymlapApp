@@ -18,16 +18,21 @@ object DatabaseHandler {
     private lateinit var dayBox: Box<Day>
     private lateinit var subBox: Box<Subject>
 
+    private var initialized = false
+
     /*
     * initializes the BoxStore for this Handler with a [context]
     * !should only be called once on app start,
     * before accessing getInstance, e.g in the launcher Activity!
     * */
     fun initialize(context: Context) {
-        store = MyObjectBox.builder().androidContext(context).build()
-        dayBox = store.boxFor()
-        subBox = store.boxFor()
-        createDB()
+        if (!initialized) {
+            store = MyObjectBox.builder().androidContext(context).build()
+            dayBox = store.boxFor()
+            subBox = store.boxFor()
+            createDB()
+            initialized = true
+        }
     }
 
     /*

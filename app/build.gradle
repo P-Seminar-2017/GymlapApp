@@ -8,7 +8,7 @@ android {
     defaultConfig {
         applicationId "de.gymnasium_lappersdorf.gymlapapp"
         minSdkVersion 21
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -40,7 +40,15 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.4.0'
     implementation 'com.android.support:design:27.1.1'
     implementation 'com.android.support:customtabs:27.1.1'
-    implementation 'com.google.android.gms:play-services-maps:15.0.1'
+    implementation 'com.google.android.gms:play-services-maps:16.0.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "io.objectbox:objectbox-kotlin:$objectboxVersion"
+    // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-core
+    implementation group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-core', version: '1.0.1'
+    // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-android
+    implementation group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-android', version: '1.0.1'
+    // https://mvnrepository.com/artifact/org.jsoup/jsoup
+    implementation group: 'org.jsoup', name: 'jsoup', version: '1.11.3'
 }
+
+apply plugin: 'kotlin-android-extensions'
