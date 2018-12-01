@@ -10,6 +10,9 @@ import android.widget.Button;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
+import de.gymnasium_lappersdorf.gymlapapp.App;
 import de.gymnasium_lappersdorf.gymlapapp.R;
 
 /**
@@ -18,11 +21,17 @@ import de.gymnasium_lappersdorf.gymlapapp.R;
 
 public class StundenplanRvAdapter extends RecyclerView.Adapter<StundenplanRvAdapter.ViewHolder> {
 
+    @Inject
+    DatabaseHandler databaseHandler;
+
     private List<Lesson> dataset;
     long day;
     Context context;
 
     public StundenplanRvAdapter(List<Lesson> dataset, long day, Context context) {
+
+        App.appComponent.inject(this);
+
         this.dataset = dataset;
         this.day = day;
         this.context = context;
@@ -66,9 +75,9 @@ public class StundenplanRvAdapter extends RecyclerView.Adapter<StundenplanRvAdap
                     public void onClick(View view) {
                         dialog.dismiss();
                         //delete from database
-                        Day dayToRmFrom = DatabaseHandler.INSTANCE.getDay(day);
+                        Day dayToRmFrom = databaseHandler.getDay(day);
                         dayToRmFrom.lessons.remove(dataset.get(holder.getAdapterPosition()));
-                        DatabaseHandler.INSTANCE.setDay(dayToRmFrom);
+                        databaseHandler.setDay(dayToRmFrom);
                         //update rv
                         dataset.remove(holder.getAdapterPosition());
                         notifyItemRemoved(holder.getAdapterPosition());

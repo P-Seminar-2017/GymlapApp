@@ -26,6 +26,9 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Locale;
 
+import javax.inject.Inject;
+
+import de.gymnasium_lappersdorf.gymlapapp.App;
 import de.gymnasium_lappersdorf.gymlapapp.R;
 import de.gymnasium_lappersdorf.gymlapapp.Stundenplan.DatabaseHandler;
 import de.gymnasium_lappersdorf.gymlapapp.Stundenplan.Subject;
@@ -35,6 +38,10 @@ import de.gymnasium_lappersdorf.gymlapapp.Stundenplan.Subject;
  */
 
 public class AddHomeworkActivity extends AppCompatActivity implements NumberPicker.OnValueChangeListener {
+
+    @Inject
+    DatabaseHandler databaseHandler;
+
     private static final String[] KLASSEN_ARRAY = new String[]{"a", "b", "c", "d", "e"};
 
     private TextView textViewDate, textViewKlasse;
@@ -59,6 +66,8 @@ public class AddHomeworkActivity extends AppCompatActivity implements NumberPick
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_homework);
 
+        App.appComponent.inject(this);
+
         setTitle("Hausaufgabe hinzufügen");
 
         textViewDate = findViewById(R.id.textview_date);
@@ -68,7 +77,7 @@ public class AddHomeworkActivity extends AppCompatActivity implements NumberPick
 
         //subjectSpinner initialisation
         ArrayList<String> subjects = new ArrayList<>();
-        for (Subject s : DatabaseHandler.INSTANCE.getSubjects()) {
+        for (Subject s : databaseHandler.getSubjects()) {
             subjects.add(s.getName());
             System.out.println(s.getName());
         }
@@ -247,13 +256,13 @@ public class AddHomeworkActivity extends AppCompatActivity implements NumberPick
                             //Name empty
                             subject.setError("Darf nicht leer sein");
                         } else {
-                            if (DatabaseHandler.INSTANCE.getSubject(subject.getText().toString()) != null) {
+                            if (databaseHandler.getSubject(subject.getText().toString()) != null) {
                                 //Subject already exists
                                 subject.setError("Fach existiert bereits");
                             } else {
                                 //valid input
                                 Subject newsubject = new Subject(0, subject.getText().toString(), course.getText().toString(), teacher.getText().toString(), room.getText().toString());
-                                DatabaseHandler.INSTANCE.setSubject(newsubject);
+                                databaseHandler.setSubject(newsubject);
                                 subjectAdapter.add(newsubject.getName());
                                 subjectSpinner.setAdapter(subjectAdapter);
                                 dialog.dismiss();

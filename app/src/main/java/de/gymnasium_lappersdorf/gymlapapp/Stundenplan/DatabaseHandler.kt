@@ -1,42 +1,39 @@
 package de.gymnasium_lappersdorf.gymlapapp.Stundenplan
 
-import android.content.Context
+import de.gymnasium_lappersdorf.gymlapapp.App
 import io.objectbox.Box
 import io.objectbox.BoxStore
 import io.objectbox.exception.NonUniqueResultException
 import io.objectbox.kotlin.boxFor
+import javax.inject.Inject
+import javax.inject.Singleton
 
 /*
-* object that handles all CRUD operations
+* class that handles all CRUD operations
 * for Day and Subject in the objectbox DB
-* only one instance of BoxStore should exist at runtime,
-* so make sure to call initialize before first use!
+* !only one instance of BoxStore should exist
+* at runtime, so leave initialisation to dagger!
 * */
-object DatabaseHandler {
+@Singleton
+class DatabaseHandler {
 
-    private lateinit var store: BoxStore
-    private lateinit var dayBox: Box<Day>
-    private lateinit var subBox: Box<Subject>
-
-    private var initialized = false
+    @Inject
+    lateinit var store: BoxStore
+    private var dayBox: Box<Day>
+    private var subBox: Box<Subject>
 
     /*
-    * initializes the BoxStore for this Handler with a [context]
-    * !should only be called once on app start,
-    * before accessing getInstance, e.g in the launcher Activity!
+    * initializes the boxes for the different objects
     * */
-    fun initialize(context: Context) {
-        if (!initialized) {
-            store = MyObjectBox.builder().androidContext(context).build()
-            dayBox = store.boxFor()
-            subBox = store.boxFor()
-            createDB()
-            initialized = true
-        }
+    init {
+        App.appComponent.inject(this)
+        dayBox = store.boxFor()
+        subBox = store.boxFor()
+        createDB()
     }
 
     /*
-    * initializes the database by adding 5 days on initial access
+    * initializes the database by adding 5 days on first access
     * */
     private fun createDB() {
         val days: List<Day> = getDays()
@@ -75,14 +72,12 @@ object DatabaseHandler {
         return query.find()
     }
 
-
     /*
     * add one [subject] object to the database
     * */
     fun setSubject(subject: Subject) {
         subBox.put(subject)
     }
-
 
     /*
     * @returns just one subject based on a [name] String

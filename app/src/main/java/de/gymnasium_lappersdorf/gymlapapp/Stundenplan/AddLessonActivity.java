@@ -21,9 +21,15 @@ import android.widget.TimePicker;
 
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
+import de.gymnasium_lappersdorf.gymlapapp.App;
 import de.gymnasium_lappersdorf.gymlapapp.R;
 
 public class AddLessonActivity extends AppCompatActivity {
+
+    @Inject
+    DatabaseHandler databaseHandler;
 
     Spinner typeSpinner, subjectSpinner;
     TextView startTime, stopTime;
@@ -39,6 +45,8 @@ public class AddLessonActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_lesson);
+
+        App.appComponent.inject(this);
 
         setTitle("Stunde hinzufügen");
 
@@ -77,7 +85,7 @@ public class AddLessonActivity extends AppCompatActivity {
         });
         //subjectSpinner initialisation
         ArrayList<String> subjects = new ArrayList<>();
-        for (Subject s : DatabaseHandler.INSTANCE.getSubjects()) {
+        for (Subject s : databaseHandler.getSubjects()) {
             subjects.add(s.getName());
             System.out.println(s.getName());
         }
@@ -119,13 +127,13 @@ public class AddLessonActivity extends AppCompatActivity {
     public void accept(View view) {
         if (validateInput()) {
             //save to DB
-            Day day = DatabaseHandler.INSTANCE.getDay(this.day);
-            Subject subject = DatabaseHandler.INSTANCE.getSubject(this.selectedSubject);
+            Day day = databaseHandler.getDay(this.day);
+            Subject subject = databaseHandler.getSubject(this.selectedSubject);
             Lesson lesson = new Lesson(0, number.getText().toString(), startTime.getText().toString(), stopTime.getText().toString());
             day.lessons.add(lesson);
             subject.lessons.add(lesson);
-            DatabaseHandler.INSTANCE.setDay(day);
-            DatabaseHandler.INSTANCE.setSubject(subject);
+            databaseHandler.setDay(day);
+            databaseHandler.setSubject(subject);
             finish();
         }
     }
@@ -145,7 +153,7 @@ public class AddLessonActivity extends AppCompatActivity {
     }
 
     private void autofill() {
-        Day day = DatabaseHandler.INSTANCE.getDay(this.day);
+        Day day = databaseHandler.getDay(this.day);
         if (day.lessons.size() > 0) {
             Lesson lastLesson = day.lessons.get(day.lessons.size() - 1);
             autofillTime(lastLesson.getEnd());
@@ -257,13 +265,13 @@ public class AddLessonActivity extends AppCompatActivity {
                             //Name empty
                             subject.setError("Darf nicht leer sein");
                         } else {
-                            if (DatabaseHandler.INSTANCE.getSubject(subject.getText().toString()) != null) {
+                            if (databaseHandler.getSubject(subject.getText().toString()) != null) {
                                 //Subject already exists
                                 subject.setError("Fach existiert bereits");
                             } else {
                                 //valid input
                                 Subject newsubject = new Subject(0, subject.getText().toString(), course.getText().toString(), teacher.getText().toString(), room.getText().toString());
-                                DatabaseHandler.INSTANCE.setSubject(newsubject);
+                                databaseHandler.setSubject(newsubject);
                                 subjectAdapter.add(newsubject.getName());
                                 subjectSpinner.setAdapter(subjectAdapter);
                                 dialog.dismiss();
