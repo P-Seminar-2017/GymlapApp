@@ -13,6 +13,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.Calendar;
+
 import de.gymnasium_lappersdorf.gymlapapp.R;
 
 public class StundenplanerFragment extends Fragment {
@@ -67,6 +69,24 @@ public class StundenplanerFragment extends Fragment {
                 day = tab.getPosition();
             }
         });
+        //setting page to current day
+        Calendar cal = Calendar.getInstance();
+        int day = 0;
+        switch (cal.get(Calendar.DAY_OF_WEEK)) {
+            case Calendar.TUESDAY:
+                day = 1;
+                break;
+            case Calendar.WEDNESDAY:
+                day = 2;
+                break;
+            case Calendar.THURSDAY:
+                day = 3;
+                break;
+            case Calendar.FRIDAY:
+                day = 4;
+                break;
+        }
+        vp.setCurrentItem(day);
         return view;
     }
 

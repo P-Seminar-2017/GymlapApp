@@ -11,9 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.NumberPicker;
@@ -21,26 +19,18 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Locale;
 
-import javax.inject.Inject;
-
-import de.gymnasium_lappersdorf.gymlapapp.App;
 import de.gymnasium_lappersdorf.gymlapapp.R;
-import de.gymnasium_lappersdorf.gymlapapp.Stundenplan.DatabaseHandler;
-import de.gymnasium_lappersdorf.gymlapapp.Stundenplan.Subject;
+import de.gymnasium_lappersdorf.gymlapapp.Stundenplan.SubjectView;
 
 /**
  * 03.06.2018 | created by Lukas S
  */
 
 public class AddHomeworkActivity extends AppCompatActivity implements NumberPicker.OnValueChangeListener {
-
-    @Inject
-    DatabaseHandler databaseHandler;
 
     private static final String[] KLASSEN_ARRAY = new String[]{"a", "b", "c", "d", "e"};
 
@@ -52,9 +42,7 @@ public class AddHomeworkActivity extends AppCompatActivity implements NumberPick
     private Spinner klasseSpinner;
     private EditText stufenEdittext;
 
-    private String selectedSubject;
-    private ArrayAdapter<String> subjectAdapter;
-    private Spinner subjectSpinner;
+    private SubjectView subjectView;
 
     private Hausaufgabe newHomework;
 
@@ -66,35 +54,12 @@ public class AddHomeworkActivity extends AppCompatActivity implements NumberPick
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_homework);
 
-        App.appComponent.inject(this);
-
         setTitle("Hausaufgabe hinzufügen");
 
         textViewDate = findViewById(R.id.textview_date);
         textViewKlasse = findViewById(R.id.textview_klasse);
         textInputText = findViewById(R.id.homework_input_text);
-        subjectSpinner = findViewById(R.id.subject_spinner);
-
-        //subjectSpinner initialisation
-        ArrayList<String> subjects = new ArrayList<>();
-        for (Subject s : databaseHandler.getSubjects()) {
-            subjects.add(s.getName());
-            System.out.println(s.getName());
-        }
-        subjectAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, subjects);
-        subjectAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        subjectSpinner.setAdapter(subjectAdapter);
-        subjectSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                selectedSubject = subjectAdapter.getItem(i);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
+        subjectView = findViewById(R.id.subject_view);
 
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_MONTH, 1);
@@ -115,10 +80,9 @@ public class AddHomeworkActivity extends AppCompatActivity implements NumberPick
     }
 
     public void onSubmit(View v) {
+        if (subjectView.validate() && checkInputs()) {
 
-        if (checkInputs() && selectedSubject != null) {
-
-            newHomework.setFach(selectedSubject);
+            newHomework.setFach(subjectView.getSubject().getName());
             newHomework.setText(textInputText.getText().toString().trim());
 
             //Add new homework to database
@@ -130,7 +94,6 @@ public class AddHomeworkActivity extends AppCompatActivity implements NumberPick
 
             finish();
         }
-
     }
 
     private void datePicker() {
@@ -229,50 +192,6 @@ public class AddHomeworkActivity extends AppCompatActivity implements NumberPick
             }
         });
 
-    }
-
-    public void addSubject(View view) {
-        View v = getLayoutInflater().inflate(R.layout.add_subject_view, null);
-        final TextInputEditText subject, teacher, room, course;
-        subject = v.findViewById(R.id.subject);
-        teacher = v.findViewById(R.id.teacher);
-        room = v.findViewById(R.id.room);
-        course = v.findViewById(R.id.course);
-
-        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
-        builder.setView(v);
-        builder.setTitle("Fach hinzufügen");
-        builder.setPositiveButton("Hinzufügen", null);//set to null -> overriding onClick
-        final android.app.AlertDialog dialog = builder.create();
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialogInterface) {
-                Button button = dialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE);
-                button.setOnClickListener(new View.OnClickListener() {
-
-                    @Override
-                    public void onClick(View view) {
-                        if (subject.getText().toString().equals("")) {
-                            //Name empty
-                            subject.setError("Darf nicht leer sein");
-                        } else {
-                            if (databaseHandler.getSubject(subject.getText().toString()) != null) {
-                                //Subject already exists
-                                subject.setError("Fach existiert bereits");
-                            } else {
-                                //valid input
-                                Subject newsubject = new Subject(0, subject.getText().toString(), course.getText().toString(), teacher.getText().toString(), room.getText().toString());
-                                databaseHandler.setSubject(newsubject);
-                                subjectAdapter.add(newsubject.getName());
-                                subjectSpinner.setAdapter(subjectAdapter);
-                                dialog.dismiss();
-                            }
-                        }
-                    }
-                });
-            }
-        });
-        dialog.show();
     }
 
     private void updateLabels() {

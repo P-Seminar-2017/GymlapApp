@@ -105,7 +105,12 @@
                 android:layout_marginTop="8dp"
                 android:orientation="vertical">
 
-                <RelativeLayout
+                <de.gymnasium_lappersdorf.gymlapapp.Stundenplan.SubjectView
+                    android:id="@+id/subject_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <!--<RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="12dp">
@@ -127,7 +132,7 @@
                         android:background="@android:color/transparent"
                         android:onClick="addSubject"
                         android:src="@drawable/plus_dark" />
-                </RelativeLayout>
+                </RelativeLayout>-->
 
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"

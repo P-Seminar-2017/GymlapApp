@@ -1,8 +1,6 @@
 package de.gymnasium_lappersdorf.gymlapapp.Stundenplan;
 
-import android.app.AlertDialog;
 import android.app.TimePickerDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -13,13 +11,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
-
-import java.util.ArrayList;
 
 import javax.inject.Inject;
 
@@ -31,15 +26,14 @@ public class AddLessonActivity extends AppCompatActivity {
     @Inject
     DatabaseHandler databaseHandler;
 
-    Spinner typeSpinner, subjectSpinner;
+    Spinner typeSpinner;
     TextView startTime, stopTime;
     RelativeLayout startLayout, stopLayout;
     TextInputEditText number;
-    Long day;
+    SubjectView subjectView;
 
+    Long day;
     String lessonType = "Doppelstunde";
-    String selectedSubject;
-    ArrayAdapter<String> subjectAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,12 +46,12 @@ public class AddLessonActivity extends AppCompatActivity {
 
         //view initialisation
         typeSpinner = findViewById(R.id.TypeSpinner);
-        subjectSpinner = findViewById(R.id.SubjectSpinner);
         startTime = findViewById(R.id.starttime);
         stopTime = findViewById(R.id.stoptime);
         startLayout = findViewById(R.id.layoutstart);
         stopLayout = findViewById(R.id.layoutstop);
         number = findViewById(R.id.number);
+        subjectView = findViewById(R.id.subject_view);
 
         //get day
         Intent i = getIntent();
@@ -76,26 +70,6 @@ public class AddLessonActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 lessonType = "" + adapterView.getItemAtPosition(i);
                 autofill();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-        //subjectSpinner initialisation
-        ArrayList<String> subjects = new ArrayList<>();
-        for (Subject s : databaseHandler.getSubjects()) {
-            subjects.add(s.getName());
-            System.out.println(s.getName());
-        }
-        subjectAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, subjects);
-        subjectAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        subjectSpinner.setAdapter(subjectAdapter);
-        subjectSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                selectedSubject = subjectAdapter.getItem(i);
             }
 
             @Override
@@ -128,13 +102,15 @@ public class AddLessonActivity extends AppCompatActivity {
         if (validateInput()) {
             //save to DB
             Day day = databaseHandler.getDay(this.day);
-            Subject subject = databaseHandler.getSubject(this.selectedSubject);
-            Lesson lesson = new Lesson(0, number.getText().toString(), startTime.getText().toString(), stopTime.getText().toString());
-            day.lessons.add(lesson);
-            subject.lessons.add(lesson);
-            databaseHandler.setDay(day);
-            databaseHandler.setSubject(subject);
-            finish();
+            if (subjectView.validate()) {
+                Subject subject = subjectView.getSubject();
+                Lesson lesson = new Lesson(0, number.getText().toString(), startTime.getText().toString(), stopTime.getText().toString());
+                day.lessons.add(lesson);
+                subject.lessons.add(lesson);
+                databaseHandler.setDay(day);
+                databaseHandler.setSubject(subject);
+                finish();
+            }
         }
     }
 
@@ -238,50 +214,6 @@ public class AddLessonActivity extends AppCompatActivity {
 
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    public void addSubject(View view) {
-        View v = getLayoutInflater().inflate(R.layout.add_subject_view, null);
-        final TextInputEditText subject, teacher, room, course;
-        subject = v.findViewById(R.id.subject);
-        teacher = v.findViewById(R.id.teacher);
-        room = v.findViewById(R.id.room);
-        course = v.findViewById(R.id.course);
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setView(v);
-        builder.setTitle("Fach hinzufügen");
-        builder.setPositiveButton("Hinzufügen", null);//set to null -> overriding onClick
-        final AlertDialog dialog = builder.create();
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialogInterface) {
-                Button button = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                button.setOnClickListener(new View.OnClickListener() {
-
-                    @Override
-                    public void onClick(View view) {
-                        if (subject.getText().toString().equals("")) {
-                            //Name empty
-                            subject.setError("Darf nicht leer sein");
-                        } else {
-                            if (databaseHandler.getSubject(subject.getText().toString()) != null) {
-                                //Subject already exists
-                                subject.setError("Fach existiert bereits");
-                            } else {
-                                //valid input
-                                Subject newsubject = new Subject(0, subject.getText().toString(), course.getText().toString(), teacher.getText().toString(), room.getText().toString());
-                                databaseHandler.setSubject(newsubject);
-                                subjectAdapter.add(newsubject.getName());
-                                subjectSpinner.setAdapter(subjectAdapter);
-                                dialog.dismiss();
-                            }
-                        }
-                    }
-                });
-            }
-        });
-        dialog.show();
     }
 
     @Override

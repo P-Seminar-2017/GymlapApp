@@ -21,7 +21,6 @@
 
     </LinearLayout>
 
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -29,7 +28,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <TextView
@@ -70,7 +69,7 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     android:scaleX="0.75"
                     android:scaleY="0.75"
@@ -100,14 +99,14 @@
                     android:id="@+id/stoptime"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/bis"
+                    android:layout_toEndOf="@id/bis"
                     android:text="08:40"
                     android:textSize="25sp" />
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     android:scaleX="0.75"
                     android:scaleY="0.75"
@@ -123,54 +122,27 @@
                 android:textSize="12sp" />
 
             <!--preferences-->
-            <LinearLayout
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_margin="6dp">
 
-                <android.support.design.widget.TextInputLayout
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/number"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="6dp">
+                    android:digits="0123456789-"
+                    android:hint="Stundennummer"
+                    android:inputType="number"
+                    android:maxLength="5"
+                    android:maxLines="1" />
 
-                    <android.support.design.widget.TextInputEditText
-                        android:id="@+id/number"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:digits="0123456789-"
-                        android:hint="Stundennummer"
-                        android:inputType="number"
-                        android:maxLength="5"
-                        android:maxLines="1" />
+            </android.support.design.widget.TextInputLayout>
 
-                </android.support.design.widget.TextInputLayout>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="12dp">
-
-                    <Spinner
-                        android:id="@+id/SubjectSpinner"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_centerVertical="true"
-                        android:layout_toLeftOf="@+id/add_subject"/>
-
-                    <ImageButton
-                        android:id="@+id/add_subject"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:background="@android:color/transparent"
-                        android:onClick="addSubject"
-                        android:src="@drawable/plus_dark" />
-                </RelativeLayout>
-
-
-            </LinearLayout>
+            <de.gymnasium_lappersdorf.gymlapapp.Stundenplan.SubjectView
+                android:id="@+id/subject_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
         </LinearLayout>
 
@@ -180,7 +152,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_margin="16dp"
         android:elevation="6dp"
         android:onClick="accept"

@@ -1,0 +1,120 @@
+{
+  "_note1": "KEEP THIS FILE! Check it into a version control system (VCS) like git.",
+  "_note2": "ObjectBox manages crucial IDs for your object model. See docs for details.",
+  "_note3": "If you have VCS merge conflicts, you must resolve them according to ObjectBox docs.",
+  "entities": [
+    {
+      "id": "1:8476640049297886869",
+      "lastPropertyId": "3:3059354272620649365",
+      "name": "Day",
+      "properties": [
+        {
+          "id": "1:1703082971672956364",
+          "name": "id"
+        },
+        {
+          "id": "3:3059354272620649365",
+          "name": "day"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "5:258683870046286809",
+      "lastPropertyId": "5:9157184737609521462",
+      "name": "Subject",
+      "properties": [
+        {
+          "id": "1:7149138777707657216",
+          "name": "course"
+        },
+        {
+          "id": "2:9117673547496972638",
+          "name": "teacher"
+        },
+        {
+          "id": "3:2479828188178310099",
+          "name": "room"
+        },
+        {
+          "id": "4:2913505039505413894",
+          "name": "id"
+        },
+        {
+          "id": "5:9157184737609521462",
+          "name": "name"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "6:9221404264895360041",
+      "lastPropertyId": "6:5187868229279467806",
+      "name": "Lesson",
+      "properties": [
+        {
+          "id": "1:6735660284822328355",
+          "name": "id"
+        },
+        {
+          "id": "2:7263482681774110283",
+          "name": "number"
+        },
+        {
+          "id": "3:3619649224185627744",
+          "name": "start"
+        },
+        {
+          "id": "4:4062902601305820389",
+          "name": "end"
+        },
+        {
+          "id": "5:3436813649239961498",
+          "name": "subject"
+        },
+        {
+          "id": "6:5187868229279467806",
+          "indexId": "1:1549636707676313072",
+          "name": "dayId"
+        }
+      ],
+      "relations": []
+    }
+  ],
+  "lastEntityId": "6:9221404264895360041",
+  "lastIndexId": "1:1549636707676313072",
+  "lastRelationId": "4:2191603367702487024",
+  "lastSequenceId": "0:0",
+  "modelVersion": 4,
+  "modelVersionParserMinimum": 4,
+  "retiredEntityUids": [
+    1982069386499997373,
+    8146489864774795250,
+    1461305295435856409
+  ],
+  "retiredIndexUids": [],
+  "retiredPropertyUids": [
+    1133508151808675755,
+    4253424845565101631,
+    6942352297724049878,
+    1114857869081884162,
+    524473746643910030,
+    4204639383183441877,
+    7020976401611518730,
+    5500392670932498453,
+    477034873036362258,
+    2579506214238932462,
+    4741689972581797160,
+    8460264314187240515,
+    8431437236109377686,
+    3460897282646445445,
+    2051725239372846256
+  ],
+  "retiredRelationUids": [
+    4223139422813621672,
+    8570416771307562604,
+    2863945229067573598,
+    2191603367702487024
+  ],
+  "version": 1
+}

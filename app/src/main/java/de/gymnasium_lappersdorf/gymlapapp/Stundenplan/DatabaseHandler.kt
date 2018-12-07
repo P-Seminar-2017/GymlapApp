@@ -11,8 +11,8 @@ import javax.inject.Singleton
 /*
 * class that handles all CRUD operations
 * for Day and Subject in the objectbox DB
-* !only one instance of BoxStore should exist
-* at runtime, so leave initialisation to dagger!
+* !only one instance should exist at runtime,
+* so leave initialisation to dagger!
 * */
 @Singleton
 class DatabaseHandler {
@@ -91,6 +91,11 @@ class DatabaseHandler {
         }
         return null
     }
+
+    /*
+    * removes a [subject] from the database
+    * */
+    fun rmSubject(subject: Subject) = subBox.remove(subject)
 
     /*
     * @return all the Subject objects in the database

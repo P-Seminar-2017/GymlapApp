@@ -1,7 +1,9 @@
 package de.gymnasium_lappersdorf.gymlapapp.Home
 
 import android.content.Context
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.io.IOException
@@ -79,7 +81,7 @@ object Articles {
     private fun readCache(context: Context): String {
         //shared preferences can be used here, because just one string gets stored anyway
         val prefs = context.getSharedPreferences("home_cache", Context.MODE_PRIVATE)
-        return prefs.getString("site_cache", "*CACHE_EMPTY*")
+        return prefs.getString("site_cache", "*CACHE_EMPTY*")!!
     }
 
     /*
