@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.android.gms.oss-licenses-plugin'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'io.objectbox'
@@ -52,6 +53,8 @@ dependencies {
     //dagger2
     implementation 'com.google.dagger:dagger:2.16'
     kapt 'com.google.dagger:dagger-compiler:2.16'
+    //licensing
+    implementation 'com.google.android.gms:play-services-oss-licenses:16.0.1'
 }
 
 apply plugin: 'kotlin-android-extensions'

@@ -6,61 +6,69 @@
     android:orientation="vertical"
     tools:context=".Info.InfoFragment">
 
-    <TextView
-        style="@android:style/TextAppearance.DeviceDefault.Medium"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="GymlapApp" />
-
     <RelativeLayout
-        android:id="@+id/open_license"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:background="@color/colorPrimary">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true">
+
+            <ImageView
+                android:id="@+id/about_logo"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_centerVertical="true"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_launcher_foreground" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="24dp"
+                android:layout_toEndOf="@id/about_logo"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/about_title"
+                    style="@android:style/TextAppearance.DeviceDefault.Medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="3dp"
+                    android:text="GymlapApp"
+                    android:textColor="@android:color/white" />
+
+                <TextView
+                    android:id="@+id/about_version"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="3dp"
+                    android:textColor="@android:color/white"
+                    tools:text="Version 1.0" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/about_licenses"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="12dp">
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?android:attr/selectableItemBackground">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:text="Lizenzen" />
+            android:padding="16dp"
+            android:text="Open Source-Lizenzen" />
 
-        <ImageView
-            android:id="@+id/toggle_license"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:src="@drawable/arrowdown" />
-
-    </RelativeLayout>
-
-    <ScrollView
-        android:id="@+id/txt_license"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:padding="16dp"
-        android:visibility="gone">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/copyrightglide"
-                android:layout_marginBottom="12dp"/>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/copyrightobjectbox"
-                android:layout_marginBottom="12dp"/>
-
-        </LinearLayout>
-
-    </ScrollView>
+    </android.support.v7.widget.CardView>
 
 </LinearLayout>

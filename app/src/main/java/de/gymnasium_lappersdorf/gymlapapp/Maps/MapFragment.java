@@ -49,6 +49,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Adapter
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        getActivity().setTitle("Indoorkarte");
 
         //floor selection spinner
 

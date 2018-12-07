@@ -30,6 +30,7 @@ public class StundenplanerFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_stundenplaner, container, false);
+        getActivity().setTitle("Stundenplan");
 
         fab = view.findViewById(R.id.stundenplan_fab);
         fab.setOnClickListener(new View.OnClickListener() {

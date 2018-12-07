@@ -6,11 +6,11 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-
 import de.gymnasium_lappersdorf.gymlapapp.R
 import kotlinx.android.synthetic.main.fragment_home.*
-import kotlinx.coroutines.*
-import java.lang.IllegalStateException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment() {
     private lateinit var rvAdapter: ArticlesRvAdapter
@@ -21,6 +21,7 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        activity!!.title = "GymlapApp"
         //rv initialisation
         rvAdapter = ArticlesRvAdapter(emptyList(), context!!)
         home_rv.layoutManager = LinearLayoutManager(context)

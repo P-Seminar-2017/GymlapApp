@@ -104,6 +104,7 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        getActivity().setTitle("Hausaufgaben");
 
         fabContainer = v.findViewById(R.id.fab_container);
 
