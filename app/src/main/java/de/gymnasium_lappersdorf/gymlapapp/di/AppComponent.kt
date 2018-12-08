@@ -5,7 +5,6 @@ import dagger.BindsInstance
 import dagger.Component
 import dagger.Module
 import dagger.Provides
-import de.gymnasium_lappersdorf.gymlapapp.HausaufgabenPlaner.AddHomeworkActivity
 import de.gymnasium_lappersdorf.gymlapapp.Stundenplan.*
 import io.objectbox.BoxStore
 import javax.inject.Singleton

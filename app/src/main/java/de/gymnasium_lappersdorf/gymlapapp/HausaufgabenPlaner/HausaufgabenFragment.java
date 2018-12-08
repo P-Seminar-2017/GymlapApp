@@ -1,7 +1,5 @@
 package de.gymnasium_lappersdorf.gymlapapp.HausaufgabenPlaner;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -70,7 +68,9 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        getActivity().setTitle("Hausaufgaben");
 
+        tb = getActivity().findViewById(R.id.toolbar_main);
         refreshLayout = v.findViewById(R.id.swiperefresh_homework);
 
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -111,9 +111,8 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        tb = ((Activity) context).findViewById(R.id.toolbar_main);
+    public void onResume() {
+        super.onResume();
         try {
             tb.setElevation(0);
         } catch (NullPointerException e) {
@@ -123,8 +122,8 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
+    public void onPause() {
+        super.onPause();
         try {
             tb.setElevation(4);
         } catch (NullPointerException e) {

@@ -1,7 +1,5 @@
 package de.gymnasium_lappersdorf.gymlapapp.Stundenplan;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -32,6 +30,7 @@ public class StundenplanerFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_stundenplaner, container, false);
         getActivity().setTitle("Stundenplan");
 
+        tb = getActivity().findViewById(R.id.toolbar_main);
         fab = view.findViewById(R.id.stundenplan_fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,20 +91,19 @@ public class StundenplanerFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        tb = ((Activity)context).findViewById(R.id.toolbar_main);
+    public void onResume() {
+        super.onResume();
         try {
             tb.setElevation(0);
-        }catch (NullPointerException e){
+        } catch (NullPointerException e) {
             e.printStackTrace();
         }
 
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
+    public void onPause() {
+        super.onPause();
         try {
             tb.setElevation(4);
         } catch (NullPointerException e) {

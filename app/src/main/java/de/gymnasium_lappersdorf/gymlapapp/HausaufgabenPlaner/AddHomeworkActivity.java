@@ -11,9 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.NumberPicker;
@@ -21,14 +19,11 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Locale;
 
 import de.gymnasium_lappersdorf.gymlapapp.R;
-import de.gymnasium_lappersdorf.gymlapapp.Stundenplan.DatabaseHandler;
-import de.gymnasium_lappersdorf.gymlapapp.Stundenplan.Subject;
 import de.gymnasium_lappersdorf.gymlapapp.Stundenplan.SubjectView;
 
 /**
@@ -92,7 +87,7 @@ public class AddHomeworkActivity extends AppCompatActivity implements NumberPick
 
     public void onSubmit(View v) {
 
-        if (checkInputs() && subjectView.validate()) {
+        if (subjectView.validate() && checkInputs()) {
 
             newHomework.setFach(subjectView.getSubject().getName());
             newHomework.setText(textInputText.getText().toString().trim());
