@@ -47,7 +47,7 @@ class NavDrawerOnClickHandler(val context: Context) : NavigationView.OnNavigatio
             return when (item) {
                 R.id._home -> h
                 R.id.stundenplaner -> s
-                R.id.indoormap -> m
+                R.id.karte -> m
                 R.id.hausaufgaben -> hw
                 R.id.information -> inf
                 else -> h

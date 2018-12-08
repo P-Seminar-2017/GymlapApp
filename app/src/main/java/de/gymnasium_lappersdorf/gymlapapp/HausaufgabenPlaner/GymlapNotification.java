@@ -32,7 +32,7 @@ public class GymlapNotification {
     }
 
     /**
-     * @param context     - basic application to create notification
+     * @param context     - basic context to create notification
      * @param text        - text to be displayed in the notification
      * @param resultClass - class to be executed on notification click
      * @param id          - must be unique to identify the notification

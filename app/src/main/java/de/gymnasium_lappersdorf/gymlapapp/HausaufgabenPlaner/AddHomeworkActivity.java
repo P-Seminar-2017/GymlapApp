@@ -11,7 +11,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.NumberPicker;
@@ -19,11 +21,14 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Locale;
 
 import de.gymnasium_lappersdorf.gymlapapp.R;
+import de.gymnasium_lappersdorf.gymlapapp.Stundenplan.DatabaseHandler;
+import de.gymnasium_lappersdorf.gymlapapp.Stundenplan.Subject;
 import de.gymnasium_lappersdorf.gymlapapp.Stundenplan.SubjectView;
 
 /**
@@ -31,7 +36,6 @@ import de.gymnasium_lappersdorf.gymlapapp.Stundenplan.SubjectView;
  */
 
 public class AddHomeworkActivity extends AppCompatActivity implements NumberPicker.OnValueChangeListener {
-
     private static final String[] KLASSEN_ARRAY = new String[]{"a", "b", "c", "d", "e"};
 
     private TextView textViewDate, textViewKlasse;
@@ -42,9 +46,9 @@ public class AddHomeworkActivity extends AppCompatActivity implements NumberPick
     private Spinner klasseSpinner;
     private EditText stufenEdittext;
 
-    private SubjectView subjectView;
-
     private Hausaufgabe newHomework;
+
+    private SubjectView subjectView;
 
     //Database
     private HausaufgabenDatabaseHandler dbh;
@@ -63,7 +67,14 @@ public class AddHomeworkActivity extends AppCompatActivity implements NumberPick
 
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_MONTH, 1);
-        newHomework = new Hausaufgabe(null, null, calendar.getTimeInMillis(), 5, "a", Hausaufgabe.Types.DATE);
+        newHomework = new Hausaufgabe(
+                null,
+                null,
+                calendar.getTimeInMillis(),
+                getIntent().getIntExtra("STUFE", 5),
+                getIntent().getStringExtra("KLASSE"),
+                Hausaufgabe.Types.DATE
+        );
 
         dbh = new HausaufgabenDatabaseHandler(this);
         updateLabels();
@@ -80,7 +91,8 @@ public class AddHomeworkActivity extends AppCompatActivity implements NumberPick
     }
 
     public void onSubmit(View v) {
-        if (subjectView.validate() && checkInputs()) {
+
+        if (checkInputs() && subjectView.validate()) {
 
             newHomework.setFach(subjectView.getSubject().getName());
             newHomework.setText(textInputText.getText().toString().trim());
@@ -94,6 +106,7 @@ public class AddHomeworkActivity extends AppCompatActivity implements NumberPick
 
             finish();
         }
+
     }
 
     private void datePicker() {

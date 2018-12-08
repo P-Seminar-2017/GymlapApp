@@ -1,24 +1,17 @@
 package de.gymnasium_lappersdorf.gymlapapp.HausaufgabenPlaner;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -29,42 +22,27 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.NumberPicker;
 import android.widget.Spinner;
-import android.widget.TextView;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
 
 import de.gymnasium_lappersdorf.gymlapapp.R;
-
-import static android.app.Activity.RESULT_OK;
 
 /**
  * 01.06.2018 | created by Lukas S
  */
 
 public class HausaufgabenFragment extends Fragment implements NumberPicker.OnValueChangeListener, Spinner.OnItemSelectedListener {
-    private static final int REQUEST_ID = 1;
+
     private static final String[] KLASSEN_ARRAY = new String[]{"Alle", "a", "b", "c", "d", "e"};
 
     private View v;
-    private RecyclerView recyclerView;
-    private HomeworkRvAdapter homeworkRvAdapter;
-    private LinearLayoutManager linearLayoutManager;
+    private Toolbar tb;
     private SwipeRefreshLayout refreshLayout;
-    private TextView countLabel;
-    private Snackbar snackbarConn, snackbarRevert, snackBarAPIKey;
-    private CoordinatorLayout fabContainer;
-    private FloatingActionButton fab;
-    private ItemTouchHelper itemTouchHelper;
 
-    private JsonHandler jsonHandler;
-    private OnlineSQLHandler onlineSQLHandler;
-
-    private ArrayList<Hausaufgabe> homeworks;
+    //Tab
+    private ViewPager vp;
+    private TabLayout tl;
+    private HomeworkTabAdapter adapter;
 
     //Dialog
     private AlertDialog filterDialog;
@@ -73,24 +51,12 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
     private String klasse;
     private Spinner klasseSpinner;
 
-    //Dialog API Key
-    private AlertDialog apikeyDialog;
-    private TextInputEditText keyInput;
-
-    //Recycler swipe removing
-    private Hausaufgabe lastItem = null;
-    private int lastItemPosition = -1;
-
-    //Database
-    private HausaufgabenDatabaseHandler dbh;
-
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.fragment_homework, container, false);
         setHasOptionsMenu(true);
         createFilterDialog();
-        createAPIKeyDialog();
         return v;
     }
 
@@ -104,116 +70,67 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        getActivity().setTitle("Hausaufgaben");
-
-        fabContainer = v.findViewById(R.id.fab_container);
-
-        snackbarConn = Snackbar.make(fabContainer, "Keine Verbindung", Snackbar.LENGTH_INDEFINITE);
-        snackbarRevert = Snackbar.make(fabContainer, "Hausaufgabe erledigt", Snackbar.LENGTH_LONG);
-        snackbarRevert.setAction("Rückgängig", new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (lastItem != null) {
-                    int pos = homeworks.indexOf(lastItem);
-                    homeworks.get(pos).setDone(false);
-                    homeworkRvAdapter.restoreItem(homeworks.get(pos), lastItemPosition);
-                    updateLabel();
-                    recyclerView.smoothScrollToPosition(lastItemPosition);
-                    lastItem = null;
-                    //Updating database
-                    dbh.updateHomework(homeworks.get(pos));
-                }
-            }
-        });
-        snackBarAPIKey = Snackbar.make(fabContainer, "Offline Modus", Snackbar.LENGTH_INDEFINITE);
-        snackBarAPIKey.setAction("Online", new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showAPIKeyDialog();
-            }
-        });
-
-        fab = fabContainer.findViewById(R.id.add_homework_fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i = new Intent(getActivity(), AddHomeworkActivity.class);
-                startActivityForResult(i, REQUEST_ID);
-            }
-        });
-
-        homeworks = new ArrayList<>();
 
         refreshLayout = v.findViewById(R.id.swiperefresh_homework);
-        recyclerView = v.findViewById(R.id.homework_rv);
-
-        linearLayoutManager = new LinearLayoutManager(getActivity());
-        recyclerView.setLayoutManager(linearLayoutManager);
-
-        homeworkRvAdapter = new HomeworkRvAdapter(homeworks.toArray(new Hausaufgabe[homeworks.size()]), getContext());
-        recyclerView.setAdapter(homeworkRvAdapter);
-
-        countLabel = v.findViewById(R.id.homework_count_label);
-        updateLabel();
 
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                initDownload();
+                int index = 0;
+                TabLayout.Tab tab = tl.getTabAt(index);
+                tab.select();
+                ((HausaufgabenOnlineFragment) adapter.getItem(index)).initDownload();
             }
         });
 
-        //Swipe card to remove
-        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+        vp = view.findViewById(R.id.pager_homework);
+        adapter = new HomeworkTabAdapter(getChildFragmentManager());
+        ((HausaufgabenOnlineFragment) adapter.getItem(0)).setRefreshLayout(refreshLayout);
+        vp.setAdapter(adapter);
+
+        tl = view.findViewById(R.id.tab_layout_homework);
+        tl.addTab(tl.newTab().setText("Online"));
+        tl.addTab(tl.newTab().setText("Lokal"));
+        vp.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tl));
+        tl.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
-            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-                return false;
+            public void onTabSelected(TabLayout.Tab tab) {
+                vp.setCurrentItem(tab.getPosition());
             }
 
             @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
-                int pos = homeworks.indexOf(homeworkRvAdapter.getDataset()[viewHolder.getAdapterPosition()]);
-                homeworks.get(pos).setDone(true);
-                lastItem = homeworks.get(pos);
-                lastItemPosition = viewHolder.getAdapterPosition();
-                homeworkRvAdapter.removeItem(viewHolder.getAdapterPosition());
-                updateLabel();
-                snackbarRevert.show();
-                //Updating database
-                dbh.updateHomework(homeworks.get(pos));
-            }
-        };
-
-        itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
-        itemTouchHelper.attachToRecyclerView(recyclerView);
-
-        stufe = 5;
-        klasse = KLASSEN_ARRAY[0];
-
-        //Database
-        dbh = new HausaufgabenDatabaseHandler(v.getContext());
-
-        if (dbh.getHomeworkCount() > 0) {
-            //load content of db
-            Hausaufgabe[] hw_db = dbh.getAllHomeworks();
-
-            Collections.addAll(homeworks, hw_db);
-
-            //Removing all local homeworks that are marked as done
-            Iterator it = homeworks.iterator();
-            Hausaufgabe temp;
-            while (it.hasNext()) {
-                temp = (Hausaufgabe) it.next();
-                if (temp.isDone() && !temp.isFromInternet()) {
-                    it.remove();
-                    dbh.deleteHomework(temp);
-                }
+            public void onTabUnselected(TabLayout.Tab tab) {
             }
 
-            filter(stufe, klasse);
-        } else {
-            initDownload();
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+            }
+        });
+
+        resetFilterAttributes();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        tb = ((Activity) context).findViewById(R.id.toolbar_main);
+        try {
+            tb.setElevation(0);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
         }
+
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        try {
+            tb.setElevation(4);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override
@@ -259,28 +176,6 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
     public void onNothingSelected(AdapterView<?> adapterView) {
     }
 
-    //Adding new homework to "homeworks"
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        if (requestCode == REQUEST_ID) {
-
-            if (resultCode == RESULT_OK) {
-                long id = data.getExtras().getLong("HW_ID");
-
-                Hausaufgabe temp = dbh.getHomework(id);
-
-                homeworks.add(temp);
-
-                stufe = temp.getStufe();
-                klasse = temp.getKurs();
-
-                filter(stufe, klasse);
-            }
-
-        }
-    }
-
     //creating dialog once for better performance
     private void createFilterDialog() {
 
@@ -313,22 +208,14 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
         builder.setNegativeButton("Reset", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                resetFilter();
+                resetFilterAttributes();
                 filter(stufe, klasse);
             }
         });
-
-        //TODO Remove in release
-        builder.setNeutralButton("Dev", new DialogInterface.OnClickListener() {
+        builder.setNeutralButton("Alles", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int id) {
-                for (int i = 0; i < homeworks.size(); i++) {
-                    if (homeworks.get(i).isDone()) {
-                        homeworks.get(i).setDone(false);
-                        dbh.updateHomework(homeworks.get(i));
-                    }
-                }
-                resetFilter();
+                showAll();
             }
         });
 
@@ -343,229 +230,19 @@ public class HausaufgabenFragment extends Fragment implements NumberPicker.OnVal
         filterDialog.show();
     }
 
-    //creating dialog once for better performance
-    private void createAPIKeyDialog() {
-        LayoutInflater inflater = this.getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.homework_api_key_dialog, null);
-
-        keyInput = dialogView.findViewById(R.id.homework_input_api_key);
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
-        builder.setTitle("API Schlüssel eintragen");
-
-        builder.setView(dialogView);
-
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                saveAPIKey(keyInput.getText().toString());
-                initDownload();
-            }
-        });
-        builder.setNegativeButton("Zurück", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-                initDownload();
-            }
-        });
-
-        builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
-            @Override
-            public void onCancel(DialogInterface dialogInterface) {
-                initDownload();
-            }
-        });
-
-        apikeyDialog = builder.create();
-    }
-
-    private void showAPIKeyDialog() {
-        //Default value
-        String defKey = loadAPIKey();
-        if (defKey != null) keyInput.setText(defKey);
-
-        apikeyDialog.show();
-    }
-
-    //checks for internet connection
-    public static boolean isNetworkConnected(Context context) {
-        ConnectivityManager con = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = con.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
-    }
-
-    private void updateLabel() {
-        if (homeworkRvAdapter.getItemCount() == 0) {
-            countLabel.setText("Keine Einträge");
-        } else {
-            countLabel.setText("Einträge: " + homeworkRvAdapter.getItemCount());
-        }
-    }
-
-    private void initDownload() {
-        if (isNetworkConnected(getActivity())) {
-            refreshLayout.setRefreshing(true);
-            onlineSQLHandler = new OnlineSQLHandler(loadAPIKey(), "http://api.lakinator.bplaced.net/request.php", OnlineSQLHandler.RequestTypes.ALL, new OnlineSQLHandler.SQLCallback() {
-                @Override
-                public void onDataReceived(JsonHandler jsonHandler) {
-                    HausaufgabenFragment.this.jsonHandler = jsonHandler;
-                    processData();
-                }
-            });
-
-            onlineSQLHandler.execute();
-        } else {
-            snackbarConn.show();
-            refreshLayout.setRefreshing(false);
-        }
-    }
-
-    private void processData() {
-
-        if (jsonHandler.getSuccess()) {
-
-            for (int i = 0; i < jsonHandler.getLength(); i++) {
-                Hausaufgabe.Types hw_type;
-                Hausaufgabe neu;
-
-                switch (jsonHandler.getType(i)) {
-                    default:
-                        hw_type = Hausaufgabe.Types.DATE;
-                        break;
-                    case "DATE":
-                        hw_type = Hausaufgabe.Types.DATE;
-                        break;
-                    case "NEXT":
-                        hw_type = Hausaufgabe.Types.NEXT;
-                        break;
-                    case "NEXT2":
-                        hw_type = Hausaufgabe.Types.NEXT2;
-                        break;
-                }
-
-                //TODO if "next" or "next2" -> calculate time with values from stundenplan
-
-                //Text from database is URI encoded
-                String text = jsonHandler.getText(i);
-                String fach = jsonHandler.getFach(i);
-                try {
-                    text = URLDecoder.decode(text.replace("+", "%2B"), "UTF-8").replace("%2B", "+");
-                    fach = URLDecoder.decode(fach.replace("+", "%2B"), "UTF-8").replace("%2B", "+");
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-
-                neu = new Hausaufgabe(
-                        fach,
-                        text,
-                        jsonHandler.getDate(i),
-                        Integer.parseInt(jsonHandler.getKlasse(i)),
-                        jsonHandler.getStufe(i),
-                        Hausaufgabe.Types.DATE);
-
-                neu.setInternetId(jsonHandler.getID(i));
-
-                if (homeworks.indexOf(neu) != -1) {
-                    //Homework alredy exists -> update it
-                    int index = homeworks.indexOf(neu);
-                    neu.setDatabaseId(homeworks.get(index).getDatabaseId());
-                    neu.setInternetId(homeworks.get(index).getInternetId());
-                    neu.setDone(homeworks.get(index).isDone());
-
-                    homeworks.set(index, neu);
-                    //Updating database
-                    dbh.updateHomework(homeworks.get(index));
-                } else {
-                    homeworks.add(neu);
-
-                    //Add new homework to database
-                    long id = dbh.addHomework(homeworks.get(i));
-                    homeworks.get(i).setDatabaseId(id);
-                }
-
-            }
-
-            //Removing all internet homeworks that aren't mentioned in the new data
-            Iterator it = homeworks.iterator();
-            Hausaufgabe temp;
-            while (it.hasNext()) {
-                temp = (Hausaufgabe) it.next();
-                if (!jsonHandler.contains(temp) && temp.isFromInternet()) {
-                    it.remove();
-                    dbh.deleteHomework(temp);
-                }
-            }
-
-            snackBarAPIKey.dismiss();
-            filter(stufe, klasse);
-        } else {
-            //No success
-            snackBarAPIKey.show();
-        }
-
-        snackbarConn.dismiss();
-        refreshLayout.setRefreshing(false);
-    }
-
     private void filter(int stufe, String klasse) {
-        ArrayList<Hausaufgabe> temp_new_items = new ArrayList<>();
-
-        for (int i = 0; i < homeworks.size(); i++) {
-
-            if (klasse.equals(KLASSEN_ARRAY[0])) {
-                //Alle sind ausgewählt
-
-                if (stufe == homeworks.get(i).getStufe() && !homeworks.get(i).isDone()) {
-                    temp_new_items.add(homeworks.get(i));
-                }
-
-            } else {
-                //Es wird pro klasse unterschieden
-
-                if (stufe == homeworks.get(i).getStufe() && klasse.equals(homeworks.get(i).getKurs()) && !homeworks.get(i).isDone()) {
-                    temp_new_items.add(homeworks.get(i));
-                }
-            }
-
-        }
-
-        homeworkRvAdapter.setDataset(temp_new_items.toArray(new Hausaufgabe[temp_new_items.size()]));
-        homeworkRvAdapter.notifyDataSetChanged();
-        updateLabel();
+        ((HausaufgabenTabFragment) adapter.getItem(0)).filter(stufe, klasse);
+        ((HausaufgabenTabFragment) adapter.getItem(1)).filter(stufe, klasse);
     }
 
-    private void resetFilter() {
-        ArrayList<Hausaufgabe> temp_new_items = new ArrayList<>();
+    private void showAll() {
+        ((HausaufgabenTabFragment) adapter.getItem(0)).showAll();
+        ((HausaufgabenTabFragment) adapter.getItem(1)).showAll();
+    }
 
+    private void resetFilterAttributes() {
         stufe = 5;
         klasse = KLASSEN_ARRAY[0];
-
-        //TODO currently displays all homeworks -> used for "dev" dialog -> on release change to filter(..., ...);
-        for (int i = 0; i < homeworks.size(); i++) {
-
-            if (!homeworks.get(i).isDone()) {
-                temp_new_items.add(homeworks.get(i));
-            }
-
-        }
-
-        homeworkRvAdapter.setDataset(temp_new_items.toArray(new Hausaufgabe[temp_new_items.size()]));
-        homeworkRvAdapter.notifyDataSetChanged();
-        updateLabel();
-    }
-
-    private void saveAPIKey(String key) {
-        SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString(getString(R.string.shared_pref_api), key);
-        editor.apply();
-    }
-
-    private String loadAPIKey() {
-        SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
-        //default value is null !!
-        return sharedPref.getString(getString(R.string.shared_pref_api), null);
     }
 
 }
