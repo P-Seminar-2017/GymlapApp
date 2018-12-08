@@ -56,16 +56,12 @@ public abstract class HausaufgabenTabFragment extends Fragment {
     }
 
     protected void updateLabel() {
-        if (homeworkRvAdapter.getItemCount() == 0) {
-            if (klasse == KLASSEN_ARRAY[0])
-                countLabel.setText("Keine Einträge für die " + stufe + ". Klasse");
-            else countLabel.setText("Keine Einträge für " + stufe + " " + klasse);
-        } else {
-            if (klasse == KLASSEN_ARRAY[0])
-                countLabel.setText(homeworkRvAdapter.getItemCount() + (homeworkRvAdapter.getItemCount() > 1 ? " Einträge" : " Eintrag") + " für die " + stufe + ". Klasse");
-            else
-                countLabel.setText(homeworkRvAdapter.getItemCount() + (homeworkRvAdapter.getItemCount() > 1 ? " Einträge" : " Eintrag") + " für " + stufe + " " + klasse);
-        }
+        int count = homeworkRvAdapter.getItemCount();
+
+        if (klasse == KLASSEN_ARRAY[0])
+            countLabel.setText((count == 0 ? "Kein" : homeworkRvAdapter.getItemCount()) + (homeworkRvAdapter.getItemCount() > 1 ? " Einträge" : " Eintrag") + " für die " + stufe + ". Klasse");
+        else
+            countLabel.setText((count == 0 ? "Kein" : homeworkRvAdapter.getItemCount()) + (homeworkRvAdapter.getItemCount() > 1 ? " Einträge" : " Eintrag") + " für " + stufe + " " + klasse);
     }
 
     protected void filter(int stufe, String klasse) {
