@@ -1,6 +1,7 @@
 package de.gymnasium_lappersdorf.gymlapapp.HausaufgabenPlaner;
 
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -21,6 +22,7 @@ import android.view.View;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 
@@ -32,8 +34,8 @@ import de.gymnasium_lappersdorf.gymlapapp.R;
 public class HausaufgabenOnlineFragment extends HausaufgabenTabFragment {
 
     //Internet
-    private JsonHandler jsonHandler;
-    private OnlineSQLHandler onlineSQLHandler;
+    private JsonHandlerHomework jsonHandler;
+    private OnlineSQLHandlerHomework onlineSQLHandlerHomework;
     private Snackbar snackbarConn, snackBarAPIKey;
     private SwipeRefreshLayout refreshLayout;
 
@@ -45,6 +47,7 @@ public class HausaufgabenOnlineFragment extends HausaufgabenTabFragment {
         this.refreshLayout = refreshLayout;
     }
 
+    @SuppressLint("RestrictedApi")
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -164,15 +167,15 @@ public class HausaufgabenOnlineFragment extends HausaufgabenTabFragment {
     public void initDownload() {
         if (isNetworkConnected(getActivity())) {
             refreshLayout.setRefreshing(true);
-            onlineSQLHandler = new OnlineSQLHandler(loadAPIKey(), "http://api.lakinator.bplaced.net/request.php", OnlineSQLHandler.RequestTypes.ALL, new OnlineSQLHandler.SQLCallback() {
+            onlineSQLHandlerHomework = new OnlineSQLHandlerHomework(loadAPIKey(), "http://api.lakinator.bplaced.net/request.php", OnlineSQLHandlerHomework.RequestTypes.ALL, new OnlineSQLHandlerHomework.SQLCallback() {
                 @Override
-                public void onDataReceived(JsonHandler jsonHandler) {
+                public void onDataReceived(JsonHandlerHomework jsonHandler) {
                     HausaufgabenOnlineFragment.this.jsonHandler = jsonHandler;
                     processData();
                 }
             });
 
-            onlineSQLHandler.execute();
+            onlineSQLHandlerHomework.execute();
         } else {
             snackbarConn.show();
             refreshLayout.setRefreshing(false);

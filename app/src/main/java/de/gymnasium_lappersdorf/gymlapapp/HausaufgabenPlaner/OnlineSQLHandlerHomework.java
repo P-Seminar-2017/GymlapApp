@@ -13,14 +13,14 @@ import java.net.URL;
  */
 
 
-public class OnlineSQLHandler extends AsyncTask<Hausaufgabe, String, String> {
+public class OnlineSQLHandlerHomework extends AsyncTask<Hausaufgabe, String, String> {
     private String key;
     private String apiDomain;
     private SQLCallback sqlCallback;
     private RequestTypes requestType;
 
     public interface SQLCallback {
-        void onDataReceived(JsonHandler jsonHandler);
+        void onDataReceived(JsonHandlerHomework jsonHandler);
     }
 
     public enum RequestTypes {
@@ -28,7 +28,7 @@ public class OnlineSQLHandler extends AsyncTask<Hausaufgabe, String, String> {
     }
 
 
-    public OnlineSQLHandler(String key, String apiDomain, RequestTypes requestType, SQLCallback callback) {
+    public OnlineSQLHandlerHomework(String key, String apiDomain, RequestTypes requestType, SQLCallback callback) {
         this.sqlCallback = callback;
         this.requestType = requestType;
         this.key = key;
@@ -104,7 +104,7 @@ public class OnlineSQLHandler extends AsyncTask<Hausaufgabe, String, String> {
     @Override
     protected void onPostExecute(String s) {
 
-        this.sqlCallback.onDataReceived(new JsonHandler(s));
+        this.sqlCallback.onDataReceived(new JsonHandlerHomework(s));
 
     }
 }

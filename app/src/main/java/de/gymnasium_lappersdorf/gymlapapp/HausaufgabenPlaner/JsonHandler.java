@@ -1,19 +1,18 @@
 package de.gymnasium_lappersdorf.gymlapapp.HausaufgabenPlaner;
 
+import android.support.annotation.NonNull;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * 20.01.2018
- * Created by Lukas S
+ * 08.12.2018 | created by Lukas S
  */
-
-
-public class JsonHandler {
-    private boolean success;
-    private String jsonString;
-    private JSONObject[] dataArray;
+public abstract class JsonHandler {
+    protected boolean success;
+    protected String jsonString;
+    protected JSONObject[] dataArray;
 
     public JsonHandler(String jsonString) {
         this.jsonString = jsonString;
@@ -38,7 +37,6 @@ public class JsonHandler {
             e.printStackTrace();
             success = false;
         }
-
     }
 
     public int getLength() {
@@ -49,40 +47,8 @@ public class JsonHandler {
         return success;
     }
 
-
-    public long getID(int position) {
-        return getLong(position, "id");
-    }
-
-    public String getFach(int position) {
-        return getString(position, "fach");
-    }
-
-    //Klasse entspricht z.B. 9 oder 10
-    public String getKlasse(int position) {
-        return getString(position, "klasse");
-    }
-
-    //Stufe entspricht z.B. a oder 1m3
-    public String getStufe(int position) {
-        return getString(position, "stufe");
-    }
-
-    public String getType(int position) {
-        return getString(position, "type");
-    }
-
-    public long getDate(int position) {
-        return getLong(position, "date");
-    }
-
-    public String getText(int position) {
-        return getString(position, "text");
-    }
-
-
-    private int getInt(int position, String name) {
-        if (!success) return -1;
+    protected int getInt(int position, String name) {
+        if (!success || position < 0 || position >= getLength()) return -1;
 
         try {
             return dataArray[position].getInt(name);
@@ -92,8 +58,8 @@ public class JsonHandler {
         }
     }
 
-    private String getString(int position, String name) {
-        if (!success) return null;
+    protected String getString(int position, String name) {
+        if (!success || position < 0 || position >= getLength()) return null;
 
         try {
             return dataArray[position].getString(name);
@@ -103,8 +69,48 @@ public class JsonHandler {
         }
     }
 
-    private long getLong(int position, String name) {
-        if (!success) return -1;
+    protected String[] getStringArray(int position, String name) {
+        if (!success || position < 0 || position >= getLength()) return null;
+
+        String[] retArr = new String[0];
+
+        try {
+            JSONArray arr = dataArray[position].getJSONArray(name);
+            retArr = new String[arr.length()];
+
+            for (int i = 0; i < retArr.length; i++) {
+                retArr[i] = arr.getString(i);
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return retArr;
+    }
+
+    protected int[] getIntArray(int position, String name) {
+        if (!success || position < 0 || position >= getLength()) return null;
+
+        int[] retArr = new int[0];
+
+        try {
+            JSONArray arr = dataArray[position].getJSONArray(name);
+            retArr = new int[arr.length()];
+
+            for (int i = 0; i < retArr.length; i++) {
+                retArr[i] = arr.getInt(i);
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return retArr;
+    }
+
+    protected long getLong(int position, String name) {
+        if (!success || position < 0 || position >= getLength()) return -1;
 
         try {
             return dataArray[position].getLong(name);
@@ -114,19 +120,7 @@ public class JsonHandler {
         }
     }
 
-    public boolean contains(Hausaufgabe h) {
-        boolean contains = false;
-
-        for (int i = 0; i < getLength(); i++) {
-            if (h.getInternetId() == getID(i)) {
-                contains = true;
-                break;
-            }
-        }
-
-        return contains;
-    }
-
+    @NonNull
     @Override
     public String toString() {
         return jsonString;
