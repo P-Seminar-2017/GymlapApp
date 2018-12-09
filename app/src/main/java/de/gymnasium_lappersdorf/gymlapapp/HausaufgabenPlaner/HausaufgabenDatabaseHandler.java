@@ -19,6 +19,7 @@ public class HausaufgabenDatabaseHandler extends SQLiteOpenHelper {
     //Table Columns names
     private static final String KEY_ID = "id";
     private static final String KEY_INTERNET_ID = "internet_id";
+    private static final String KEY_NOTIFICATION_ID = "notification_id";
     private static final String KEY_FACH = "fach";
     private static final String KEY_TEXT = "quest";
     private static final String KEY_TIMETOBEDONE = "timetobedone";
@@ -37,6 +38,7 @@ public class HausaufgabenDatabaseHandler extends SQLiteOpenHelper {
         String CREATE_TABLE = "CREATE TABLE " + DATABASE_TABLE + "(" +
                 KEY_ID + " INTEGER PRIMARY KEY," +
                 KEY_INTERNET_ID + " INT," +
+                KEY_NOTIFICATION_ID + " INT," +
                 KEY_FACH + " TEXT," +
                 KEY_TEXT + " TEXT," +
                 KEY_TIMETOBEDONE + " TEXT," +
@@ -63,6 +65,7 @@ public class HausaufgabenDatabaseHandler extends SQLiteOpenHelper {
 
 
         values.put(KEY_INTERNET_ID, h.getInternetId());
+        values.put(KEY_NOTIFICATION_ID, h.getNotificationId());
         values.put(KEY_FACH, h.getFach());
         values.put(KEY_TEXT, h.getText());
         values.put(KEY_TIMETOBEDONE, h.getTimestamp());
@@ -79,19 +82,20 @@ public class HausaufgabenDatabaseHandler extends SQLiteOpenHelper {
     //read Homework from Database
     public Hausaufgabe getHomework(long id) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(DATABASE_TABLE, new String[]{KEY_ID, KEY_INTERNET_ID, KEY_FACH, KEY_TEXT, KEY_TIMETOBEDONE, KEY_DONE, KEY_KURS, KEY_STUFE},
+        Cursor cursor = db.query(DATABASE_TABLE, new String[]{KEY_ID, KEY_INTERNET_ID, KEY_NOTIFICATION_ID, KEY_FACH, KEY_TEXT, KEY_TIMETOBEDONE, KEY_DONE, KEY_KURS, KEY_STUFE},
                 KEY_ID + "=?",
                 new String[]{String.valueOf(id)}, null, null, null, null);
         if (cursor != null) {
             cursor.moveToFirst();
         }
 
-        Hausaufgabe h = new Hausaufgabe(cursor.getString(2), cursor.getString(3), Long.parseLong(cursor.getString(4)),
-                cursor.getInt(7), cursor.getString(6), Hausaufgabe.Types.DATE);
+        Hausaufgabe h = new Hausaufgabe(cursor.getString(3), cursor.getString(4), Long.parseLong(cursor.getString(5)),
+                cursor.getInt(8), cursor.getString(7), Hausaufgabe.Types.DATE);
 
-        h.setDone(cursor.getInt(5) == 1);
+        h.setDone(cursor.getInt(6) == 1);
         h.setDatabaseId(cursor.getLong(0));
         h.setInternetId(cursor.getLong(1));
+        h.setNotificationId(cursor.getInt(2));
 
         cursor.close();
         return h;
@@ -135,6 +139,7 @@ public class HausaufgabenDatabaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(KEY_INTERNET_ID, h.getInternetId());
+        values.put(KEY_NOTIFICATION_ID, h.getNotificationId());
         values.put(KEY_FACH, h.getFach());
         values.put(KEY_TEXT, h.getText());
         values.put(KEY_TIMETOBEDONE, h.getTimestamp());

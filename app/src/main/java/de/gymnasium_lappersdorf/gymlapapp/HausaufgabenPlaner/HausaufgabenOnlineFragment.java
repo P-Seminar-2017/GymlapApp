@@ -15,14 +15,12 @@ import android.support.design.widget.TextInputEditText;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 
@@ -56,7 +54,14 @@ public class HausaufgabenOnlineFragment extends HausaufgabenTabFragment {
 
         recyclerView = v.findViewById(R.id.homework_rv);
 
-        homeworkRvAdapter = new HomeworkRvAdapter(new Hausaufgabe[0], getActivity());
+        homeworkRvAdapter = new HomeworkRvAdapter(new Hausaufgabe[0], getActivity(), new HomeworkRvAdapter.DatasetChangeListener() {
+            @Override
+            public void onNotificationIdChanged(Hausaufgabe h) {
+                int index = homeworks.indexOf(h);
+                homeworks.get(index).setNotificationId(h.getNotificationId());
+                dbh.updateHomework(homeworks.get(index));
+            }
+        });
         recyclerView.setAdapter(homeworkRvAdapter);
 
         linearLayoutManager = new LinearLayoutManager(getActivity());
@@ -87,7 +92,7 @@ public class HausaufgabenOnlineFragment extends HausaufgabenTabFragment {
 
     @Override
     public void updateDataset() {
-        dbh = new HausaufgabenDatabaseHandler(v.getContext());
+        dbh = new HausaufgabenDatabaseHandler(getActivity());
         homeworks = new ArrayList<>();
 
         if (dbh.getHomeworkCount() > 0) {
@@ -105,9 +110,9 @@ public class HausaufgabenOnlineFragment extends HausaufgabenTabFragment {
                     it.remove();
                 }
             }
-        } else {
-            initDownload();
         }
+
+        if (homeworks.size() == 0) initDownload();
 
         filter(stufe, klasse);
     }
@@ -255,7 +260,6 @@ public class HausaufgabenOnlineFragment extends HausaufgabenTabFragment {
                 if (!jsonHandler.contains(temp) && temp.isFromInternet()) {
                     it.remove();
                     dbh.deleteHomework(temp);
-                    Log.d("kjsbcd", "rnewjjwnewn");
                 }
             }
 

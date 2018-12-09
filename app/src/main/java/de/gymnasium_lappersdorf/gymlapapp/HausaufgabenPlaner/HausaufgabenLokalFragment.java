@@ -40,7 +40,14 @@ public class HausaufgabenLokalFragment extends HausaufgabenTabFragment {
 
         recyclerView = v.findViewById(R.id.homework_rv);
 
-        homeworkRvAdapter = new HomeworkRvAdapter(new Hausaufgabe[0], getActivity());
+        homeworkRvAdapter = new HomeworkRvAdapter(new Hausaufgabe[0], getActivity(), new HomeworkRvAdapter.DatasetChangeListener() {
+            @Override
+            public void onNotificationIdChanged(Hausaufgabe h) {
+                int index = homeworks.indexOf(h);
+                homeworks.get(index).setNotificationId(h.getNotificationId());
+                dbh.updateHomework(homeworks.get(index));
+            }
+        });
         recyclerView.setAdapter(homeworkRvAdapter);
 
         linearLayoutManager = new LinearLayoutManager(getActivity());
@@ -130,7 +137,7 @@ public class HausaufgabenLokalFragment extends HausaufgabenTabFragment {
 
     @Override
     public void updateDataset() {
-        dbh = new HausaufgabenDatabaseHandler(v.getContext());
+        dbh = new HausaufgabenDatabaseHandler(getActivity());
         homeworks = new ArrayList<>();
 
         if (dbh.getHomeworkCount() > 0) {

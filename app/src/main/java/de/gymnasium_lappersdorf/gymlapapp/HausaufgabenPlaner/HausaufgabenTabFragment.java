@@ -49,12 +49,6 @@ public abstract class HausaufgabenTabFragment extends Fragment {
         return v;
     }
 
-    protected void showAll() {
-        homeworkRvAdapter.setDataset(homeworks.toArray(new Hausaufgabe[]{}));
-        homeworkRvAdapter.notifyDataSetChanged();
-        updateLabel();
-    }
-
     protected void updateLabel() {
         int count = homeworkRvAdapter.getItemCount();
 

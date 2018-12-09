@@ -7,4 +7,6 @@
         <item>Einzelstunde</item>
     </string-array>
     <string name="shared_pref_api">SHARED_API_KEY</string>
+    <string name="shared_pref_notification_id_key">GYMLAP_SHARED_NOTIFICATION_ID_KEY</string>
+    <string name="shared_pref_notification_id">GYMLAP_SHARED_NOTIFICATION_ID</string>
 </resources>

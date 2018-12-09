@@ -1,7 +1,12 @@
 package de.gymnasium_lappersdorf.gymlapapp.HausaufgabenPlaner;
 
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.Context;
+
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by lmatn on 01.03.2018.
@@ -10,6 +15,7 @@ import java.util.Date;
 public class Hausaufgabe {
     private long databaseId; //-1 if not in database already
     private long internetId; //-1 if not from internet
+    private int notificationId;
     private String fach;
     private String text;
     private long date;
@@ -22,6 +28,7 @@ public class Hausaufgabe {
     public Hausaufgabe(String fach, String text, long date, int stufe, String kurs, Types type) {
         this.internetId = -1;
         this.databaseId = -1;
+        this.notificationId = -1;
         this.fach = fach;
         this.text = text;
         this.date = date;
@@ -91,6 +98,10 @@ public class Hausaufgabe {
         this.kurs = kurs;
     }
 
+    public void setNotificationId(int notificationId) {
+        this.notificationId = notificationId;
+    }
+
     public long getTimestamp() {
         return date;
     }
@@ -121,6 +132,25 @@ public class Hausaufgabe {
 
     public boolean isFromInternet() {
         return internetId != -1;
+    }
+
+    public int getNotificationId() {
+        return notificationId;
+    }
+
+    public boolean isSetAsNotification(Context c) {
+        JobScheduler jobScheduler = (JobScheduler) c.getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        List<JobInfo> jobs = jobScheduler.getAllPendingJobs();
+        boolean alreadySet = false;
+
+        for (int i = 0; i < jobs.size(); i++) {
+            if (jobs.get(i).getId() == notificationId) {
+                alreadySet = true;
+                break;
+            }
+        }
+
+        return alreadySet;
     }
 
     @Override
