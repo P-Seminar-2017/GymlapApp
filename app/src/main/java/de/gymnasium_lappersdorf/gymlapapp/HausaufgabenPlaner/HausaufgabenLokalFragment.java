@@ -4,11 +4,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,49 +41,49 @@ public class HausaufgabenLokalFragment extends HausaufgabenTabFragment {
         super.onViewCreated(view, savedInstanceState);
 
 
-        recyclerView = v.findViewById(R.id.homework_rv);
+        setRecyclerView((RecyclerView) getV().findViewById(R.id.homework_rv));
 
-        homeworkRvAdapter = new HomeworkRvAdapter(new Hausaufgabe[0], getActivity(), new HomeworkRvAdapter.DatasetChangeListener() {
+        setHomeworkRvAdapter(new HomeworkRvAdapter(new Hausaufgabe[0], getActivity(), new HomeworkRvAdapter.DatasetChangeListener() {
             @Override
             public void onNotificationIdChanged(Hausaufgabe h) {
-                int index = homeworks.indexOf(h);
-                homeworks.get(index).setNotificationId(h.getNotificationId());
-                dbh.updateHomework(homeworks.get(index));
+                int index = getHomeworks().indexOf(h);
+                getHomeworks().get(index).setNotificationId(h.getNotificationId());
+                getDbh().updateHomework(getHomeworks().get(index));
             }
-        });
-        recyclerView.setAdapter(homeworkRvAdapter);
+        }));
+        getRecyclerView().setAdapter(getHomeworkRvAdapter());
 
-        linearLayoutManager = new LinearLayoutManager(getActivity());
-        recyclerView.setLayoutManager(linearLayoutManager);
+        setLinearLayoutManager(new LinearLayoutManager(getActivity()));
+        getRecyclerView().setLayoutManager(getLinearLayoutManager());
 
-        countLabel = v.findViewById(R.id.homework_count_label);
+        setCountLabel((TextView) getV().findViewById(R.id.homework_count_label));
 
 
-        fab = v.findViewById(R.id.add_homework_fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        setFab((FloatingActionButton) getV().findViewById(R.id.add_homework_fab));
+        getFab().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(getActivity(), AddHomeworkActivity.class);
-                i.putExtra("STUFE", stufe);
-                i.putExtra("KLASSE", klasse == KLASSEN_ARRAY[0] ? "a" : klasse);
+                i.putExtra("STUFE", getStufe());
+                i.putExtra("KLASSE", getKlasse() == getKlassenArray()[0] ? "a" : getKlasse());
                 startActivityForResult(i, REQUEST_ID);
             }
         });
-        fabContainer = v.findViewById(R.id.fab_container);
+        setFabContainer((CoordinatorLayout) getV().findViewById(R.id.fab_container));
 
-        snackbarRevert = Snackbar.make(fabContainer, "Hausaufgabe erledigt", Snackbar.LENGTH_LONG);
+        snackbarRevert = Snackbar.make(getFabContainer(), "Hausaufgabe erledigt", Snackbar.LENGTH_LONG);
         snackbarRevert.setAction("Rückgängig", new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (lastItem != null) {
-                    int pos = homeworks.indexOf(lastItem);
-                    homeworks.get(pos).setDone(false);
-                    homeworkRvAdapter.restoreItem(homeworks.get(pos), lastItemPosition);
+                    int pos = getHomeworks().indexOf(lastItem);
+                    getHomeworks().get(pos).setDone(false);
+                    getHomeworkRvAdapter().restoreItem(getHomeworks().get(pos), lastItemPosition);
                     updateLabel();
-                    recyclerView.smoothScrollToPosition(lastItemPosition);
+                    getRecyclerView().smoothScrollToPosition(lastItemPosition);
                     lastItem = null;
                     //Updating database
-                    dbh.updateHomework(homeworks.get(pos));
+                    getDbh().updateHomework(getHomeworks().get(pos));
                 }
             }
         });
@@ -94,23 +97,23 @@ public class HausaufgabenLokalFragment extends HausaufgabenTabFragment {
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
-                int pos = homeworks.indexOf(homeworkRvAdapter.getDataset()[viewHolder.getAdapterPosition()]);
-                homeworks.get(pos).setDone(true);
-                lastItem = homeworks.get(pos);
+                int pos = getHomeworks().indexOf(getHomeworkRvAdapter().getDataset()[viewHolder.getAdapterPosition()]);
+                getHomeworks().get(pos).setDone(true);
+                lastItem = getHomeworks().get(pos);
                 lastItemPosition = viewHolder.getAdapterPosition();
-                homeworkRvAdapter.removeItem(viewHolder.getAdapterPosition());
+                getHomeworkRvAdapter().removeItem(viewHolder.getAdapterPosition());
                 updateLabel();
                 snackbarRevert.show();
                 //Updating database
-                dbh.updateHomework(homeworks.get(pos));
+                getDbh().updateHomework(getHomeworks().get(pos));
             }
         };
 
         itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
-        itemTouchHelper.attachToRecyclerView(recyclerView);
+        itemTouchHelper.attachToRecyclerView(getRecyclerView());
 
-        stufe = 5;
-        klasse = KLASSEN_ARRAY[0];
+        setStufe(5);
+        setKlasse(getKlassenArray()[0]);
 
         updateDataset();
         updateLabel();
@@ -125,9 +128,9 @@ public class HausaufgabenLokalFragment extends HausaufgabenTabFragment {
             if (resultCode == RESULT_OK) {
                 long id = data.getExtras().getLong("HW_ID");
 
-                Hausaufgabe temp = dbh.getHomework(id);
+                Hausaufgabe temp = getDbh().getHomework(id);
 
-                homeworks.add(temp);
+                getHomeworks().add(temp);
 
                 filter(temp.getStufe(), temp.getKurs());
             }
@@ -137,32 +140,32 @@ public class HausaufgabenLokalFragment extends HausaufgabenTabFragment {
 
     @Override
     public void updateDataset() {
-        dbh = new HausaufgabenDatabaseHandler(getActivity());
-        homeworks = new ArrayList<>();
+        setDbh(new HausaufgabenDatabaseHandler(getActivity()));
+        setHomeworks(new ArrayList<Hausaufgabe>());
 
-        if (dbh.getHomeworkCount() > 0) {
+        if (getDbh().getHomeworkCount() > 0) {
             //load content of db
-            Hausaufgabe[] hw_db = dbh.getAllHomeworks();
+            Hausaufgabe[] hw_db = getDbh().getAllHomeworks();
 
-            Collections.addAll(homeworks, hw_db);
+            Collections.addAll(getHomeworks(), hw_db);
 
             //Removing all local homeworks that are marked as done and all online homeworks
-            Iterator it = homeworks.iterator();
+            Iterator it = getHomeworks().iterator();
             Hausaufgabe temp;
             while (it.hasNext()) {
                 temp = (Hausaufgabe) it.next();
                 if (temp.isDone() && !temp.isFromInternet()) {
                     it.remove();
-                    dbh.deleteHomework(temp);
+                    getDbh().deleteHomework(temp);
                 } else if (temp.isFromInternet()) {
                     it.remove();
                 }
             }
         } else {
-            homeworks = new ArrayList<>(); //TODO: Remove
+            setHomeworks(new ArrayList<Hausaufgabe>()); //TODO: Remove
         }
 
-        filter(stufe, klasse);
+        filter(getStufe(), getKlasse());
     }
 
 }

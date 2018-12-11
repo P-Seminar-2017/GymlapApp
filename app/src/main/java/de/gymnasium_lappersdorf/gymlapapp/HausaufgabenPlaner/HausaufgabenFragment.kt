@@ -44,9 +44,7 @@ class HausaufgabenFragment : Fragment(), NumberPicker.OnValueChangeListener, Ada
     private var klasse: String? = null
     private var klasseSpinner: Spinner? = null
 
-    companion object {
-        private val KLASSEN_ARRAY = arrayOf("Alle", "a", "b", "c", "d", "e")
-    }
+    private val klassenArray = arrayOf("Alle", "a", "b", "c", "d", "e")
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         v = inflater.inflate(R.layout.fragment_homework, container, false)
@@ -130,22 +128,23 @@ class HausaufgabenFragment : Fragment(), NumberPicker.OnValueChangeListener, Ada
     //Numberpicker
     override fun onValueChange(numberPicker: NumberPicker, oldVal: Int, newVal: Int) {
 
-        if (oldVal != newVal) {
-            if (newVal > 10) {
-                klasseSpinner!!.setSelection(0)
-                klasseSpinner!!.isEnabled = false
-            } else {
-                klasseSpinner!!.isEnabled = true
-            }
-
-            stufe = newVal
-            filter(stufe, klasse)
+        if (newVal >= 11 && newVal != oldVal) {
+            val adapter = ArrayAdapter<CharSequence>(v!!.context, android.R.layout.simple_spinner_item, getKurse(newVal))
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            klasseSpinner!!.adapter = adapter
+        } else if (newVal <= 10 && oldVal >= 11 && newVal != oldVal) {
+            val adapter = ArrayAdapter<CharSequence>(v!!.context, android.R.layout.simple_spinner_item, klassenArray)
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            klasseSpinner!!.adapter = adapter
         }
+
+        stufe = newVal
+        filter(stufe, klasse)
     }
 
     //Spinner
     override fun onItemSelected(adapterView: AdapterView<*>, view: View, pos: Int, id: Long) {
-        klasse = KLASSEN_ARRAY[pos]
+        klasse = klasseSpinner!!.selectedItem as String
         filter(stufe, klasse)
     }
 
@@ -168,14 +167,12 @@ class HausaufgabenFragment : Fragment(), NumberPicker.OnValueChangeListener, Ada
         stufenPicker!!.setOnValueChangedListener(this)
 
         klasseSpinner = dialogView.findViewById(R.id.filter_spinner)
-        val adapter = ArrayAdapter<CharSequence>(v!!.context, android.R.layout.simple_spinner_item, KLASSEN_ARRAY)
+        val adapter = ArrayAdapter<CharSequence>(v!!.context, android.R.layout.simple_spinner_item, klassenArray)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         klasseSpinner!!.adapter = adapter
-        klasseSpinner!!.setOnItemSelectedListener(this)
+        klasseSpinner!!.onItemSelectedListener = this
 
         builder.setPositiveButton("Fertig") { dialogInterface, i ->
-            stufe = stufenPicker!!.value
-            klasse = KLASSEN_ARRAY[klasseSpinner!!.selectedItemPosition]
             filter(stufe, klasse)
         }
         builder.setNegativeButton("Reset") { dialogInterface, i ->
@@ -189,19 +186,26 @@ class HausaufgabenFragment : Fragment(), NumberPicker.OnValueChangeListener, Ada
     private fun showFilterDialog() {
         //Default values
         stufenPicker!!.value = stufe
-        klasseSpinner!!.setSelection(Arrays.asList(*KLASSEN_ARRAY).indexOf(klasse))
+        klasseSpinner!!.setSelection(Arrays.asList(*klassenArray).indexOf(klasse))
 
         filterDialog!!.show()
     }
 
     private fun filter(stufe: Int, klasse: String?) {
-        (adapter!!.getItem(0) as HausaufgabenTabFragment).filter(stufe, klasse)
+        (adapter!!.getItem(0) as HausaufgabenTabFragment).filter(stufe, klasse!!)
         (adapter!!.getItem(1) as HausaufgabenTabFragment).filter(stufe, klasse)
     }
 
     private fun resetFilterAttributes() {
         stufe = 5
-        klasse = KLASSEN_ARRAY[0]
+        klasse = klassenArray[0]
+    }
+
+    private fun getKurse(stufe: Int): Array<String> {
+        val list: MutableList<String> = ArrayList()
+        list.addAll(0, HausaufgabenDatabaseHandler(activity).getKurse(stufe).asList())
+        list.add(0, klassenArray[0])
+        return list.toTypedArray()
     }
 
 }

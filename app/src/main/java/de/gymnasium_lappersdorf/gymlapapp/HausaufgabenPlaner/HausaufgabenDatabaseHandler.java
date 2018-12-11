@@ -106,7 +106,7 @@ public class HausaufgabenDatabaseHandler extends SQLiteOpenHelper {
     public Hausaufgabe[] getAllHomeworks() {
         List<Hausaufgabe> homeworklist = new ArrayList<>();
         String query = "SELECT * FROM " + DATABASE_TABLE;
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(query, null);
 
         if (cursor.moveToFirst()) {
@@ -118,15 +118,12 @@ public class HausaufgabenDatabaseHandler extends SQLiteOpenHelper {
 
         cursor.close();
 
-        Hausaufgabe[] s = new Hausaufgabe[homeworklist.size()];
-        s = homeworklist.toArray(s);
-
-        return s;
+        return homeworklist.toArray(new Hausaufgabe[0]);
     }
 
     //gets number of all
     public int getHomeworkCount() {
-        String query = "SELECT  * FROM " + DATABASE_TABLE;
+        String query = "SELECT * FROM " + DATABASE_TABLE;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(query, null);
         int count = cursor.getCount();
@@ -160,5 +157,21 @@ public class HausaufgabenDatabaseHandler extends SQLiteOpenHelper {
         db.close();
     }
 
+    public String[] getKurse(int stufe) {
+        ArrayList<String> homeworklist = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(DATABASE_TABLE, new String[]{KEY_KURS},
+                KEY_STUFE + "=?",
+                new String[]{String.valueOf(stufe)}, null, null, null, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                String kurs = cursor.getString(0);
+                if (!homeworklist.contains(kurs)) homeworklist.add(kurs);
+            } while (cursor.moveToNext());
+        }
+
+        return homeworklist.toArray(new String[0]);
+    }
 
 }

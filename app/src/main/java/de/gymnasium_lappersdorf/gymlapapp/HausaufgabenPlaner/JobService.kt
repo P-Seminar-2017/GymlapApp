@@ -18,7 +18,7 @@ class JobService : android.app.job.JobService() {
 
     companion object {
 
-        private val EXTRA_TEXT = "extra_text"
+        private const val EXTRA_TEXT = "extra_text"
 
         //creates a new job that will execute at the given timestamp(in milli seconds) and show the given notification
         fun createSchedule(context: Context, timestamp: Long, notification: String) : Int {

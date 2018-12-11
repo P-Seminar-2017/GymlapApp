@@ -10,13 +10,17 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.TextView;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -52,30 +56,30 @@ public class HausaufgabenOnlineFragment extends HausaufgabenTabFragment {
 
         createAPIKeyDialog();
 
-        recyclerView = v.findViewById(R.id.homework_rv);
+        setRecyclerView((RecyclerView) getV().findViewById(R.id.homework_rv));
 
-        homeworkRvAdapter = new HomeworkRvAdapter(new Hausaufgabe[0], getActivity(), new HomeworkRvAdapter.DatasetChangeListener() {
+        setHomeworkRvAdapter(new HomeworkRvAdapter(new Hausaufgabe[0], getActivity(), new HomeworkRvAdapter.DatasetChangeListener() {
             @Override
             public void onNotificationIdChanged(Hausaufgabe h) {
-                int index = homeworks.indexOf(h);
-                homeworks.get(index).setNotificationId(h.getNotificationId());
-                dbh.updateHomework(homeworks.get(index));
+                int index = getHomeworks().indexOf(h);
+                getHomeworks().get(index).setNotificationId(h.getNotificationId());
+                getDbh().updateHomework(getHomeworks().get(index));
             }
-        });
-        recyclerView.setAdapter(homeworkRvAdapter);
+        }));
+        getRecyclerView().setAdapter(getHomeworkRvAdapter());
 
-        linearLayoutManager = new LinearLayoutManager(getActivity());
-        recyclerView.setLayoutManager(linearLayoutManager);
+        setLinearLayoutManager(new LinearLayoutManager(getActivity()));
+        getRecyclerView().setLayoutManager(getLinearLayoutManager());
 
-        countLabel = v.findViewById(R.id.homework_count_label);
+        setCountLabel((TextView) getV().findViewById(R.id.homework_count_label));
 
-        fab = v.findViewById(R.id.add_homework_fab);
-        fab.setVisibility(View.INVISIBLE);
-        fabContainer = v.findViewById(R.id.fab_container);
+        setFab((FloatingActionButton) getV().findViewById(R.id.add_homework_fab));
+        getFab().setVisibility(View.INVISIBLE);
+        setFabContainer((CoordinatorLayout) getV().findViewById(R.id.fab_container));
 
-        snackbarConn = Snackbar.make(fabContainer, "Keine Verbindung", Snackbar.LENGTH_INDEFINITE);
+        snackbarConn = Snackbar.make(getFabContainer(), "Keine Verbindung", Snackbar.LENGTH_INDEFINITE);
 
-        snackBarAPIKey = Snackbar.make(fabContainer, "Offline Modus", Snackbar.LENGTH_INDEFINITE);
+        snackBarAPIKey = Snackbar.make(getFabContainer(), "Offline Modus", Snackbar.LENGTH_INDEFINITE);
         snackBarAPIKey.setAction("Online", new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -83,8 +87,8 @@ public class HausaufgabenOnlineFragment extends HausaufgabenTabFragment {
             }
         });
 
-        stufe = 5;
-        klasse = KLASSEN_ARRAY[0];
+        setStufe(5);
+        setKlasse(getKlassenArray()[0]);
 
         updateDataset();
         updateLabel();
@@ -92,17 +96,17 @@ public class HausaufgabenOnlineFragment extends HausaufgabenTabFragment {
 
     @Override
     public void updateDataset() {
-        dbh = new HausaufgabenDatabaseHandler(getActivity());
-        homeworks = new ArrayList<>();
+        setDbh(new HausaufgabenDatabaseHandler(getActivity()));
+        setHomeworks(new ArrayList<Hausaufgabe>());
 
-        if (dbh.getHomeworkCount() > 0) {
+        if (getDbh().getHomeworkCount() > 0) {
             //load content of db
-            Hausaufgabe[] hw_db = dbh.getAllHomeworks();
+            Hausaufgabe[] hw_db = getDbh().getAllHomeworks();
 
-            Collections.addAll(homeworks, hw_db);
+            Collections.addAll(getHomeworks(), hw_db);
 
             //Removing all local homeworks
-            Iterator it = homeworks.iterator();
+            Iterator it = getHomeworks().iterator();
             Hausaufgabe temp;
             while (it.hasNext()) {
                 temp = (Hausaufgabe) it.next();
@@ -112,9 +116,9 @@ public class HausaufgabenOnlineFragment extends HausaufgabenTabFragment {
             }
         }
 
-        if (homeworks.size() == 0) initDownload();
+        if (getHomeworks().size() == 0) initDownload();
 
-        filter(stufe, klasse);
+        filter(getStufe(), getKlasse());
     }
 
     //creating dialog once for better performance
@@ -124,7 +128,7 @@ public class HausaufgabenOnlineFragment extends HausaufgabenTabFragment {
 
         keyInput = dialogView.findViewById(R.id.homework_input_api_key);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getV().getContext());
         builder.setTitle("API Schlüssel eintragen");
 
         builder.setView(dialogView);
@@ -232,39 +236,39 @@ public class HausaufgabenOnlineFragment extends HausaufgabenTabFragment {
 
                 neu.setInternetId(jsonHandler.getID(i));
 
-                if (homeworks.indexOf(neu) != -1) {
+                if (getHomeworks().indexOf(neu) != -1) {
                     //Homework alredy exists -> update it
-                    int index = homeworks.indexOf(neu);
-                    neu.setDatabaseId(homeworks.get(index).getDatabaseId());
-                    neu.setInternetId(homeworks.get(index).getInternetId());
-                    neu.setDone(homeworks.get(index).isDone());
+                    int index = getHomeworks().indexOf(neu);
+                    neu.setDatabaseId(getHomeworks().get(index).getDatabaseId());
+                    neu.setInternetId(getHomeworks().get(index).getInternetId());
+                    neu.setDone(getHomeworks().get(index).isDone());
 
-                    homeworks.set(index, neu);
+                    getHomeworks().set(index, neu);
                     //Updating database
-                    dbh.updateHomework(homeworks.get(index));
+                    getDbh().updateHomework(getHomeworks().get(index));
                 } else {
-                    homeworks.add(neu);
+                    getHomeworks().add(neu);
 
                     //Add new homework to database
-                    long id = dbh.addHomework(homeworks.get(i));
-                    homeworks.get(i).setDatabaseId(id);
+                    long id = getDbh().addHomework(getHomeworks().get(i));
+                    getHomeworks().get(i).setDatabaseId(id);
                 }
 
             }
 
             //Removing all internet homeworks that aren't mentioned in the new data
-            Iterator it = homeworks.iterator();
+            Iterator it = getHomeworks().iterator();
             Hausaufgabe temp;
             while (it.hasNext()) {
                 temp = (Hausaufgabe) it.next();
                 if (!jsonHandler.contains(temp) && temp.isFromInternet()) {
                     it.remove();
-                    dbh.deleteHomework(temp);
+                    getDbh().deleteHomework(temp);
                 }
             }
 
             snackBarAPIKey.dismiss();
-            filter(stufe, klasse);
+            filter(getStufe(), getKlasse());
         } else {
             //No success
             snackBarAPIKey.show();

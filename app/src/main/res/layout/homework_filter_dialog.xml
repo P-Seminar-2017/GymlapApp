@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginStart="32dp"
-        android:maxLength="6"
+        android:maxLength="12"
         android:hint="Kurs"
         android:visibility="gone" />
 

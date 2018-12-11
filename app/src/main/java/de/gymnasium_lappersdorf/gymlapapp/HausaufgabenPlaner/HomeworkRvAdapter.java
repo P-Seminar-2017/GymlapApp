@@ -57,11 +57,11 @@ public class HomeworkRvAdapter extends RecyclerView.Adapter<HomeworkRvAdapter.Vi
                     JobScheduler jobScheduler = (JobScheduler) c.getSystemService(Context.JOB_SCHEDULER_SERVICE);
                     jobScheduler.cancel(id);
                     dataset.get(holder.getAdapterPosition()).setNotificationId(-1);
-                    Toast.makeText(c, "Erinnerung (" + id + ") gestoppt", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(c, "Erinnerung gestoppt", Toast.LENGTH_SHORT).show();
                 } else {
                     int scheduleId = JobService.Companion.createSchedule(c, dataset.get(holder.getAdapterPosition()).getTimestamp(), dataset.get(holder.getAdapterPosition()).getText());
                     dataset.get(holder.getAdapterPosition()).setNotificationId(scheduleId);
-                    Toast.makeText(c, "Erinnerung (" + scheduleId + ") gesetzt (" + ((dataset.get(holder.getAdapterPosition()).getTimestamp()-System.currentTimeMillis()) / 3600000) + " Stunden verbleibend)",
+                    Toast.makeText(c, "Erinnerung gesetzt (" + ((dataset.get(holder.getAdapterPosition()).getTimestamp()-System.currentTimeMillis()) / 3600000) + " Stunden verbleibend)",
                             Toast.LENGTH_SHORT).show();
                 }
 

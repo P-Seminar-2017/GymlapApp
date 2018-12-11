@@ -130,7 +130,7 @@ public class AddHomeworkActivity extends AppCompatActivity implements NumberPick
         d.setView(dialogView);
 
         stufenPicker = dialogView.findViewById(R.id.filter_numberpicker);
-        stufenPicker.setMaxValue(12);
+        stufenPicker.setMaxValue(13);
         stufenPicker.setMinValue(5);
         stufenPicker.setWrapSelectorWheel(false);
         stufenPicker.setOnValueChangedListener(this);
