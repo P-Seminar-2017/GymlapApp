@@ -75,7 +75,7 @@ class HausaufgabenFragment : Fragment(), NumberPicker.OnValueChangeListener, Ada
 
         vp = view.findViewById(R.id.pager_homework)
         adapter = HomeworkTabAdapter(childFragmentManager)
-        (adapter!!.getItem(0) as HausaufgabenOnlineFragment).setRefreshLayout(refreshLayout)
+        (adapter!!.getItem(0) as HausaufgabenOnlineFragment).setRefreshLayout(refreshLayout!!)
         vp!!.adapter = adapter
 
         tl = view.findViewById(R.id.tab_layout_homework)
