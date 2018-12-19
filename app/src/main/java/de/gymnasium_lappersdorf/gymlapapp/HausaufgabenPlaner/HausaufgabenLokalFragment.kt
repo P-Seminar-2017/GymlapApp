@@ -40,9 +40,9 @@ class HausaufgabenLokalFragment : HausaufgabenTabFragment() {
         recyclerView = v.findViewById<View>(R.id.homework_rv) as RecyclerView
 
         homeworkRvAdapter = HomeworkRvAdapter(arrayOfNulls(0), activity, HomeworkRvAdapter.DatasetChangeListener { h ->
-            val index = homeworks!!.indexOf(h)
-            homeworks!![index].notificationId = h.notificationId
-            dbh!!.updateHomework(homeworks!![index])
+            val index = homeworkList!!.indexOf(h)
+            homeworkList!![index].notificationId = h.notificationId
+            dbh!!.updateHomework(homeworkList!![index])
         })
         recyclerView!!.adapter = homeworkRvAdapter
 
@@ -64,14 +64,14 @@ class HausaufgabenLokalFragment : HausaufgabenTabFragment() {
         snackbarRevert = Snackbar.make(fabContainer!!, "Hausaufgabe erledigt", Snackbar.LENGTH_LONG)
         snackbarRevert!!.setAction("Rückgängig") {
             if (lastItem != null) {
-                val pos = homeworks!!.indexOf(lastItem!!)
-                homeworks!![pos].isDone = false
-                homeworkRvAdapter!!.restoreItem(homeworks!![pos], lastItemPosition)
+                val pos = homeworkList!!.indexOf(lastItem!!)
+                homeworkList!![pos].isDone = false
+                homeworkRvAdapter!!.restoreItem(homeworkList!![pos], lastItemPosition)
                 updateLabel()
                 recyclerView!!.smoothScrollToPosition(lastItemPosition)
                 lastItem = null
                 //Updating database
-                dbh!!.updateHomework(homeworks!![pos])
+                dbh!!.updateHomework(homeworkList!![pos])
             }
         }
 
@@ -82,15 +82,15 @@ class HausaufgabenLokalFragment : HausaufgabenTabFragment() {
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, swipeDir: Int) {
-                val pos = homeworks!!.indexOf(homeworkRvAdapter!!.dataset[viewHolder.adapterPosition])
-                homeworks!![pos].isDone = true
-                lastItem = homeworks!![pos]
+                val pos = homeworkList!!.indexOf(homeworkRvAdapter!!.dataset[viewHolder.adapterPosition])
+                homeworkList!![pos].isDone = true
+                lastItem = homeworkList!![pos]
                 lastItemPosition = viewHolder.adapterPosition
                 homeworkRvAdapter!!.removeItem(viewHolder.adapterPosition)
                 updateLabel()
                 snackbarRevert!!.show()
                 //Updating database
-                dbh!!.updateHomework(homeworks!![pos])
+                dbh!!.updateHomework(homeworkList!![pos])
             }
         }
 
@@ -104,7 +104,7 @@ class HausaufgabenLokalFragment : HausaufgabenTabFragment() {
         updateLabel()
     }
 
-    //Adding new homework to "homeworks"
+    //Adding new homework to "homeworkList"
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
         if (requestCode == REQUEST_ID) {
@@ -114,7 +114,7 @@ class HausaufgabenLokalFragment : HausaufgabenTabFragment() {
 
                 val temp = dbh!!.getHomework(id)
 
-                homeworks!!.add(temp)
+                homeworkList!!.add(temp)
 
                 filter(temp.stufe, temp.kurs!!)
             }
@@ -124,16 +124,16 @@ class HausaufgabenLokalFragment : HausaufgabenTabFragment() {
 
     override fun updateDataset() {
         dbh = HausaufgabenDatabaseHandler(activity)
-        homeworks = ArrayList()
+        homeworkList = ArrayList()
 
         if (dbh!!.homeworkCount > 0) {
             //load content of db
-            val hw_db = dbh!!.allHomeworks
+            val hw_db = dbh!!.completeHomework
 
-            Collections.addAll(homeworks, *hw_db)
+            Collections.addAll(homeworkList, *hw_db)
 
-            //Removing all local homeworks that are marked as done and all online homeworks
-            val it = homeworks!!.iterator()
+            //Removing all local homeworkList that are marked as done and all online homeworkList
+            val it = homeworkList!!.iterator()
             var temp: Hausaufgabe
             while (it.hasNext()) {
                 temp = it.next()
@@ -145,7 +145,7 @@ class HausaufgabenLokalFragment : HausaufgabenTabFragment() {
                 }
             }
         } else {
-            homeworks = ArrayList() //TODO: Remove
+            homeworkList = ArrayList() //TODO: Remove
         }
 
         filter(stufe, klasse)

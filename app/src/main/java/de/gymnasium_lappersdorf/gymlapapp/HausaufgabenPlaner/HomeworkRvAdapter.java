@@ -1,6 +1,5 @@
 package de.gymnasium_lappersdorf.gymlapapp.HausaufgabenPlaner;
 
-import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -9,7 +8,6 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * 01.06.2018 | created by Lukas S

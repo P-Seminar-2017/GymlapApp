@@ -22,7 +22,7 @@ abstract class HausaufgabenTabFragment : Fragment() {
 
     protected val klassenArray = arrayOf("Alle", "a", "b", "c", "d", "e")
 
-    protected var homeworks: ArrayList<Hausaufgabe>? = null
+    protected var homeworkList: ArrayList<Hausaufgabe>? = null
 
     protected lateinit var v: View
     protected var countLabel: TextView? = null
@@ -58,20 +58,20 @@ abstract class HausaufgabenTabFragment : Fragment() {
         this.stufe = stufe
         this.klasse = klasse
 
-        for (i in homeworks!!.indices) {
+        for (i in homeworkList!!.indices) {
 
             if (klasse == klassenArray[0]) {
                 //Alle sind ausgewählt
 
-                if (stufe == homeworks!![i].stufe && !homeworks!![i].isDone) {
-                    temp_new_items.add(homeworks!![i])
+                if (stufe == homeworkList!![i].stufe && !homeworkList!![i].isDone) {
+                    temp_new_items.add(homeworkList!![i])
                 }
 
             } else {
                 //Es wird pro klasse unterschieden
 
-                if (stufe == homeworks!![i].stufe && klasse == homeworks!![i].kurs && !homeworks!![i].isDone) {
-                    temp_new_items.add(homeworks!![i])
+                if (stufe == homeworkList!![i].stufe && klasse == homeworkList!![i].kurs && !homeworkList!![i].isDone) {
+                    temp_new_items.add(homeworkList!![i])
                 }
             }
 

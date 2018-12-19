@@ -102,8 +102,8 @@ public class HausaufgabenDatabaseHandler extends SQLiteOpenHelper {
     }
 
 
-    //returns all homeworks in an array
-    public Hausaufgabe[] getAllHomeworks() {
+    //returns all homework in an array
+    public Hausaufgabe[] getCompleteHomework() {
         List<Hausaufgabe> homeworklist = new ArrayList<>();
         String query = "SELECT * FROM " + DATABASE_TABLE;
         SQLiteDatabase db = this.getReadableDatabase();

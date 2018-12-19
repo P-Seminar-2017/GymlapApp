@@ -52,9 +52,9 @@ class HausaufgabenOnlineFragment : HausaufgabenTabFragment() {
         recyclerView = v.findViewById<View>(R.id.homework_rv) as RecyclerView
 
         homeworkRvAdapter = HomeworkRvAdapter(arrayOfNulls(0), activity, HomeworkRvAdapter.DatasetChangeListener { h ->
-            val index = homeworks!!.indexOf(h)
-            homeworks!![index].notificationId = h.notificationId
-            dbh!!.updateHomework(homeworks!![index])
+            val index = homeworkList!!.indexOf(h)
+            homeworkList!![index].notificationId = h.notificationId
+            dbh!!.updateHomework(homeworkList!![index])
         })
         recyclerView!!.adapter = homeworkRvAdapter
 
@@ -81,16 +81,16 @@ class HausaufgabenOnlineFragment : HausaufgabenTabFragment() {
 
     override fun updateDataset() {
         dbh = HausaufgabenDatabaseHandler(activity)
-        homeworks = ArrayList()
+        homeworkList = ArrayList()
 
         if (dbh!!.homeworkCount > 0) {
             //load content of db
-            val hw_db = dbh!!.allHomeworks
+            val hw_db = dbh!!.completeHomework
 
-            Collections.addAll(homeworks, *hw_db)
+            Collections.addAll(homeworkList, *hw_db)
 
-            //Removing all local homeworks
-            val it = homeworks!!.iterator()
+            //Removing all local homeworkList
+            val it = homeworkList!!.iterator()
             var temp: Hausaufgabe
             while (it.hasNext()) {
                 temp = it.next()
@@ -100,7 +100,7 @@ class HausaufgabenOnlineFragment : HausaufgabenTabFragment() {
             }
         }
 
-        if (homeworks!!.size == 0) initDownload()
+        if (homeworkList!!.size == 0) initDownload()
 
         filter(stufe, klasse)
     }
@@ -191,28 +191,28 @@ class HausaufgabenOnlineFragment : HausaufgabenTabFragment() {
 
                 neu.internetId = jsonHandler!!.getID(i)
 
-                if (homeworks!!.indexOf(neu) != -1) {
+                if (homeworkList!!.indexOf(neu) != -1) {
                     //Homework alredy exists -> update it
-                    val index = homeworks!!.indexOf(neu)
-                    neu.databaseId = homeworks!![index].databaseId
-                    neu.internetId = homeworks!![index].internetId
-                    neu.isDone = homeworks!![index].isDone
+                    val index = homeworkList!!.indexOf(neu)
+                    neu.databaseId = homeworkList!![index].databaseId
+                    neu.internetId = homeworkList!![index].internetId
+                    neu.isDone = homeworkList!![index].isDone
 
-                    homeworks!![index] = neu
+                    homeworkList!![index] = neu
                     //Updating database
-                    dbh!!.updateHomework(homeworks!![index])
+                    dbh!!.updateHomework(homeworkList!![index])
                 } else {
-                    homeworks!!.add(neu)
+                    homeworkList!!.add(neu)
 
                     //Add new homework to database
-                    val id = dbh!!.addHomework(homeworks!![i])
-                    homeworks!![i].databaseId = id
+                    val id = dbh!!.addHomework(homeworkList!![i])
+                    homeworkList!![i].databaseId = id
                 }
 
             }
 
-            //Removing all internet homeworks that aren't mentioned in the new data
-            val it = homeworks!!.iterator()
+            //Removing all internet homeworkList that aren't mentioned in the new data
+            val it = homeworkList!!.iterator()
             var temp: Hausaufgabe
             while (it.hasNext()) {
                 temp = it.next()
