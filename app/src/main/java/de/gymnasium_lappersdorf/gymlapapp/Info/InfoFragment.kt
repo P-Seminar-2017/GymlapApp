@@ -1,7 +1,10 @@
 package de.gymnasium_lappersdorf.gymlapapp.Info
 
 import android.content.Intent
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
+import android.support.customtabs.CustomTabsIntent
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -26,6 +29,13 @@ class InfoFragment : Fragment() {
         about_version.text = version
         about_licenses.setOnClickListener {
             startActivity(Intent(activity, OssLicensesMenuActivity::class.java))
+        }
+        about_cvs.setOnClickListener {
+            val builder = CustomTabsIntent.Builder()
+                    .enableUrlBarHiding()
+                    .setShowTitle(true)
+                    .setCloseButtonIcon(BitmapFactory.decodeResource(context!!.resources, R.drawable.back))
+            builder.build().launchUrl(context!!, Uri.parse("https://github.com/P-Seminar-2017/GymlapApp"))
         }
     }
 }

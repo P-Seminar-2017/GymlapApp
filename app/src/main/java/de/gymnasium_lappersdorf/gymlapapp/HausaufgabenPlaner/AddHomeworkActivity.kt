@@ -9,19 +9,10 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import android.view.View
-import android.widget.ArrayAdapter
-import android.widget.EditText
-import android.widget.NumberPicker
-import android.widget.Spinner
-import android.widget.TextView
-import android.widget.Toast
-
-import java.util.Arrays
-import java.util.Calendar
-import java.util.Locale
-
+import android.widget.*
 import de.gymnasium_lappersdorf.gymlapapp.R
 import de.gymnasium_lappersdorf.gymlapapp.Stundenplan.SubjectView
+import java.util.*
 
 /**
  * 03.06.2018 | created by Lukas S

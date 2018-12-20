@@ -15,13 +15,10 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.TextView
-
+import de.gymnasium_lappersdorf.gymlapapp.R
 import java.io.UnsupportedEncodingException
 import java.net.URLDecoder
-import java.util.ArrayList
-import java.util.Collections
-
-import de.gymnasium_lappersdorf.gymlapapp.R
+import java.util.*
 
 /**
  * 07.12.2018 | created by Lukas S

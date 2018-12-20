@@ -2,9 +2,7 @@ package de.gymnasium_lappersdorf.gymlapapp.HausaufgabenPlaner
 
 import android.app.job.JobScheduler
 import android.content.Context
-
-import java.util.Calendar
-import java.util.Date
+import java.util.*
 
 /**
  * Created by lmatn on 01.03.2018.

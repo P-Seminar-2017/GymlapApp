@@ -7,20 +7,17 @@ import android.support.v4.view.ViewPager
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.Toolbar
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.NumberPicker
 import android.widget.Spinner
-
-import java.util.Arrays
-
 import de.gymnasium_lappersdorf.gymlapapp.R
+import java.util.Arrays
+import kotlin.collections.ArrayList
+import kotlin.collections.MutableList
+import kotlin.collections.asList
+import kotlin.collections.toTypedArray
 
 /**
  * 01.06.2018 | created by Lukas S

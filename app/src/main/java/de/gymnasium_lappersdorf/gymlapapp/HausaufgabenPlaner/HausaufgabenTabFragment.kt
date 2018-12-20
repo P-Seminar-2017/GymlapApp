@@ -10,10 +10,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-
-import java.util.ArrayList
-
 import de.gymnasium_lappersdorf.gymlapapp.R
+import java.util.*
 
 /**
  * 07.12.2018 | created by Lukas S

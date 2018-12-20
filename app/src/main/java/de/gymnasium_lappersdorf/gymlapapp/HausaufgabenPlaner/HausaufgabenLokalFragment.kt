@@ -1,5 +1,6 @@
 package de.gymnasium_lappersdorf.gymlapapp.HausaufgabenPlaner
 
+import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.CoordinatorLayout
@@ -10,13 +11,8 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.View
 import android.widget.TextView
-
-import java.util.ArrayList
-import java.util.Collections
-
 import de.gymnasium_lappersdorf.gymlapapp.R
-
-import android.app.Activity.RESULT_OK
+import java.util.*
 
 /**
  * 07.12.2018 | created by Lukas S
