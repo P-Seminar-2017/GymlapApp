@@ -21,6 +21,7 @@ class DatabaseHandler {
     lateinit var store: BoxStore
     private var dayBox: Box<Day>
     private var subBox: Box<Subject>
+    private var lessonBox: Box<Lesson>
 
     /*
     * initializes the boxes for the different objects
@@ -29,17 +30,26 @@ class DatabaseHandler {
         App.appComponent.inject(this)
         dayBox = store.boxFor()
         subBox = store.boxFor()
+        lessonBox = store.boxFor()
         createDB()
     }
 
     /*
-    * initializes the database by adding 5 days on first access
+    * initializes the database by adding 5 days
+    * and 3 default subjects on first access
     * */
     private fun createDB() {
         val days: List<Day> = getDays()
         if (days.isEmpty()) {
             for (i in 0 until 5) {
                 setDay(Day(0, i.toLong()))
+            }
+        }
+        val subjects: List<Subject> = getSubjects()
+        if (subjects.isEmpty()) {
+            val defaultSubjects = listOf("Deutsch", "Mathe", "Sport")
+            for (i in defaultSubjects) {
+                setSubject(Subject(0, i, "", "", ""))
             }
         }
     }
@@ -103,5 +113,18 @@ class DatabaseHandler {
     fun getSubjects(): List<Subject> {
         val query = subBox.query().build()
         return query.find()
+    }
+
+    /*
+    * @returns a lesson based on its [id]
+    * */
+    fun getLesson(id: Long): Lesson? {
+        val query = lessonBox.query().equal(Lesson_.id, id).build()
+        try {
+            return query.findUnique()
+        } catch (e: NonUniqueResultException) {
+            e.printStackTrace()
+        }
+        return null
     }
 }

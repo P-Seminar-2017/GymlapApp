@@ -30,7 +30,7 @@ class HomeFragment : Fragment() {
         /*
         * sets the animation of the swipeToRefreshLayout to [refreshing]
         * */
-        fun setRefresingIndicator(refreshing: Boolean) {
+        fun setRefreshingIndicator(refreshing: Boolean) {
             try {
                 swiperefresh_home.isRefreshing = refreshing
             } catch (e: IllegalStateException) {
@@ -45,18 +45,18 @@ class HomeFragment : Fragment() {
                 val newArticles = Articles.getDownload(Articles.URL, context!!)
                 rvAdapter.setDataset(newArticles)
                 rvAdapter.notifyDataSetChanged()
-                setRefresingIndicator(false)
+                setRefreshingIndicator(false)
             }
         }
         val con = context!!
         GlobalScope.launch(Dispatchers.Main) {
-            setRefresingIndicator(true)
-            //recieve Articles from cache and/or download
+            setRefreshingIndicator(true)
+            //receive Articles from cache and/or download
             Articles.initialize(con) { articles ->
                 rvAdapter.setDataset(articles)
                 rvAdapter.notifyDataSetChanged()
             }
-            setRefresingIndicator(false)
+            setRefreshingIndicator(false)
         }
     }
 }

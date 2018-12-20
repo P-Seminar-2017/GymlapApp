@@ -37,9 +37,10 @@ interface AppComponent {
         fun context(context: Context): Builder
     }
 
-    fun inject(app: AddLessonActivity)
-    fun inject(app: StundenplanerDayFragment)
-    fun inject(app: StundenplanRvAdapter)
     fun inject(app: DatabaseHandler)
     fun inject(app: SubjectView)
+    fun inject(app: LessonView)
+    fun inject(app: DayFragment)
+    fun inject(app: LessonActivity)
+
 }

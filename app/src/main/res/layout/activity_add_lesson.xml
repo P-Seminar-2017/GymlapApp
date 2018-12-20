@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="de.gymnasium_lappersdorf.gymlapapp.Stundenplan.AddLessonActivity">
+    tools:context="de.gymnasium_lappersdorf.gymlapapp.Stundenplan.LessonActivity">
 
     <LinearLayout
         android:id="@+id/spinner_wrap"
@@ -46,7 +46,7 @@
                 android:layout_margin="12dp"
                 android:clickable="true"
                 android:focusable="true"
-                android:onClick="vonClicked">
+                android:onClick="startClicked">
 
                 <TextView
                     android:id="@+id/von"
@@ -84,7 +84,7 @@
                 android:layout_margin="12dp"
                 android:clickable="true"
                 android:focusable="true"
-                android:onClick="bisClicked">
+                android:onClick="stopClicked">
 
                 <TextView
                     android:id="@+id/bis"

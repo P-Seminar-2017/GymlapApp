@@ -83,6 +83,22 @@ class SubjectView @JvmOverloads constructor(
     fun getSubject(): Subject = databaseHandler
             .getSubject(subjectAdapter.getItem(SubjectSpinner.selectedItemPosition)!!)!!
 
+
+    /*
+    * selects a [subject] based on a string identifier
+    * */
+    fun setSelected(subject: String) {
+        val subjects = databaseHandler.getSubjects()
+        for ((index, e: Subject) in subjects.withIndex()) {
+            if (e.name == subject) {
+                SubjectSpinner.setSelection(index + 1, true)
+                SubjectSpinner.post {
+                    (SubjectSpinner.selectedView as TextView).setTextColor(Color.BLACK)
+                }
+            }
+        }
+    }
+
     /*
     * adds a subject to spinner and database
     * */
@@ -181,5 +197,4 @@ class SubjectView @JvmOverloads constructor(
         }
         dialog.show()
     }
-
 }

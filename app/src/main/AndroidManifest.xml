@@ -24,7 +24,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Stundenplan.AddLessonActivity"
+            android:name=".Stundenplan.LessonActivity"
             android:parentActivityName=".MainActivity" />
         <activity
             android:name=".HausaufgabenPlaner.AddHomeworkActivity"
