@@ -8,17 +8,18 @@ import android.support.v4.app.FragmentPagerAdapter
  * 07.12.2018 | created by Lukas S
  */
 class HomeworkTabAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
-    private val fragments: Array<HausaufgabenTabFragment> = arrayOf(HausaufgabenOnlineFragment(), HausaufgabenLokalFragment())
+    private val online = HausaufgabenOnlineFragment()
+    private val local = HausaufgabenLokalFragment()
 
     override fun getItem(position: Int): Fragment {
-        return fragments[position]
+        return when (position) {
+            0 -> online
+            1 -> local
+            else -> online
+        }
     }
 
     override fun getCount(): Int {
-        return NUM_TABS
-    }
-
-    companion object {
-        private const val NUM_TABS = 2
+        return 2
     }
 }

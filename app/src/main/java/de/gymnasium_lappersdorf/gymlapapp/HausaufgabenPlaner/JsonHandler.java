@@ -13,6 +13,8 @@ public abstract class JsonHandler {
     protected boolean success;
     protected String jsonString;
     protected JSONObject[] dataArray;
+    protected String error;
+    protected int errorCode;
 
     public JsonHandler(String jsonString) {
         this.jsonString = jsonString;
@@ -22,6 +24,8 @@ public abstract class JsonHandler {
             success = obj.getBoolean("success");
 
             if (success) {
+                error = "none";
+                errorCode = 200;
                 JSONArray tempArr = obj.getJSONArray("data");
                 dataArray = new JSONObject[tempArr.length()];
 
@@ -30,6 +34,8 @@ public abstract class JsonHandler {
                 }
 
             } else {
+                error = obj.getString("error");
+                errorCode = obj.getInt("errorcode");
                 dataArray = null;
             }
 
@@ -45,6 +51,14 @@ public abstract class JsonHandler {
 
     public boolean getSuccess() {
         return success;
+    }
+
+    public String getError() {
+        return error;
+    }
+
+    public int getErrorCode() {
+        return errorCode;
     }
 
     protected int getInt(int position, String name) {

@@ -37,14 +37,16 @@ class Hausaufgabe(var fach: String?, var text: String?, var timestamp: Long, var
 
     val dayOfWeek: String
         get() {
-            val tage = arrayOf("Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag")
+            val tage = arrayOf("Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag") //Calendar.DAY_OF_WEEK starts at 1 (sunday)
             val c = Calendar.getInstance()
             c.time = Date(timestamp)
-            return tage[c.get(Calendar.DAY_OF_WEEK) - 2]
+            return tage[c.get(Calendar.DAY_OF_WEEK) - 1]
         }
 
     val isFromInternet: Boolean
         get() = internetId.compareTo(-1) != 0
+
+    val isOutdated = timestamp - System.currentTimeMillis() < 0
 
     fun isSetAsNotification(c: Context): Boolean {
         val jobScheduler = c.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler

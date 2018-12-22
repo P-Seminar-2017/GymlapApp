@@ -14,7 +14,7 @@ import java.net.URL;
 
 
 public class OnlineSQLHandlerHomework extends AsyncTask<Hausaufgabe, String, String> {
-    private String key;
+    private final String key = "12345"; //TODO change
     private String apiDomain;
     private SQLCallback sqlCallback;
     private RequestTypes requestType;
@@ -27,11 +27,9 @@ public class OnlineSQLHandlerHomework extends AsyncTask<Hausaufgabe, String, Str
         ALL, GET, SAVE, DELETE, EDIT
     }
 
-
-    public OnlineSQLHandlerHomework(String key, String apiDomain, RequestTypes requestType, SQLCallback callback) {
+    public OnlineSQLHandlerHomework(String apiDomain, RequestTypes requestType, SQLCallback callback) {
         this.sqlCallback = callback;
         this.requestType = requestType;
-        this.key = key;
         this.apiDomain = apiDomain;
     }
 

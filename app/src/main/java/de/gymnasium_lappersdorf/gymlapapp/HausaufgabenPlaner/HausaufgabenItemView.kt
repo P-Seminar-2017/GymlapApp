@@ -60,7 +60,8 @@ class HausaufgabenItemView : LinearLayout {
         }
 
         viewFach!!.text = hw.fach
-        viewKlasseStufe!!.text = hw.stufe.toString() + " | " + hw.kurs + " | " + if (hw.isFromInternet) "Internet" else "Lokal"
+        if (hw.stufe >= 0) viewKlasseStufe!!.text = hw.stufe.toString() + " " + hw.kurs
+        else viewKlasseStufe!!.text = ""
         viewHausaufgaben!!.text = hw.text
 
         updateButton()

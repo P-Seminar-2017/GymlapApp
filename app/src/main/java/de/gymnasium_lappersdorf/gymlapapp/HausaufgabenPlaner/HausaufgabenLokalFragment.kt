@@ -6,10 +6,13 @@ import android.os.Bundle
 import android.support.design.widget.CoordinatorLayout
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
+import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.TextView
 import de.gymnasium_lappersdorf.gymlapapp.R
 import java.util.*
@@ -17,17 +20,39 @@ import java.util.*
 /**
  * 07.12.2018 | created by Lukas S
  */
-class HausaufgabenLokalFragment : HausaufgabenTabFragment() {
+class HausaufgabenLokalFragment : Fragment() {
 
     private val REQUEST_ID = 1
+    private val EDIT_ID = 2
+
+    private var homeworkList: ArrayList<Hausaufgabe>? = null
+
+    private lateinit var v: View
+    private var countLabel: TextView? = null
+    private var recyclerView: RecyclerView? = null
+    private var linearLayoutManager: LinearLayoutManager? = null
+    private var homeworkRvAdapter: HomeworkRvAdapter? = null
+
+    private var fab: FloatingActionButton? = null
+    private var fabContainer: CoordinatorLayout? = null
 
     private var itemTouchHelper: ItemTouchHelper? = null
 
-    private var snackbarRevert: Snackbar? = null
+    //Database
+    private var dbh: HausaufgabenDatabaseHandler? = null
 
     //Recycler swipe removing
     private var lastItem: Hausaufgabe? = null
     private var lastItemPosition = -1
+    private var snackbarRevert: Snackbar? = null
+
+    fun getRequestId() = REQUEST_ID
+    fun getEditId() = EDIT_ID
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        v = inflater.inflate(R.layout.fragment_homework_tab_local, container, false)
+        return v
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -35,7 +60,7 @@ class HausaufgabenLokalFragment : HausaufgabenTabFragment() {
 
         recyclerView = v.findViewById<View>(R.id.homework_rv) as RecyclerView
 
-        homeworkRvAdapter = HomeworkRvAdapter(arrayOfNulls(0), activity, HomeworkRvAdapter.DatasetChangeListener { h ->
+        homeworkRvAdapter = HomeworkRvAdapter(arrayOfNulls(0), activity,this, HomeworkRvAdapter.DatasetChangeListener { h ->
             val index = homeworkList!!.indexOf(h)
             homeworkList!![index].notificationId = h.notificationId
             dbh!!.updateHomework(homeworkList!![index])
@@ -51,8 +76,6 @@ class HausaufgabenLokalFragment : HausaufgabenTabFragment() {
         fab = v.findViewById<View>(R.id.add_homework_fab) as FloatingActionButton
         fab!!.setOnClickListener {
             val i = Intent(activity, AddHomeworkActivity::class.java)
-            i.putExtra("STUFE", stufe)
-            i.putExtra("KLASSE", if (klasse === klassenArray[0]) "a" else klasse)
             startActivityForResult(i, REQUEST_ID)
         }
         fabContainer = v.findViewById<View>(R.id.fab_container) as CoordinatorLayout
@@ -93,32 +116,40 @@ class HausaufgabenLokalFragment : HausaufgabenTabFragment() {
         itemTouchHelper = ItemTouchHelper(simpleItemTouchCallback)
         itemTouchHelper!!.attachToRecyclerView(recyclerView)
 
-        stufe = 5
-        klasse = klassenArray[0]
-
         updateDataset()
         updateLabel()
+    }
+
+    private fun updateLabel() {
+        val count = homeworkRvAdapter!!.itemCount
+        countLabel!!.text = "${(if (count == 0) "Kein" else homeworkRvAdapter!!.itemCount)}${if (homeworkRvAdapter!!.itemCount > 1) " Einträge" else " Eintrag"} vorhanden."
     }
 
     //Adding new homework to "homeworkList"
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
-        if (requestCode == REQUEST_ID) {
+        if (resultCode == RESULT_OK) {
 
-            if (resultCode == RESULT_OK) {
+            if (requestCode == REQUEST_ID) {
                 val id = data!!.extras!!.getLong("HW_ID")
 
                 val temp = dbh!!.getHomework(id)
 
                 homeworkList!!.add(temp)
 
-                filter(temp.stufe, temp.kurs!!)
+                homeworkRvAdapter!!.dataset = homeworkList!!.toTypedArray()
+                homeworkRvAdapter!!.notifyDataSetChanged()
+                updateLabel()
+            } else if (requestCode == EDIT_ID) {
+                val id = data!!.extras!!.getLong("HW_ID")
+
+                updateDataset()
             }
 
         }
     }
 
-    override fun updateDataset() {
+    private fun updateDataset() {
         dbh = HausaufgabenDatabaseHandler(activity)
         homeworkList = ArrayList()
 
@@ -133,7 +164,7 @@ class HausaufgabenLokalFragment : HausaufgabenTabFragment() {
             var temp: Hausaufgabe
             while (it.hasNext()) {
                 temp = it.next()
-                if (temp.isDone && !temp.isFromInternet) {
+                if ((temp.isDone && !temp.isFromInternet) || temp.isOutdated) {
                     it.remove()
                     dbh!!.deleteHomework(temp)
                 } else if (temp.isFromInternet) {
@@ -141,10 +172,12 @@ class HausaufgabenLokalFragment : HausaufgabenTabFragment() {
                 }
             }
         } else {
-            homeworkList = ArrayList() //TODO: Remove
+            homeworkList = ArrayList()
         }
 
-        filter(stufe, klasse)
+        homeworkRvAdapter!!.dataset = homeworkList!!.toTypedArray()
+        homeworkRvAdapter!!.notifyDataSetChanged()
+        updateLabel()
     }
 
 }

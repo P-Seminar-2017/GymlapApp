@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.support.v4.view.ViewPager
-import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.Toolbar
 import android.view.*
@@ -27,7 +26,8 @@ class HausaufgabenFragment : Fragment(), NumberPicker.OnValueChangeListener, Ada
 
     private var v: View? = null
     private var tb: Toolbar? = null
-    private var refreshLayout: SwipeRefreshLayout? = null
+
+    private var menu: Menu? = null
 
     //Tab
     private var vp: ViewPager? = null
@@ -51,6 +51,7 @@ class HausaufgabenFragment : Fragment(), NumberPicker.OnValueChangeListener, Ada
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        this.menu = menu
         menu!!.clear()
         inflater!!.inflate(R.menu.homework_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
@@ -61,18 +62,9 @@ class HausaufgabenFragment : Fragment(), NumberPicker.OnValueChangeListener, Ada
         activity!!.title = "Hausaufgaben"
 
         tb = activity!!.findViewById(R.id.toolbar_main)
-        refreshLayout = v!!.findViewById(R.id.swiperefresh_homework)
-
-        refreshLayout!!.setOnRefreshListener {
-            val index = 0
-            val tab = tl!!.getTabAt(index)
-            tab!!.select()
-            (adapter!!.getItem(index) as HausaufgabenOnlineFragment).initDownload()
-        }
 
         vp = view.findViewById(R.id.pager_homework)
         adapter = HomeworkTabAdapter(childFragmentManager)
-        (adapter!!.getItem(0) as HausaufgabenOnlineFragment).setRefreshLayout(refreshLayout!!)
         vp!!.adapter = adapter
 
         tl = view.findViewById(R.id.tab_layout_homework)
@@ -82,6 +74,15 @@ class HausaufgabenFragment : Fragment(), NumberPicker.OnValueChangeListener, Ada
         tl!!.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 vp!!.currentItem = tab.position
+
+                if (menu != null) {
+                    when (tab.position) {
+                        0 -> menu!!.findItem(R.id.filter_item).isVisible = true
+                        1 -> menu!!.findItem(R.id.filter_item).isVisible = false
+                        else -> menu!!.findItem(R.id.filter_item).isVisible = true
+                    }
+                }
+
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab) {}
@@ -189,8 +190,7 @@ class HausaufgabenFragment : Fragment(), NumberPicker.OnValueChangeListener, Ada
     }
 
     private fun filter(stufe: Int, klasse: String?) {
-        (adapter!!.getItem(0) as HausaufgabenTabFragment).filter(stufe, klasse!!)
-        (adapter!!.getItem(1) as HausaufgabenTabFragment).filter(stufe, klasse)
+        (adapter!!.getItem(0) as HausaufgabenOnlineFragment).filter(stufe, klasse!!)
     }
 
     private fun resetFilterAttributes() {

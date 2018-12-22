@@ -2,7 +2,10 @@ package de.gymnasium_lappersdorf.gymlapapp.HausaufgabenPlaner;
 
 import android.app.job.JobScheduler;
 import android.content.Context;
+import android.content.Intent;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
@@ -16,6 +19,7 @@ import java.util.Arrays;
 public class HomeworkRvAdapter extends RecyclerView.Adapter<HomeworkRvAdapter.ViewHolder> {
     private ArrayList<Hausaufgabe> dataset;
     private Context c;
+    private Fragment f;
     private DatasetChangeListener listener;
 
     public interface DatasetChangeListener {
@@ -31,9 +35,10 @@ public class HomeworkRvAdapter extends RecyclerView.Adapter<HomeworkRvAdapter.Vi
         }
     }
 
-    public HomeworkRvAdapter(Hausaufgabe[] dataset, Context c, DatasetChangeListener listener) {
+    public HomeworkRvAdapter(Hausaufgabe[] dataset, Context c, Fragment f, DatasetChangeListener listener) {
         this.dataset = new ArrayList<>(Arrays.asList(dataset));
         this.c = c;
+        this.f = f;
         this.listener = listener;
     }
 
@@ -67,6 +72,17 @@ public class HomeworkRvAdapter extends RecyclerView.Adapter<HomeworkRvAdapter.Vi
                 listener.onNotificationIdChanged(dataset.get(holder.getAdapterPosition()));
             }
         });
+
+        if (!dataset.get(position).isFromInternet()) {
+            holder.hv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(c, AddHomeworkActivity.class);
+                    intent.putExtra("EDIT_ID", dataset.get(holder.getAdapterPosition()).getDatabaseId());
+                    f.startActivityForResult(intent, ((HausaufgabenLokalFragment) f).getEditId());
+                }
+            });
+        }
     }
 
     @Override

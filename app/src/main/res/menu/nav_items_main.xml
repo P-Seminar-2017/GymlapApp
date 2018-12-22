@@ -7,7 +7,6 @@
         android:icon="@drawable/schedule"
         android:id="@+id/stundenplaner" />
     <item android:title="Hausaufgaben" android:icon="@drawable/ic_homework" android:id="@+id/hausaufgaben"/>
-    <item android:title="Karte" android:icon="@drawable/ic_map" android:id="@+id/karte"/>
     <item android:title="Über diese App" android:icon="@drawable/information" android:id="@+id/information"/>
 
 </menu>

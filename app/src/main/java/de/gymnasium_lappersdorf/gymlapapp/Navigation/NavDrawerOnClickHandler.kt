@@ -9,7 +9,6 @@ import de.gymnasium_lappersdorf.gymlapapp.HausaufgabenPlaner.HausaufgabenFragmen
 import de.gymnasium_lappersdorf.gymlapapp.Home.HomeFragment
 import de.gymnasium_lappersdorf.gymlapapp.Info.InfoFragment
 import de.gymnasium_lappersdorf.gymlapapp.MainActivity
-import de.gymnasium_lappersdorf.gymlapapp.Maps.MapFragment
 import de.gymnasium_lappersdorf.gymlapapp.R
 import de.gymnasium_lappersdorf.gymlapapp.Stundenplan.StundenplanFragment
 import kotlinx.android.synthetic.main.activity_main.*
@@ -21,7 +20,6 @@ class NavDrawerOnClickHandler(val context: Context) : NavigationView.OnNavigatio
 
     private val h by lazy { HomeFragment() }
     private val s by lazy { StundenplanFragment() }
-    private val m by lazy { MapFragment() }
     private val hw by lazy { HausaufgabenFragment() }
     private val inf by lazy { InfoFragment() }
 
@@ -47,7 +45,6 @@ class NavDrawerOnClickHandler(val context: Context) : NavigationView.OnNavigatio
             return when (item) {
                 R.id._home -> h
                 R.id.stundenplaner -> s
-                R.id.karte -> m
                 R.id.hausaufgaben -> hw
                 R.id.information -> inf
                 else -> h
