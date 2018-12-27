@@ -149,7 +149,7 @@ class HausaufgabenOnlineFragment : Fragment() {
     private fun initDownload() {
         if (isNetworkConnected(activity!!)) {
             refreshLayout!!.isRefreshing = true
-            onlineSQLHandlerHomework = OnlineSQLHandlerHomework("http://api.lakinator.bplaced.net/request.php", OnlineSQLHandlerHomework.RequestTypes.ALL, OnlineSQLHandlerHomework.SQLCallback { jsonHandler ->
+            onlineSQLHandlerHomework = OnlineSQLHandlerHomework("http://api.gymlap.de/request.php", OnlineSQLHandlerHomework.RequestTypes.ALL, OnlineSQLHandlerHomework.SQLCallback { jsonHandler ->
                 this@HausaufgabenOnlineFragment.jsonHandler = jsonHandler
                 processData()
             })
@@ -243,6 +243,14 @@ class HausaufgabenOnlineFragment : Fragment() {
         val con = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val activeNetworkInfo = con.activeNetworkInfo
         return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting
+    }
+
+    fun hideSnackbarIfShown() {
+        if (snackbarConn!!.isShown) snackbarConn!!.dismiss()
+    }
+
+    fun showSnackbarIfNoNetwork() {
+        if (!isNetworkConnected(activity!!)) snackbarConn!!.show()
     }
 
 }

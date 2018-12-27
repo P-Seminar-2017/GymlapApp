@@ -13,13 +13,21 @@ class HomeworkTabAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
 
     override fun getItem(position: Int): Fragment {
         return when (position) {
-            0 -> online
-            1 -> local
-            else -> online
+            0 -> getOnlineFragment()
+            1 -> getLokalFragment()
+            else -> getOnlineFragment()
         }
     }
 
     override fun getCount(): Int {
         return 2
+    }
+
+    fun getOnlineFragment() : HausaufgabenOnlineFragment {
+        return online
+    }
+
+    fun getLokalFragment() : HausaufgabenLokalFragment {
+        return local
     }
 }

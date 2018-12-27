@@ -58,6 +58,7 @@ class AddHomeworkActivity : AppCompatActivity() {
                     Hausaufgabe.Types.DATE
             )
             newHomework!!.databaseId = edit_id
+            newHomework!!.notificationId = edit.notificationId
 
             subjectView!!.setSelected(edit.fach!!)
             textInputText!!.setText(edit.text)

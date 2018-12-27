@@ -77,8 +77,14 @@ class HausaufgabenFragment : Fragment(), NumberPicker.OnValueChangeListener, Ada
 
                 if (menu != null) {
                     when (tab.position) {
-                        0 -> menu!!.findItem(R.id.filter_item).isVisible = true
-                        1 -> menu!!.findItem(R.id.filter_item).isVisible = false
+                        0 -> {
+                            menu!!.findItem(R.id.filter_item).isVisible = true
+                            (vp!!.adapter as HomeworkTabAdapter).getOnlineFragment().showSnackbarIfNoNetwork()
+                        }
+                        1 -> {
+                            menu!!.findItem(R.id.filter_item).isVisible = false
+                            (vp!!.adapter as HomeworkTabAdapter).getOnlineFragment().hideSnackbarIfShown()
+                        }
                         else -> menu!!.findItem(R.id.filter_item).isVisible = true
                     }
                 }
@@ -190,7 +196,7 @@ class HausaufgabenFragment : Fragment(), NumberPicker.OnValueChangeListener, Ada
     }
 
     private fun filter(stufe: Int, klasse: String?) {
-        (adapter!!.getItem(0) as HausaufgabenOnlineFragment).filter(stufe, klasse!!)
+        adapter!!.getOnlineFragment().filter(stufe, klasse!!)
     }
 
     private fun resetFilterAttributes() {
