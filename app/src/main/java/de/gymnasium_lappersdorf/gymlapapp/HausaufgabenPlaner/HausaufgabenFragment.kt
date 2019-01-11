@@ -76,16 +76,18 @@ class HausaufgabenFragment : Fragment(), NumberPicker.OnValueChangeListener, Ada
                 vp!!.currentItem = tab.position
 
                 if (menu != null) {
+                    val item: MenuItem? = menu!!.findItem(R.id.filter_item)
+
                     when (tab.position) {
                         0 -> {
-                            menu!!.findItem(R.id.filter_item).isVisible = true
+                            if (item != null) item.isVisible = true
                             (vp!!.adapter as HomeworkTabAdapter).getOnlineFragment().showSnackbarIfNoNetwork()
                         }
                         1 -> {
-                            menu!!.findItem(R.id.filter_item).isVisible = false
+                            if (item != null) item.isVisible = false
                             (vp!!.adapter as HomeworkTabAdapter).getOnlineFragment().hideSnackbarIfShown()
                         }
-                        else -> menu!!.findItem(R.id.filter_item).isVisible = true
+                        else -> if (item != null) item.isVisible = false
                     }
                 }
 
@@ -102,6 +104,7 @@ class HausaufgabenFragment : Fragment(), NumberPicker.OnValueChangeListener, Ada
         super.onResume()
         try {
             tb!!.elevation = 0f
+            vp!!.currentItem = 0
         } catch (e: NullPointerException) {
             e.printStackTrace()
         }

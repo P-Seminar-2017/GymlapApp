@@ -246,7 +246,9 @@ class HausaufgabenOnlineFragment : Fragment() {
     }
 
     fun hideSnackbarIfShown() {
-        if (snackbarConn!!.isShown) snackbarConn!!.dismiss()
+        if (snackbarConn != null)
+            if (snackbarConn!!.isShown)
+                snackbarConn!!.dismiss()
     }
 
     fun showSnackbarIfNoNetwork() {
