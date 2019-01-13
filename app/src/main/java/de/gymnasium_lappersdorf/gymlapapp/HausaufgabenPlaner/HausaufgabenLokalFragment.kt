@@ -60,7 +60,7 @@ class HausaufgabenLokalFragment : Fragment() {
 
         recyclerView = v.findViewById<View>(R.id.homework_rv) as RecyclerView
 
-        homeworkRvAdapter = HomeworkRvAdapter(arrayOfNulls(0), activity,this, HomeworkRvAdapter.DatasetChangeListener { h ->
+        homeworkRvAdapter = HomeworkRvAdapter(arrayOfNulls(0), activity, this, HomeworkRvAdapter.DatasetChangeListener { h ->
             val index = homeworkList!!.indexOf(h)
             homeworkList!![index].notificationId = h.notificationId
             dbh!!.updateHomework(homeworkList!![index])

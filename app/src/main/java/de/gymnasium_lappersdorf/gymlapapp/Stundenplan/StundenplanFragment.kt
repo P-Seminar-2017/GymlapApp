@@ -21,7 +21,7 @@ class StundenplanFragment : Fragment() {
     private var day: Int = 0
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
-            inflater.inflate(R.layout.fragment_stundenplaner, container, false)
+        inflater.inflate(R.layout.fragment_stundenplaner, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

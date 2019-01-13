@@ -9,11 +9,11 @@ import org.jsoup.nodes.Element
 import java.io.IOException
 
 data class Article(
-        val title: String,
-        val text: String,
-        val date: String,
-        val href: String,
-        val img: String
+    val title: String,
+    val text: String,
+    val date: String,
+    val href: String,
+    val img: String
 )
 
 /*
@@ -122,11 +122,11 @@ object Articles {
             val date = getFirstByTag(getFirstByClass(element, "news-list-date"), "time").text()
             //input
             val href =
-                    "https://www.gymnasium-lappersdorf.de" + getFirstByTag(getFirstByClass(element, "header"), "a").attr("href")
+                "https://www.gymnasium-lappersdorf.de" + getFirstByTag(getFirstByClass(element, "header"), "a").attr("href")
             //img
             val img = "https://www.gymnasium-lappersdorf.de" + getFirstByTag(
-                    getFirstByClass(element, "news-img-wrap"),
-                    "img"
+                getFirstByClass(element, "news-img-wrap"),
+                "img"
             ).attr("src")
             articles.add(Article(title, text, date, href, img))
         }

@@ -22,9 +22,9 @@ import javax.inject.Inject
 * delete and choose subjects from the database
 * */
 class SubjectView @JvmOverloads constructor(
-        context: Context,
-        attrs: AttributeSet? = null,
-        defStyleAttr: Int = 0
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
 ) : RelativeLayout(context, attrs, defStyleAttr) {
 
     @Inject
@@ -81,7 +81,7 @@ class SubjectView @JvmOverloads constructor(
     * an exception when no subject is selected
     * */
     fun getSubject(): Subject = databaseHandler
-            .getSubject(subjectAdapter.getItem(SubjectSpinner.selectedItemPosition)!!)!!
+        .getSubject(subjectAdapter.getItem(SubjectSpinner.selectedItemPosition)!!)!!
 
 
     /*
@@ -154,46 +154,46 @@ class SubjectView @JvmOverloads constructor(
             course.setText(editSubject.course)
         }
         val builder = AlertDialog.Builder(context)
-                .setTitle(if (editSubject == null) "Fach hinzufügen" else "Fach bearbeiten")
-                .setView(view)
-                .setPositiveButton("Speichern", null) //set to null -> overriding onClick later
+            .setTitle(if (editSubject == null) "Fach hinzufügen" else "Fach bearbeiten")
+            .setView(view)
+            .setPositiveButton("Speichern", null) //set to null -> overriding onClick later
         val dialog = builder.create()
         dialog.setOnShowListener {
             dialog.getButton(AlertDialog.BUTTON_POSITIVE)
-                    .setOnClickListener {
-                        if (subject.text.toString() == "") {
-                            //name empty
-                            subject.error = "Darf nicht leer sein!"
-                        } else {
-                            if (editSubject == null) {
-                                //subject gets added
-                                if (databaseHandler.getSubject(subject.text.toString()) != null) {
-                                    //subject already exists
-                                    subject.error = "Fach existiert bereits!"
-                                } else {
-                                    //new subject can be created
-                                    onNewSubject(Subject(
-                                            0,
-                                            subject.text.toString(),
-                                            course.text.toString(),
-                                            teacher.text.toString(),
-                                            room.text.toString()
-                                    ))
-                                    dialog.dismiss()
-                                }
+                .setOnClickListener {
+                    if (subject.text.toString() == "") {
+                        //name empty
+                        subject.error = "Darf nicht leer sein!"
+                    } else {
+                        if (editSubject == null) {
+                            //subject gets added
+                            if (databaseHandler.getSubject(subject.text.toString()) != null) {
+                                //subject already exists
+                                subject.error = "Fach existiert bereits!"
                             } else {
-                                //subject get edited
+                                //new subject can be created
                                 onNewSubject(Subject(
-                                        editSubject.id,
-                                        subject.text.toString(),
-                                        course.text.toString(),
-                                        teacher.text.toString(),
-                                        room.text.toString()
+                                    0,
+                                    subject.text.toString(),
+                                    course.text.toString(),
+                                    teacher.text.toString(),
+                                    room.text.toString()
                                 ))
                                 dialog.dismiss()
                             }
+                        } else {
+                            //subject get edited
+                            onNewSubject(Subject(
+                                editSubject.id,
+                                subject.text.toString(),
+                                course.text.toString(),
+                                teacher.text.toString(),
+                                room.text.toString()
+                            ))
+                            dialog.dismiss()
                         }
                     }
+                }
         }
         dialog.show()
     }

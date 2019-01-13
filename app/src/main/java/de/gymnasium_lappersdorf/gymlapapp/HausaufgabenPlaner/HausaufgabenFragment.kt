@@ -14,9 +14,6 @@ import android.widget.Spinner
 import de.gymnasium_lappersdorf.gymlapapp.R
 import java.util.Arrays
 import kotlin.collections.ArrayList
-import kotlin.collections.MutableList
-import kotlin.collections.asList
-import kotlin.collections.toTypedArray
 
 /**
  * 01.06.2018 | created by Lukas S

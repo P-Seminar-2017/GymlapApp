@@ -32,18 +32,18 @@ class ArticlesRvAdapter(private var dataset: List<Article>, val context: Context
         holder.articleView.newsitem_home.setOnClickListener {
             val builder = CustomTabsIntent.Builder()
             builder.setToolbarColor(context.resources.getColor(R.color.colorPrimary))
-                    .enableUrlBarHiding()
-                    .setShowTitle(true)
-                    .setCloseButtonIcon(BitmapFactory.decodeResource(context.resources, R.drawable.back))
+                .enableUrlBarHiding()
+                .setShowTitle(true)
+                .setCloseButtonIcon(BitmapFactory.decodeResource(context.resources, R.drawable.back))
             builder.build().launchUrl(context, Uri.parse(dataset[position].href))
         }
         //set image with glide
         Glide.with(context)
-                .load(dataset[position].img)
-                .apply(RequestOptions()
-                        .placeholder(R.drawable.placeholder)
-                        .error(R.drawable.imagebroken))
-                .into(holder.articleView.img_home)
+            .load(dataset[position].img)
+            .apply(RequestOptions()
+                .placeholder(R.drawable.placeholder)
+                .error(R.drawable.imagebroken))
+            .into(holder.articleView.img_home)
     }
 }
 

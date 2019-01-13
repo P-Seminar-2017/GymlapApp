@@ -23,11 +23,11 @@ class HomeworkTabAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
         return 2
     }
 
-    fun getOnlineFragment() : HausaufgabenOnlineFragment {
+    fun getOnlineFragment(): HausaufgabenOnlineFragment {
         return online
     }
 
-    fun getLokalFragment() : HausaufgabenLokalFragment {
+    fun getLokalFragment(): HausaufgabenLokalFragment {
         return local
     }
 }

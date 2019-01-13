@@ -21,7 +21,7 @@ class JobService : android.app.job.JobService() {
         private const val EXTRA_TEXT = "extra_text"
 
         //creates a new job that will execute at the given timestamp(in milli seconds) and show the given notification
-        fun createSchedule(context: Context, timestamp: Long, notification: String) : Int {
+        fun createSchedule(context: Context, timestamp: Long, notification: String): Int {
             val sharedPref = context.getSharedPreferences(context.getString(R.string.shared_pref_notification_id_key), Context.MODE_PRIVATE)
             var id = sharedPref.getInt(context.getString(R.string.shared_pref_notification_id), 0)
             id++
@@ -34,7 +34,7 @@ class JobService : android.app.job.JobService() {
             val jobScheduler = context.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
             jobScheduler.schedule(builder.build())
 
-            with (sharedPref.edit()) {
+            with(sharedPref.edit()) {
                 putInt(context.getString(R.string.shared_pref_notification_id), id)
                 apply()
             }

@@ -189,12 +189,12 @@ class HausaufgabenOnlineFragment : Fragment() {
                 }
 
                 neu = Hausaufgabe(
-                        fach,
-                        text,
-                        jsonHandler!!.getDate(i),
-                        Integer.parseInt(jsonHandler!!.getKlasse(i)),
-                        jsonHandler!!.getStufe(i),
-                        Hausaufgabe.Types.DATE)
+                    fach,
+                    text,
+                    jsonHandler!!.getDate(i),
+                    Integer.parseInt(jsonHandler!!.getKlasse(i)),
+                    jsonHandler!!.getStufe(i),
+                    Hausaufgabe.Types.DATE)
 
                 neu.internetId = jsonHandler!!.getID(i)
 

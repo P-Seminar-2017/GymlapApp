@@ -14,9 +14,9 @@ class ObjectBoxModule {
     @Provides
     @Singleton
     fun provideBoxStore(context: Context): BoxStore = MyObjectBox
-            .builder()
-            .androidContext(context)
-            .build()
+        .builder()
+        .androidContext(context)
+        .build()
 }
 
 @Module

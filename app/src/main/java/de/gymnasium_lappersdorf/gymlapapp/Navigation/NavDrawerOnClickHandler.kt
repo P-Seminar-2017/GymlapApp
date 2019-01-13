@@ -51,9 +51,9 @@ class NavDrawerOnClickHandler(val context: Context) : NavigationView.OnNavigatio
             }
         }
         (context as AppCompatActivity).supportFragmentManager
-                .beginTransaction()
-                .replace(R.id.content_frame_main, getFragment())
-                .commit()
+            .beginTransaction()
+            .replace(R.id.content_frame_main, getFragment())
+            .commit()
         (context as MainActivity).drawer_layout_main.closeDrawers()
     }
 }

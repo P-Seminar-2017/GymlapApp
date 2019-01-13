@@ -32,9 +32,9 @@ class InfoFragment : Fragment() {
         }
         about_cvs.setOnClickListener {
             val builder = CustomTabsIntent.Builder()
-                    .enableUrlBarHiding()
-                    .setShowTitle(true)
-                    .setCloseButtonIcon(BitmapFactory.decodeResource(context!!.resources, R.drawable.back))
+                .enableUrlBarHiding()
+                .setShowTitle(true)
+                .setCloseButtonIcon(BitmapFactory.decodeResource(context!!.resources, R.drawable.back))
             builder.build().launchUrl(context!!, Uri.parse("https://github.com/P-Seminar-2017/GymlapApp"))
         }
     }

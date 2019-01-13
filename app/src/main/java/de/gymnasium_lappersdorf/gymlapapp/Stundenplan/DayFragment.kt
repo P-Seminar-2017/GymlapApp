@@ -30,7 +30,7 @@ class DayFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
-            inflater.inflate(R.layout.fragment_stundenplaner_day, container, false)
+        inflater.inflate(R.layout.fragment_stundenplaner_day, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -56,8 +56,8 @@ class DayFragment : Fragment() {
         rvAdapter = RvAdapter(mutableListOf(), hw) {
             val fragment = HausaufgabenFragment()
             parentFragment!!.fragmentManager!!.beginTransaction()
-                    .replace(R.id.content_frame_main, fragment, fragment.tag)
-                    .commit()
+                .replace(R.id.content_frame_main, fragment, fragment.tag)
+                .commit()
         }
         stundenplaner_rv.adapter = rvAdapter
     }

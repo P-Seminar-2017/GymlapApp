@@ -64,7 +64,7 @@ public class HomeworkRvAdapter extends RecyclerView.Adapter<HomeworkRvAdapter.Vi
                 } else {
                     int scheduleId = JobService.Companion.createSchedule(c, dataset.get(holder.getAdapterPosition()).getTimestamp(), dataset.get(holder.getAdapterPosition()).getText());
                     dataset.get(holder.getAdapterPosition()).setNotificationId(scheduleId);
-                    Toast.makeText(c, "Erinnerung gesetzt (" + ((dataset.get(holder.getAdapterPosition()).getTimestamp()-System.currentTimeMillis()) / 3600000) + " Stunden verbleibend)",
+                    Toast.makeText(c, "Erinnerung gesetzt (" + ((dataset.get(holder.getAdapterPosition()).getTimestamp() - System.currentTimeMillis()) / 3600000) + " Stunden verbleibend)",
                             Toast.LENGTH_SHORT).show();
                 }
 
@@ -90,7 +90,7 @@ public class HomeworkRvAdapter extends RecyclerView.Adapter<HomeworkRvAdapter.Vi
         return dataset.size();
     }
 
-    public void setDataset(Hausaufgabe[] dataset){
+    public void setDataset(Hausaufgabe[] dataset) {
         this.dataset = new ArrayList<>(Arrays.asList(dataset));
     }
 

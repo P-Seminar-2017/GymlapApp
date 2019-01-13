@@ -9,9 +9,9 @@ import de.gymnasium_lappersdorf.gymlapapp.HausaufgabenPlaner.Hausaufgabe
 * recyclerviewAdapter for displaying lessons in a day
 * */
 class RvAdapter(
-        var dataset: MutableList<Lesson>,
-        private val hw: List<Hausaufgabe>,
-        private val onHomework: () -> Unit
+    var dataset: MutableList<Lesson>,
+    private val hw: List<Hausaufgabe>,
+    private val onHomework: () -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private lateinit var recyclerView: RecyclerView

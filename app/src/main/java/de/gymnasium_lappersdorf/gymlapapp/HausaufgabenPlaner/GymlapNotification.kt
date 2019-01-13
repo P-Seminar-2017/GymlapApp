@@ -36,9 +36,9 @@ class GymlapNotification
         }
 
         val mBuilder = NotificationCompat.Builder(context, CHANNEL_ID)
-                .setContentTitle("Gymlap Erinnerung")
-                .setContentText(text)
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setContentTitle("Gymlap Erinnerung")
+            .setContentText(text)
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
 
         if (resultClass != null) {
             val resultIntent = Intent(context, resultClass)

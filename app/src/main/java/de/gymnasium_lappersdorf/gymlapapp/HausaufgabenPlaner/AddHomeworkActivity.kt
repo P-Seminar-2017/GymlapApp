@@ -52,10 +52,10 @@ class AddHomeworkActivity : AppCompatActivity() {
 
             val edit = dbh!!.getHomework(edit_id)
             newHomework = Hausaufgabe(edit.fach, edit.text,
-                    edit.timestamp,
-                    -1,
-                    "a",
-                    Hausaufgabe.Types.DATE
+                edit.timestamp,
+                -1,
+                "a",
+                Hausaufgabe.Types.DATE
             )
             newHomework!!.databaseId = edit_id
             newHomework!!.notificationId = edit.notificationId
@@ -67,10 +67,10 @@ class AddHomeworkActivity : AppCompatActivity() {
             isEdit = false
 
             newHomework = Hausaufgabe(null, null,
-                    calendar.timeInMillis,
-                    -1,
-                    "a",
-                    Hausaufgabe.Types.DATE
+                calendar.timeInMillis,
+                -1,
+                "a",
+                Hausaufgabe.Types.DATE
             )
         }
 
@@ -108,7 +108,7 @@ class AddHomeworkActivity : AppCompatActivity() {
     }
 
     private fun datePicker() {
-        val dialog = DatePickerDialog(this, DatePickerDialog.OnDateSetListener { datePicker, year, month, dayOfMonth ->
+        val dialog = DatePickerDialog(this, DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
             val cal = Calendar.getInstance()
             cal.set(year, month, dayOfMonth, 7, 30)
             newHomework!!.timestamp = cal.timeInMillis

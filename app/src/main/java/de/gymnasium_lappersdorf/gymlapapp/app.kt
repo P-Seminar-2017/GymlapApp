@@ -14,8 +14,8 @@ class App : Application() {
         super.onCreate()
         //building dependency graph
         appComponent = DaggerAppComponent
-                .builder()
-                .context(this)
-                .build()
+            .builder()
+            .context(this)
+            .build()
     }
 }

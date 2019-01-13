@@ -17,11 +17,11 @@ class MainActivity : AppCompatActivity() {
 
         //setting up Navigation-Drawer
         val toggle = ActionBarDrawerToggle(
-                this,
-                drawer_layout_main,
-                toolbar_main,
-                R.string.drawer_close,
-                R.string.drawer_open
+            this,
+            drawer_layout_main,
+            toolbar_main,
+            R.string.drawer_close,
+            R.string.drawer_open
         )
         drawer_layout_main.addDrawerListener(toggle)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)

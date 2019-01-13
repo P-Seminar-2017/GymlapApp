@@ -30,9 +30,9 @@ class Hausaufgabe(var fach: String?, var text: String?, var timestamp: Long, var
             val c = Calendar.getInstance()
             c.time = Date(timestamp)
             return String.format("%s.%s.%s",
-                    c.get(Calendar.DATE),
-                    c.get(Calendar.MONTH) + 1,
-                    c.get(Calendar.YEAR))
+                c.get(Calendar.DATE),
+                c.get(Calendar.MONTH) + 1,
+                c.get(Calendar.YEAR))
         }
 
     val dayOfWeek: String
