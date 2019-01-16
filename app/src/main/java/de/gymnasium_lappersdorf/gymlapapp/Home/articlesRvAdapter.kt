@@ -3,6 +3,7 @@ package de.gymnasium_lappersdorf.gymlapapp.Home
 import android.content.Context
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.os.Build
 import android.support.customtabs.CustomTabsIntent
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -31,7 +32,12 @@ class ArticlesRvAdapter(private var dataset: List<Article>, val context: Context
         //set chrome-custom-tab for onClick
         holder.articleView.newsitem_home.setOnClickListener {
             val builder = CustomTabsIntent.Builder()
-            builder.setToolbarColor(context.resources.getColor(R.color.colorPrimary))
+            builder.setToolbarColor(
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                    context.resources.getColor(R.color.colorPrimary, null)
+                else
+                    @Suppress("DEPRECATION")
+                    context.resources.getColor(R.color.colorPrimary))
                 .enableUrlBarHiding()
                 .setShowTitle(true)
                 .setCloseButtonIcon(BitmapFactory.decodeResource(context.resources, R.drawable.back))
