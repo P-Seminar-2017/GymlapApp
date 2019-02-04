@@ -1,5 +1,6 @@
 package de.gymnasium_lappersdorf.gymlapapp.HausaufgabenPlaner
 
+import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
@@ -94,7 +95,7 @@ class HausaufgabenFragment : Fragment(), NumberPicker.OnValueChangeListener, Ada
             override fun onTabReselected(tab: TabLayout.Tab) {}
         })
 
-        resetFilterAttributes()
+        loadFilter()
     }
 
     override fun onResume() {
@@ -131,18 +132,11 @@ class HausaufgabenFragment : Fragment(), NumberPicker.OnValueChangeListener, Ada
 
     //Numberpicker
     override fun onValueChange(numberPicker: NumberPicker, oldVal: Int, newVal: Int) {
-
-        if (newVal >= 11 && newVal != oldVal) {
-            val adapter = ArrayAdapter<CharSequence>(v!!.context, android.R.layout.simple_spinner_item, getKurse(newVal))
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            klasseSpinner!!.adapter = adapter
-        } else if (newVal <= 10 && oldVal >= 11 && newVal != oldVal) {
-            val adapter = ArrayAdapter<CharSequence>(v!!.context, android.R.layout.simple_spinner_item, klassenArray)
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            klasseSpinner!!.adapter = adapter
-        }
-
         stufe = newVal
+
+        if ((newVal >= 11 && newVal != oldVal) || (newVal <= 10 && oldVal >= 11 && newVal != oldVal))
+            updateDropDownAdapter()
+
         filter(stufe, klasse)
     }
 
@@ -192,11 +186,14 @@ class HausaufgabenFragment : Fragment(), NumberPicker.OnValueChangeListener, Ada
         stufenPicker!!.value = stufe
         klasseSpinner!!.setSelection(Arrays.asList(*klassenArray).indexOf(klasse))
 
+        updateDropDownAdapter()
+
         filterDialog!!.show()
     }
 
     private fun filter(stufe: Int, klasse: String?) {
         adapter!!.getOnlineFragment().filter(stufe, klasse!!)
+        saveFilter()
     }
 
     private fun resetFilterAttributes() {
@@ -204,11 +201,37 @@ class HausaufgabenFragment : Fragment(), NumberPicker.OnValueChangeListener, Ada
         klasse = klassenArray[0]
     }
 
+    private fun saveFilter() {
+        val sharedPref = activity!!.getPreferences(Context.MODE_PRIVATE)
+        val editor = sharedPref.edit()
+        editor.putInt(getString(R.string.shared_pref_filter_stufe), stufe)
+        editor.putString(getString(R.string.shared_pref_filter_klasse), klasse)
+        editor.apply()
+    }
+
+    private fun loadFilter() {
+        val sharedPref = activity!!.getPreferences(Context.MODE_PRIVATE)
+        stufe = sharedPref.getInt(getString(R.string.shared_pref_filter_stufe), 5)
+        klasse = sharedPref.getString(getString(R.string.shared_pref_filter_klasse), klassenArray[0]) ?: klassenArray[0]
+    }
+
     private fun getKurse(stufe: Int): Array<String> {
         val list: MutableList<String> = ArrayList()
         list.addAll(0, HausaufgabenDatabaseHandler(activity).getKurse(stufe).asList())
         list.add(0, klassenArray[0])
         return list.toTypedArray()
+    }
+
+    private fun updateDropDownAdapter() {
+        if (stufe >= 11) {
+            val adapter = ArrayAdapter<CharSequence>(v!!.context, android.R.layout.simple_spinner_item, getKurse(stufe))
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            klasseSpinner!!.adapter = adapter
+        } else if (stufe <= 10) {
+            val adapter = ArrayAdapter<CharSequence>(v!!.context, android.R.layout.simple_spinner_item, klassenArray)
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            klasseSpinner!!.adapter = adapter
+        }
     }
 
 }

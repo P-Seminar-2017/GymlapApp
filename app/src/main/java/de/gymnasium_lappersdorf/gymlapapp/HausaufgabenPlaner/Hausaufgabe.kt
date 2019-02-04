@@ -83,5 +83,9 @@ class Hausaufgabe(var fach: String?, var text: String?, var timestamp: Long, var
         result = 31 * result + internetId.hashCode()
         return result
     }
+
+    override fun toString(): String {
+        return "DatabaseId: $databaseId | Internet: $isFromInternet | Outdated: $isOutdated | Stufe: $stufe | Kurs: $kurs"
+    }
 }
 

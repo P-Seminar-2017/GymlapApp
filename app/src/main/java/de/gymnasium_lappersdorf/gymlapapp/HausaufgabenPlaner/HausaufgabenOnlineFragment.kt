@@ -16,9 +16,11 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import de.gymnasium_lappersdorf.gymlapapp.R
+import de.gymnasium_lappersdorf.gymlapapp.Stundenplan.DatabaseHandler
 import java.io.UnsupportedEncodingException
 import java.net.URLDecoder
 import java.util.*
+
 
 /**
  * 07.12.2018 | created by Lukas S
@@ -46,6 +48,7 @@ class HausaufgabenOnlineFragment : Fragment() {
 
     //Database
     private var dbh: HausaufgabenDatabaseHandler? = null
+    private lateinit var databaseHandler: DatabaseHandler
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         v = inflater.inflate(R.layout.fragment_homework_tab_online, container, false)
@@ -75,11 +78,11 @@ class HausaufgabenOnlineFragment : Fragment() {
         refreshLayout = v.findViewById(R.id.swiperefresh_homework)
         refreshLayout!!.setOnRefreshListener { initDownload() }
 
-        stufe = 5
-        klasse = klassenArray[0]
+        databaseHandler = DatabaseHandler()
+
+        loadFilter()
 
         updateDataset()
-        updateLabel()
     }
 
     private fun updateDataset() {
@@ -111,7 +114,7 @@ class HausaufgabenOnlineFragment : Fragment() {
     private fun updateLabel() {
         val count = homeworkRvAdapter!!.itemCount
 
-        if (klasse === klassenArray[0])
+        if (klasse == klassenArray[0])
             countLabel!!.text = "${(if (count == 0) "Kein" else homeworkRvAdapter!!.itemCount)}${if (homeworkRvAdapter!!.itemCount > 1) " Einträge" else " Eintrag"} für die $stufe. Klasse"
         else
             countLabel!!.text = "${(if (count == 0) "Kein" else homeworkRvAdapter!!.itemCount)}${if (homeworkRvAdapter!!.itemCount > 1) " Einträge" else " Eintrag"} für $stufe $klasse"
@@ -164,19 +167,28 @@ class HausaufgabenOnlineFragment : Fragment() {
     private fun processData() {
 
         if (jsonHandler!!.getSuccess()) {
+            val lessonsMo = databaseHandler.getDay(0)
+            val lessonsDi = databaseHandler.getDay(1)
+            val lessonsMi = databaseHandler.getDay(2)
+            val lessonsDo = databaseHandler.getDay(3)
+            val lessonsFr = databaseHandler.getDay(4)
 
             for (i in 0 until jsonHandler!!.length) {
-                val hw_type: Hausaufgabe.Types
+                val hw_type: Hausaufgabe.Types = when (jsonHandler!!.getType(i)) {
+                    "DATE" -> Hausaufgabe.Types.DATE
+                    "NEXT" -> Hausaufgabe.Types.NEXT
+                    "NEXT2" -> Hausaufgabe.Types.NEXT2
+                    else -> Hausaufgabe.Types.DATE
+                }
                 val neu: Hausaufgabe
 
-                when (jsonHandler!!.getType(i)) {
-                    "DATE" -> hw_type = Hausaufgabe.Types.DATE
-                    "NEXT" -> hw_type = Hausaufgabe.Types.NEXT
-                    "NEXT2" -> hw_type = Hausaufgabe.Types.NEXT2
-                    else -> hw_type = Hausaufgabe.Types.DATE
-                }
-
                 //TODO if "next" or "next2" -> calculate time with values from stundenplan
+                var additionalTime = 0L
+                if (hw_type == Hausaufgabe.Types.NEXT) {
+                    additionalTime += 2 * 24 * 3600 * 1000
+                } else if (hw_type == Hausaufgabe.Types.NEXT2) {
+                    additionalTime += 4 * 24 * 3600 * 1000
+                }
 
                 //Text from database is URI encoded
                 var text = jsonHandler!!.getText(i)
@@ -191,10 +203,10 @@ class HausaufgabenOnlineFragment : Fragment() {
                 neu = Hausaufgabe(
                     fach,
                     text,
-                    jsonHandler!!.getDate(i),
+                    jsonHandler!!.getDate(i) + additionalTime,
                     Integer.parseInt(jsonHandler!!.getKlasse(i)),
                     jsonHandler!!.getStufe(i),
-                    Hausaufgabe.Types.DATE)
+                    hw_type)
 
                 neu.internetId = jsonHandler!!.getID(i)
 
@@ -253,6 +265,12 @@ class HausaufgabenOnlineFragment : Fragment() {
 
     fun showSnackbarIfNoNetwork() {
         if (!isNetworkConnected(activity!!)) snackbarConn!!.show()
+    }
+
+    private fun loadFilter() {
+        val sharedPref = activity!!.getPreferences(Context.MODE_PRIVATE)
+        stufe = sharedPref.getInt(getString(R.string.shared_pref_filter_stufe), 5)
+        klasse = sharedPref.getString(getString(R.string.shared_pref_filter_klasse), klassenArray[0]) ?: klassenArray[0]
     }
 
 }

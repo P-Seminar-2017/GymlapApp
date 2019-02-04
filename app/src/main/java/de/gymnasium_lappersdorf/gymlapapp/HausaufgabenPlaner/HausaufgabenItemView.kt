@@ -53,11 +53,8 @@ class HausaufgabenItemView : LinearLayout {
 
     fun setHomework(hw: Hausaufgabe) {
         this.hw = hw
-        when (hw.type) {
-            Hausaufgabe.Types.DATE -> viewType!!.text = "Hausaufgabe/Notiz für " + hw.dateFormatted
-            Hausaufgabe.Types.NEXT -> viewType!!.text = "Hausaufgabe aufgegeben am " + hw.dateFormatted + ", Abgabe: Nächste Lesson"
-            Hausaufgabe.Types.NEXT2 -> viewType!!.text = "Hausaufgabe aufgegeben am " + hw.dateFormatted + ", Abgabe: Übernächste Lesson"
-        }
+
+        viewType!!.text = "Hausaufgabe/Notiz für " + hw.dateFormatted
 
         viewFach!!.text = hw.fach
         if (hw.stufe >= 0) viewKlasseStufe!!.text = hw.stufe.toString() + " " + hw.kurs
