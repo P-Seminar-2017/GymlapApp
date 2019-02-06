@@ -127,4 +127,28 @@ class DatabaseHandler {
         }
         return null
     }
+
+    /*
+    * @returns a list of lessons for a [subject]
+    * */
+    fun getLessons(subject: Subject): List<Lesson> {
+        val query = lessonBox.query().equal(Lesson_.subjectId, subject.id).build()
+        return query.find()
+    }
+
+    /*
+    * @returns a list of numbers at which days a given [subject] takes place
+    * */
+    fun getDaysForSubject(subject: String): List<Int> {
+        val sub = getSubject(subject)!!
+        val lessons = getLessons(sub)
+        val days = emptyList<Int>().toMutableList()
+        for (l in lessons){
+            val num = l.day.target.day.toInt()
+            if(num !in days) {
+                days.add(num)
+            }
+        }
+        return days
+    }
 }

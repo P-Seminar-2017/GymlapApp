@@ -52,7 +52,6 @@ class DayFragment : Fragment() {
         //init rv
         val layoutManager = LinearLayoutManager(context)
         stundenplaner_rv.layoutManager = layoutManager
-        //rvAdapter = RvAdapter(databaseHandler.getDay(this.day)!!.lessons)
         rvAdapter = RvAdapter(mutableListOf(), hw) {
             val fragment = HausaufgabenFragment()
             parentFragment!!.fragmentManager!!.beginTransaction()
