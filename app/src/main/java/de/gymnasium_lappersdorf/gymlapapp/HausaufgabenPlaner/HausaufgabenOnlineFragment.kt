@@ -167,11 +167,6 @@ class HausaufgabenOnlineFragment : Fragment() {
     private fun processData() {
 
         if (jsonHandler!!.getSuccess()) {
-            val lessonsMo = databaseHandler.getDay(0)
-            val lessonsDi = databaseHandler.getDay(1)
-            val lessonsMi = databaseHandler.getDay(2)
-            val lessonsDo = databaseHandler.getDay(3)
-            val lessonsFr = databaseHandler.getDay(4)
 
             for (i in 0 until jsonHandler!!.length) {
                 val hw_type: Hausaufgabe.Types = when (jsonHandler!!.getType(i)) {
@@ -181,14 +176,6 @@ class HausaufgabenOnlineFragment : Fragment() {
                     else -> Hausaufgabe.Types.DATE
                 }
                 val neu: Hausaufgabe
-
-                //TODO if "next" or "next2" -> calculate time with values from stundenplan
-                var additionalTime = 0L
-                if (hw_type == Hausaufgabe.Types.NEXT) {
-                    additionalTime += 2 * 24 * 3600 * 1000
-                } else if (hw_type == Hausaufgabe.Types.NEXT2) {
-                    additionalTime += 4 * 24 * 3600 * 1000
-                }
 
                 //Text from database is URI encoded
                 var text = jsonHandler!!.getText(i)
@@ -200,13 +187,33 @@ class HausaufgabenOnlineFragment : Fragment() {
                     e.printStackTrace()
                 }
 
+                //if "next" or "next2" -> calculate time with values from stundenplan
+                var additionalTime = 0L
+
+                if (hw_type == Hausaufgabe.Types.NEXT || hw_type == Hausaufgabe.Types.NEXT2) {
+                    val daysOfSubject = when (databaseHandler.getSubject(fach)) {
+                        null -> emptyList()
+                        else -> databaseHandler.getDaysForSubject(fach)
+                    }
+
+                    additionalTime = if (daysOfSubject.isEmpty()) {
+                        7 * 24 * 3600 * 1000L //7 tage standard
+                    } else {
+                        when (hw_type) {
+                            Hausaufgabe.Types.NEXT -> getAdditionalTime(jsonHandler!!.getDate(i), daysOfSubject, false)
+                            Hausaufgabe.Types.NEXT2 -> getAdditionalTime(jsonHandler!!.getDate(i), daysOfSubject, true)
+                            else -> 0L
+                        }
+                    }
+                }
+
                 neu = Hausaufgabe(
-                    fach,
-                    text,
-                    jsonHandler!!.getDate(i) + additionalTime,
-                    Integer.parseInt(jsonHandler!!.getKlasse(i)),
-                    jsonHandler!!.getStufe(i),
-                    hw_type)
+                        fach,
+                        text,
+                        jsonHandler!!.getDate(i) + additionalTime,
+                        Integer.parseInt(jsonHandler!!.getKlasse(i)),
+                        jsonHandler!!.getStufe(i),
+                        hw_type)
 
                 neu.internetId = jsonHandler!!.getID(i)
 
@@ -250,6 +257,54 @@ class HausaufgabenOnlineFragment : Fragment() {
         refreshLayout!!.isRefreshing = false
     }
 
+    private fun getAdditionalTime(date: Long, nextDays: List<Int>, next2: Boolean): Long {
+        val currDay = getCurrDayNumber(date)
+
+        var additionalDays: Int
+        var smallestAdditionalDays = Integer.MAX_VALUE
+        var secondSmallestAdditionalDays = Integer.MAX_VALUE
+
+        for (k in nextDays) {
+
+            additionalDays = when {
+                k > currDay -> {
+                    k - currDay
+                }
+                k < currDay -> {
+                    currDay - k + 6 //adding one week
+                }
+                else -> 0
+            }
+
+            if (!next2) {
+                smallestAdditionalDays = when {
+                    additionalDays <= smallestAdditionalDays && additionalDays != 0 -> additionalDays
+                    else -> smallestAdditionalDays
+                }
+            } else {
+                if (additionalDays < smallestAdditionalDays && additionalDays != 0) {
+                    secondSmallestAdditionalDays = smallestAdditionalDays
+                    smallestAdditionalDays = additionalDays
+                } else if (additionalDays < secondSmallestAdditionalDays && additionalDays != 0) {
+                    secondSmallestAdditionalDays = additionalDays
+                }
+            }
+
+        }
+
+        return when (next2) {
+            true -> secondSmallestAdditionalDays * 24 * 3600 * 1000L
+            false -> smallestAdditionalDays * 24 * 3600 * 1000L
+        }
+    }
+
+    //-2 to 5 -> monday = 0
+    private fun getCurrDayNumber(date: Long): Int {
+        val cal = Calendar.getInstance()
+        cal.timeInMillis = date
+        return cal.get(Calendar.DAY_OF_WEEK) - 2
+    }
+
     //checks for internet connection
     private fun isNetworkConnected(context: Context): Boolean {
         val con = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -270,7 +325,8 @@ class HausaufgabenOnlineFragment : Fragment() {
     private fun loadFilter() {
         val sharedPref = activity!!.getPreferences(Context.MODE_PRIVATE)
         stufe = sharedPref.getInt(getString(R.string.shared_pref_filter_stufe), 5)
-        klasse = sharedPref.getString(getString(R.string.shared_pref_filter_klasse), klassenArray[0]) ?: klassenArray[0]
+        klasse = sharedPref.getString(getString(R.string.shared_pref_filter_klasse), klassenArray[0])
+                ?: klassenArray[0]
     }
 
 }
