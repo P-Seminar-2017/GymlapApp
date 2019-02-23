@@ -8,8 +8,8 @@ import android.view.View
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
-
 import de.gymnasium_lappersdorf.gymlapapp.R
+import de.gymnasium_lappersdorf.gymlapapp.Stundenplan.DatabaseHandler
 
 /**
  * 01.06.2018 | created by Lukas S
@@ -22,6 +22,8 @@ class HausaufgabenItemView : LinearLayout {
     private var viewKlasseStufe: TextView? = null
     private var viewHausaufgaben: TextView? = null
     private var btnReminder: ImageButton? = null
+
+    private lateinit var databaseHandler: DatabaseHandler
 
     private var hw: Hausaufgabe? = null
 
@@ -49,12 +51,28 @@ class HausaufgabenItemView : LinearLayout {
         viewKlasseStufe = findViewById(R.id.text_klasse_stufe)
         viewHausaufgaben = findViewById(R.id.text_homework)
         btnReminder = findViewById(R.id.reminder_btn)
+        databaseHandler = DatabaseHandler()
     }
 
     fun setHomework(hw: Hausaufgabe) {
         this.hw = hw
 
-        viewType!!.text = "Hausaufgabe/Notiz für " + hw.dateFormatted
+        if (hw.type == Hausaufgabe.Types.NEXT || hw.type == Hausaufgabe.Types.NEXT2) {
+            val daysOfSubject = when (databaseHandler.getSubject(hw.fach!!)) {
+                null -> emptyList()
+                else -> databaseHandler.getDaysForSubject(hw.fach!!)
+            }
+
+            if (daysOfSubject.isEmpty()) {
+                if (hw.type == Hausaufgabe.Types.NEXT) viewType!!.text = "Hausaufgabe/Notiz für nächste Stunde"
+                else viewType!!.text = "Hausaufgabe/Notiz für übernächste Stunde"
+            } else {
+                viewType!!.text = "Hausaufgabe/Notiz für nächsten " + hw.getNextDay(daysOfSubject)
+            }
+
+        } else {
+            viewType!!.text = "Hausaufgabe/Notiz für " + hw.dateFormatted
+        }
 
         viewFach!!.text = hw.fach
         if (hw.stufe >= 0) viewKlasseStufe!!.text = hw.stufe.toString() + " " + hw.kurs
@@ -69,6 +87,15 @@ class HausaufgabenItemView : LinearLayout {
     }
 
     fun updateButton() {
+        if (hw!!.type != Hausaufgabe.Types.DATE) {
+            btnReminder?.isEnabled = false
+            btnReminder?.alpha = .5f
+            return
+        }
+
+        btnReminder?.isEnabled = true
+        btnReminder?.alpha = 1f
+
         if (hw!!.isSetAsNotification(context))
             btnReminder?.setBackgroundColor(ResourcesCompat.getColor(resources, R.color.colorAccent, null))
         else

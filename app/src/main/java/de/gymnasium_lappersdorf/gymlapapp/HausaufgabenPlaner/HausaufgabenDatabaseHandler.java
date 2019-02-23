@@ -26,6 +26,7 @@ public class HausaufgabenDatabaseHandler extends SQLiteOpenHelper {
     private static final String KEY_DONE = "done";
     private static final String KEY_STUFE = "stufe";
     private static final String KEY_KURS = "kurs";
+    private static final String KEY_TYPE = "type";
 
     public HausaufgabenDatabaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -44,7 +45,8 @@ public class HausaufgabenDatabaseHandler extends SQLiteOpenHelper {
                 KEY_TIMETOBEDONE + " TEXT," +
                 KEY_DONE + " INT," +
                 KEY_KURS + " TEXT," +
-                KEY_STUFE + " INT" +
+                KEY_STUFE + " INT," +
+                KEY_TYPE + " INT" +
                 ")";
 
 
@@ -72,6 +74,7 @@ public class HausaufgabenDatabaseHandler extends SQLiteOpenHelper {
         values.put(KEY_DONE, h.isDone() ? 1 : 0);
         values.put(KEY_STUFE, h.getStufe());
         values.put(KEY_KURS, h.getKurs());
+        values.put(KEY_TYPE, h.getType().ordinal());
 
 
         long id = db.insert(DATABASE_TABLE, null, values);
@@ -82,7 +85,7 @@ public class HausaufgabenDatabaseHandler extends SQLiteOpenHelper {
     //read Homework from Database
     public Hausaufgabe getHomework(long id) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(DATABASE_TABLE, new String[]{KEY_ID, KEY_INTERNET_ID, KEY_NOTIFICATION_ID, KEY_FACH, KEY_TEXT, KEY_TIMETOBEDONE, KEY_DONE, KEY_KURS, KEY_STUFE},
+        Cursor cursor = db.query(DATABASE_TABLE, new String[]{KEY_ID, KEY_INTERNET_ID, KEY_NOTIFICATION_ID, KEY_FACH, KEY_TEXT, KEY_TIMETOBEDONE, KEY_DONE, KEY_KURS, KEY_STUFE, KEY_TYPE},
                 KEY_ID + "=?",
                 new String[]{String.valueOf(id)}, null, null, null, null);
         if (cursor != null) {
@@ -90,7 +93,7 @@ public class HausaufgabenDatabaseHandler extends SQLiteOpenHelper {
         }
 
         Hausaufgabe h = new Hausaufgabe(cursor.getString(3), cursor.getString(4), Long.parseLong(cursor.getString(5)),
-                cursor.getInt(8), cursor.getString(7), Hausaufgabe.Types.DATE);
+                cursor.getInt(8), cursor.getString(7), Hausaufgabe.Types.values()[cursor.getInt(9)]);
 
         h.setDone(cursor.getInt(6) == 1);
         h.setDatabaseId(cursor.getLong(0));
@@ -143,6 +146,7 @@ public class HausaufgabenDatabaseHandler extends SQLiteOpenHelper {
         values.put(KEY_DONE, h.isDone());
         values.put(KEY_STUFE, h.getStufe());
         values.put(KEY_KURS, h.getKurs());
+        values.put(KEY_TYPE, h.getType().ordinal());
 
 
         // updating row

@@ -30,9 +30,9 @@ class Hausaufgabe(var fach: String?, var text: String?, var timestamp: Long, var
             val c = Calendar.getInstance()
             c.time = Date(timestamp)
             return String.format("%s.%s.%s",
-                c.get(Calendar.DATE),
-                c.get(Calendar.MONTH) + 1,
-                c.get(Calendar.YEAR))
+                    c.get(Calendar.DATE),
+                    c.get(Calendar.MONTH) + 1,
+                    c.get(Calendar.YEAR))
         }
 
     val dayOfWeek: String
@@ -63,6 +63,60 @@ class Hausaufgabe(var fach: String?, var text: String?, var timestamp: Long, var
         return alreadySet
     }
 
+    fun getNextDay(nextDays: List<Int>): String {
+        val days = arrayOf("Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag")
+        val currDay = days.indexOf(dayOfWeek)
+
+        var additionalDays: Int
+        var smallestAdditionalDays = Integer.MAX_VALUE
+        var secondSmallestAdditionalDays = Integer.MAX_VALUE
+        var retDay = 0
+        var retDay2 = 0
+
+        for (k in nextDays) {
+            val realK = k + 1
+
+            additionalDays = when {
+                realK > currDay -> {
+                    realK - currDay
+                }
+                realK < currDay -> {
+                    Math.abs((currDay - 7) - realK)
+                }
+                realK == currDay -> {
+                    7
+                }
+                else -> 0
+            }
+
+            if (type == Hausaufgabe.Types.NEXT) {
+
+                if (additionalDays <= smallestAdditionalDays && additionalDays != 0) {
+                    smallestAdditionalDays = additionalDays
+                    retDay = realK
+                }
+
+            } else {
+
+                if (additionalDays < smallestAdditionalDays && additionalDays != 0) {
+                    secondSmallestAdditionalDays = smallestAdditionalDays
+                    smallestAdditionalDays = additionalDays
+                    retDay = retDay2
+                    retDay2 = realK
+                } else if (additionalDays < secondSmallestAdditionalDays && additionalDays != 0) {
+                    secondSmallestAdditionalDays = additionalDays
+                    retDay = realK
+                }
+
+            }
+
+        }
+
+        return if (nextDays.size == 1 && type == Hausaufgabe.Types.NEXT) days[nextDays[0] + 1]
+        else if (nextDays.size == 1 && type == Hausaufgabe.Types.NEXT2) "übernächsten " + days[nextDays[0] + 1]
+        else days[retDay]
+    }
+
     override fun equals(other: Any?): Boolean {
 
         if (this.javaClass == other!!.javaClass) {
@@ -85,7 +139,7 @@ class Hausaufgabe(var fach: String?, var text: String?, var timestamp: Long, var
     }
 
     override fun toString(): String {
-        return "DatabaseId: $databaseId | Internet: $isFromInternet | Outdated: $isOutdated | Stufe: $stufe | Kurs: $kurs"
+        return "DatabaseId: $databaseId | Internet: $isFromInternet | Outdated: $isOutdated | Stufe: $stufe | Kurs: $kurs | Type: ${type.name}"
     }
 }
 
