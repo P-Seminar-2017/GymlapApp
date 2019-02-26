@@ -64,6 +64,7 @@ class LessonView @JvmOverloads constructor(
         val day = databaseHandler.getDay(d)!!
         day.lessons.remove(lesson)
         databaseHandler.setDay(day)
+        databaseHandler.rmLesson(lesson)
         onDelete()
     }
 

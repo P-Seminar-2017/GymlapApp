@@ -129,6 +129,11 @@ class DatabaseHandler {
     }
 
     /*
+    * removes a [lesson] from the database
+    * */
+    fun rmLesson(lesson: Lesson) = lessonBox.remove(lesson)
+
+    /*
     * @returns a list of lessons for a [subject]
     * */
     fun getLessons(subject: Subject): List<Lesson> {
@@ -143,9 +148,9 @@ class DatabaseHandler {
         val sub = getSubject(subject)!!
         val lessons = getLessons(sub)
         val days = emptyList<Int>().toMutableList()
-        for (l in lessons){
-            val num = l.day.target.day.toInt()
-            if(num !in days) {
+        for (l in lessons) {
+            val num = l.day.target!!.day.toInt()
+            if (num !in days) {
                 days.add(num)
             }
         }
